@@ -1,6 +1,6 @@
-// Fullscreen keeps the model, its controls and live output cards together.
+// Fullscreen contains only the interactive model and its live output.
 (() => {
-  const model = document.querySelector('.workspace');
+  const model = document.querySelector('.stage-wrap');
   const button = document.querySelector('#fullscreen');
   let inactive = [];
 

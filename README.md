@@ -12,7 +12,7 @@ Drag a model, adjust its sliders, or focus the model and use the arrow keys. Hom
 
 Each normal page has a title and short description, with its formula above the live output cards.
 
-**Full Screen** keeps the model, sliders, essential buttons and live output cards visible. Titles, descriptions, formulas and graphs are hidden. Dragging and keyboard controls remain available. Use **Exit Full Screen** or Escape to return. Browsers without the Fullscreen API use a viewport-filling fallback.
+**Full Screen** opens only the model and live output. Dragging and keyboard controls remain available. Use **Exit Full Screen** or Escape to return. Browsers without the Fullscreen API use a viewport-filling fallback.
 
 Each folder contains its HTML model, animation logic and material colors. `shared.css`, `shared.js` and `geometry.js` provide the common layout, fullscreen behavior and isometric projection. Edit these files directly; generated copies and external toolkit installations are unnecessary.
 

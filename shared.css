@@ -163,36 +163,13 @@ h2 { margin: 0; font-size: 17px; letter-spacing: -.4px; }
 .screen-preview p { margin: 10px 0 0; font-size: 10px; color: var(--muted); }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
 [hidden] { display: none !important; }
-/* Fullscreen keeps the working controls and live outputs beside the model. */
-.workspace:fullscreen, .workspace.is-fullscreen {
-  position: fixed; inset: 0; z-index: 100; width: 100%; height: 100dvh;
-  padding: 16px; gap: 16px; background: var(--stage); overflow: auto;
-  grid-template-columns: minmax(0, 1fr) minmax(220px, 25%);
-  grid-template-rows: minmax(0, 1fr); align-items: stretch;
-}
-.model-fullscreen .page-intro,
-.workspace:is(:fullscreen, .is-fullscreen) .card-head,
-.workspace:is(:fullscreen, .is-fullscreen) .stage-note,
-.workspace:is(:fullscreen, .is-fullscreen) .stage-notes,
-.workspace:is(:fullscreen, .is-fullscreen) .legend,
-.workspace:is(:fullscreen, .is-fullscreen) .formula-card,
-.workspace:is(:fullscreen, .is-fullscreen) .graph-card,
-.workspace:is(:fullscreen, .is-fullscreen) .stage-caption > span:first-child { display: none; }
-.workspace:is(:fullscreen, .is-fullscreen) .experiment { display: flex; flex-direction: column; min-height: 0; overflow: auto; }
-.workspace:is(:fullscreen, .is-fullscreen) .stage-wrap { flex: 1; min-height: 140px; padding-top: 48px; }
-.workspace:is(:fullscreen, .is-fullscreen) #stage { flex: 1; min-height: 0; aspect-ratio: auto; touch-action: none; }
-.workspace:is(:fullscreen, .is-fullscreen) #stage > svg { height: 100%; min-height: 0; }
-.workspace:is(:fullscreen, .is-fullscreen) .stage-caption { justify-content: center; padding: 10px; font-size: 14px; }
-.workspace:is(:fullscreen, .is-fullscreen) .controls { flex: none; padding: 16px 24px; }
-.workspace:is(:fullscreen, .is-fullscreen) .actions { margin-top: 14px; }
-.workspace:is(:fullscreen, .is-fullscreen) input[type=range] { margin-top: 16px; margin-bottom: 12px; }
-.workspace:is(:fullscreen, .is-fullscreen) .screen-control { margin-top: 14px; padding-top: 14px; }
-.workspace:is(:fullscreen, .is-fullscreen) .presets { margin-top: 12px; }
-.workspace:is(:fullscreen, .is-fullscreen) .focus-feedback { padding: 10px 20px; }
-.workspace:is(:fullscreen, .is-fullscreen) .selector { margin: 14px 18px 0; }
-.workspace:is(:fullscreen, .is-fullscreen) aside { min-height: 0; overflow: auto; }
-.workspace:is(:fullscreen, .is-fullscreen) .readings { grid-template-columns: 1fr; }
-.workspace:is(:fullscreen, .is-fullscreen) .metric strong { font-size: 34px; }
+.model-fullscreen .page-intro { display: none; }
+.stage-wrap:fullscreen, .stage-wrap.is-fullscreen { position: fixed; inset: 0; z-index: 100; width: 100%; height: 100dvh; padding: 55px 3vw 20px; background: var(--stage); }
+.stage-wrap:fullscreen #stage, .stage-wrap.is-fullscreen #stage { flex: 1; min-height: 0; aspect-ratio: auto; touch-action: none; }
+.stage-wrap:fullscreen #stage > svg, .stage-wrap.is-fullscreen #stage > svg { height: 100%; max-height: calc(100dvh - 130px); }
+.stage-wrap:fullscreen .stage-note, .stage-wrap:fullscreen .stage-notes, .stage-wrap.is-fullscreen .stage-note, .stage-wrap.is-fullscreen .stage-notes,
+.stage-wrap:fullscreen .stage-caption > span:first-child, .stage-wrap.is-fullscreen .stage-caption > span:first-child { display: none; }
+.stage-wrap:fullscreen .stage-caption, .stage-wrap.is-fullscreen .stage-caption { justify-content: center; padding: 15px; font-size: 18px; }
 body.model-fullscreen { overflow: hidden; }
 @media (max-width: 1050px) {
   main { padding: 18px; }.workspace { gap: 18px; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); }
@@ -229,20 +206,4 @@ body.model-fullscreen { overflow: hidden; }
   .page-intro { margin-bottom: 20px; padding: 8px 4px; }
   .page-intro h1 { font-size: 26px; }
   .page-intro p { font-size: 12px; }
-  .workspace:is(:fullscreen, .is-fullscreen) { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); padding: 8px; gap: 8px; }
-  .workspace:is(:fullscreen, .is-fullscreen) aside { grid-row: 1; overflow: visible; }
-  .workspace:is(:fullscreen, .is-fullscreen) .experiment { grid-row: 2; }
-  .workspace:is(:fullscreen, .is-fullscreen) .readings { grid-template-columns: 1fr 1fr; gap: 8px; }
-  .workspace:is(:fullscreen, .is-fullscreen) .metric { padding: 12px 14px; }
-  .workspace:is(:fullscreen, .is-fullscreen) .metric > span:first-child { font-size: 7px; }
-  .workspace:is(:fullscreen, .is-fullscreen) .metric strong { margin: 8px 0 0; font-size: 26px; }
-  .workspace:is(:fullscreen, .is-fullscreen) .metric strong small { display: inline; font-size: 9px; margin-left: 3px; }
-  .workspace:is(:fullscreen, .is-fullscreen) .metric > div,
-  .workspace:is(:fullscreen, .is-fullscreen) .metric p,
-  .workspace:is(:fullscreen, .is-fullscreen) .constant-check,
-  .workspace:is(:fullscreen, .is-fullscreen) .tag,
-  .workspace:is(:fullscreen, .is-fullscreen) .screen-preview { display: none; }
-  .workspace:is(:fullscreen, .is-fullscreen) .controls { padding: 14px 18px; }
-  .workspace:is(:fullscreen, .is-fullscreen) .control-title output,
-  .workspace:is(:fullscreen, .is-fullscreen) .control-title strong { font-size: 22px; }
 }
