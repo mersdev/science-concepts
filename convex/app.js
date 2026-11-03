@@ -6,6 +6,28 @@ let u=60,targetU=60,s=30,targetS=30,auto=false,clock=0,reciprocal=true,frame=0,l
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
 const n=v=>v.toFixed(1),format=v=>Number.isFinite(v)?n(v):'∞';
 const isSharp=m=>m.real&&Math.abs(s-m.v)<=.35;
+const stage=$('#stage'),previewCard=$('.screen-preview'),previewParent=previewCard.parentNode,previewNext=previewCard.nextSibling;
+let activeMove='object';
+stage.setAttribute('role','group');
+for(const attr of ['aria-valuemin','aria-valuemax','aria-valuenow'])stage.removeAttribute(attr);
+stage.insertAdjacentHTML('beforeend','<button type="button" class="move-hint object-hint" data-move="object" role="slider" aria-label="Object distance. Drag or use arrow keys." aria-valuemin="10" aria-valuemax="80">↔ Drag object</button><button type="button" class="move-hint screen-hint" data-move="screen" role="slider" aria-label="Screen distance. Drag or use arrow keys." aria-valuemin="22" aria-valuemax="100">↔ Drag screen</button>');
+function positionHints(){
+ if(!$('.stage-wrap').classList.contains('optical-fullscreen'))return;
+ const matrix=stage.querySelector('svg').getScreenCTM(),box=stage.getBoundingClientRect();
+ if(!matrix)return;
+ const positions=[[-172-3*(u-60),0,145],[93+3*(s-30),0,155]].map(point=>{
+  const p=new DOMPoint(...iso(point,P)).matrixTransform(matrix);
+  return {x:clamp(p.x-box.left,60,box.width-60),y:clamp(p.y-box.top-22,18,box.height-35)};
+ });
+ if(Math.abs(positions[0].x-positions[1].x)<125)positions[1].y=Math.max(positions[1].y,positions[0].y+38);
+ $$('[data-move]').forEach((hint,i)=>{hint.style.left=positions[i].x+'px';hint.style.top=positions[i].y+'px';});
+}
+document.addEventListener('model-fullscreen-change',({detail:active})=>{
+ $('.stage-wrap').classList.toggle('optical-fullscreen',active);
+ if(active)$('.stage-wrap').append(previewCard);else previewParent.insertBefore(previewCard,previewNext);
+ positionHints();
+});
+new ResizeObserver(positionHints).observe(stage);
 function arrowPath(x,h){return pathOf([[x,-2,90],[x,2,90],[x,2,90+h-5*Math.sign(h)],[x,6,90+h-5*Math.sign(h)],[x,0,90+h],[x,-6,90+h-5*Math.sign(h)],[x,-2,90+h-5*Math.sign(h)]].map(p=>iso(p,P)),true);}
 function graph(m){
  let out='',X,Y;
@@ -37,36 +59,60 @@ function draw(){const m=model(u),sharp=isSharp(m),canFocus=m.real&&m.v>=22&&m.v<
  $('#object-carriage').setAttribute('transform',translateAlong(P,[-3*(u-60),0,0]));$('#screen-carriage').setAttribute('transform',translateAlong(P,[3*(s-30),0,0]));
  // ponytail: geometric defocus is illustrative; no wave-optics or exposure model.
  const blur=Math.abs(1-s*m.invV)*9;
- $('#blur-amount').setAttribute('stdDeviation',blur.toFixed(3));$('#screen-image').setAttribute('d',arrowPath(93,-20*s/u));$('#screen-image').setAttribute('opacity',sharp?1:Math.max(.12,.75/(1+blur*.2)));
- $('#screen-image').setAttribute('aria-label',sharp?'Sharp inverted image':'Diffuse out-of-focus light, not a sharp image');
+ $('#blur-amount').setAttribute('stdDeviation',blur.toFixed(3));$('#screen-image').setAttribute('d',arrowPath(93,-20*s/u));$('#screen-image').setAttribute('opacity',m.real?(sharp?1:Math.max(.12,.75/(1+blur*.2))):0);
+ $('#screen-image').setAttribute('aria-label',!m.real?'No projected image':sharp?'Sharp inverted image':'Diffuse out-of-focus light, not a sharp image');
  $('#preview-arrow').setAttribute('transform',`translate(150 30) scale(1 ${s/u})`);
  $('#preview-blur').setAttribute('stdDeviation',(blur*.8).toFixed(3));
- $('#preview-arrow').setAttribute('opacity',sharp?'1':String(Math.max(.12,.75/(1+blur*.2))));
+ $('#preview-arrow').setAttribute('opacity',m.real?(sharp?'1':String(Math.max(.12,.75/(1+blur*.2)))):'0');
  $('#preview-status').textContent=sharp?'SHARP':m.virtual||m.infinite?'NO SHARP IMAGE':'OUT OF FOCUS';
- $('#preview').setAttribute('aria-label',sharp?'Magnified screen view: a sharp inverted arrow.':'Magnified screen view: diffuse out-of-focus light.');
- $('[data-readout]').textContent=`u = ${n(u)} cm · v = ${format(m.v)} cm`;
- $('#stage').setAttribute('aria-valuenow',n(u));$('#stage').setAttribute('aria-valuetext',`${n(u)} centimetres from lens; ${m.infinite?'image at infinity':m.virtual?'virtual upright image':'real inverted image'}`);
+ const previewNote=m.virtual?'Virtual image — it cannot be projected onto a screen.':m.infinite?'Parallel rays — no finite screen position gives a sharp image.':!canFocus?`Image at ${n(m.v)} cm — beyond the screen’s 100 cm travel.`:sharp?'A sharp, inverted image on the screen.':'Drag the screen to sharpen the arrow.';
+ previewCard.querySelector('p').textContent=previewNote;$('#preview').setAttribute('aria-label',previewNote);
+ $('[data-readout]').textContent=`u = ${n(u)} cm · s = ${n(s)} cm · v = ${format(m.v)} cm`;
+ stage.setAttribute('aria-label',`Optical bench. ${activeMove==='screen'?'Screen':'Object'} selected; use arrow keys to move it.`);
+ $$('[data-move]').forEach(hint=>{const value=hint.dataset.move==='screen'?s:u;hint.setAttribute('aria-valuenow',n(value));hint.setAttribute('aria-valuetext',`${n(value)} centimetres from the lens`);hint.classList.toggle('selected',hint.dataset.move===activeMove);});
+ positionHints();
  $$('[data-u]').forEach(b=>{const active=Math.abs(Number(b.dataset.u)-u)<.01;b.classList.toggle('selected',active);b.setAttribute('aria-pressed',String(active));});
  graph(m);
 }
 function stop(){auto=false;$('#tour').textContent='▷ Auto explore';$('#tour').setAttribute('aria-pressed','false');}
 function wake(){if(!frame&&visible&&!document.hidden)frame=requestAnimationFrame(tick);}
 function setObject(value){stop();targetU=clamp(value,10,80);wake();}
+function setScreen(value){stop();targetS=clamp(value,22,100);wake();}
 function tick(now){frame=0;const dt=last?Math.min((now-last)/1000,.05):1/60;last=now;
  if(auto&&!reduced.matches){clock+=dt;targetU=45+35*Math.sin(clock*.35);}
  const ease=reduced.matches?1:1-Math.exp(-dt/.16);u+=(targetU-u)*ease;s+=(targetS-s)*ease;
  if(Math.abs(u-targetU)<.002)u=targetU;if(Math.abs(s-targetS)<.002)s=targetS;draw();
  if(visible&&!document.hidden&&(auto&&!reduced.matches||u!==targetU||s!==targetS))frame=requestAnimationFrame(tick);else last=0;
 }
-$('#object').oninput=e=>setObject(Number(e.target.value));$('#screen').oninput=e=>{stop();targetS=Number(e.target.value);wake();};
+$('#object').oninput=e=>setObject(Number(e.target.value));$('#screen').oninput=e=>setScreen(Number(e.target.value));
 $$('[data-u]').forEach(b=>b.onclick=()=>setObject(Number(b.dataset.u)));
 $('#focus').onclick=()=>{stop();u=targetU;const m=model(u);if(m.real&&m.v>=22&&m.v<=100){targetS=m.v;wake();}};
-$('#reset').onclick=()=>{stop();chooseGraph(true);targetU=60;targetS=30;wake();};
+$('#reset').onclick=()=>{stop();activeMove='object';chooseGraph(true);targetU=60;targetS=30;wake();};
 $('#tour').onclick=()=>{if(auto){stop();return;}auto=true;clock=Math.asin((u-45)/35)/.35;$('#tour').textContent='Ⅱ Pause explore';$('#tour').setAttribute('aria-pressed','true');if(reduced.matches)targetU=u>40?10:60;wake();};
 function chooseGraph(value){reciprocal=value;for(const id of ['reciprocal','distance']){const active=(id==='reciprocal')===value;$('#'+id).classList.toggle('selected',active);$('#'+id).setAttribute('aria-pressed',String(active));}graph(model(u));}
 $('#reciprocal').onclick=()=>chooseGraph(true);$('#distance').onclick=()=>chooseGraph(false);
-$('#stage').addEventListener('keydown',e=>{const step=e.shiftKey?5:.5,keys={ArrowLeft:targetU-step,ArrowRight:targetU+step,ArrowDown:targetU-step,ArrowUp:targetU+step,Home:10,End:80};if(e.key in keys){e.preventDefault();setObject(keys[e.key]);}});
-let dragging=false,startX=0,startU=0;$('#stage').addEventListener('pointerdown',e=>{if(e.button!==0)return;dragging=true;startX=e.clientX;startU=targetU;$('#stage').setPointerCapture(e.pointerId);stop();});$('#stage').addEventListener('pointermove',e=>{if(dragging)setObject(startU-(e.clientX-startX)/$('#stage').clientWidth*100);});for(const event of ['pointerup','pointercancel'])$('#stage').addEventListener(event,()=>dragging=false);
+stage.addEventListener('focusin',e=>{const hint=e.target.closest('[data-move]');if(hint){activeMove=hint.dataset.move;draw();}});
+stage.addEventListener('keydown',e=>{
+ activeMove=e.target.closest('[data-move]')?.dataset.move||activeMove;
+ const screen=activeMove==='screen',value=screen?targetS:targetU,step=e.shiftKey?5:.5;
+ const keys={ArrowLeft:value-step,ArrowRight:value+step,ArrowDown:value-step,ArrowUp:value+step,Home:screen?22:10,End:screen?100:80};
+ if(e.key in keys){e.preventDefault();(screen?setScreen:setObject)(keys[e.key]);}
+});
+let drag=null;
+stage.addEventListener('pointerdown',e=>{
+ if(e.button!==0)return;
+ activeMove=e.target.closest('[data-move]')?.dataset.move||(e.target.closest('#screen-carriage')?'screen':'object');
+ const matrix=stage.querySelector('svg').getScreenCTM(),a=iso([0,0,0],P),b=iso([3,0,0],P);
+ const ax=matrix.a*(b[0]-a[0])+matrix.c*(b[1]-a[1]),ay=matrix.b*(b[0]-a[0])+matrix.d*(b[1]-a[1]);
+ drag={x:e.clientX,y:e.clientY,value:activeMove==='screen'?targetS:targetU,ax,ay};
+ stage.setPointerCapture(e.pointerId);stop();draw();
+});
+stage.addEventListener('pointermove',e=>{
+ if(!drag)return;
+ const shift=((e.clientX-drag.x)*drag.ax+(e.clientY-drag.y)*drag.ay)/(drag.ax**2+drag.ay**2);
+ if(activeMove==='screen')setScreen(drag.value+shift);else setObject(drag.value-shift);
+});
+for(const event of ['pointerup','pointercancel'])stage.addEventListener(event,e=>{drag=null;if(stage.hasPointerCapture(e.pointerId))stage.releasePointerCapture(e.pointerId);});
 new IntersectionObserver(([e])=>{visible=e.isIntersecting;if(visible)wake();else{cancelAnimationFrame(frame);frame=0;last=0;}}).observe($('main'));
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)wake();else{cancelAnimationFrame(frame);frame=0;last=0;}});reduced.addEventListener('change',()=>{stop();wake();});
 window.convex={model,getState:()=>({u,s,targetU,targetS,auto,reciprocal,sharp:isSharp(model(u))})};draw();

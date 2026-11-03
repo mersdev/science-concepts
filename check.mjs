@@ -131,7 +131,7 @@ try {
     await click(play); assert.equal(await evaluate(`${name}.getState().auto`), false);
     await key('Home'); await key('End');
     assert.equal(await evaluate(`${name}.getState().${name === 'convex' ? 'u' : 'current'}`), name === 'boyle' ? 100 : name === 'convex' ? 80 : 12);
-    const box = await evaluate(`{const r=document.querySelector('#stage').getBoundingClientRect();({x:r.x+r.width*.6,y:r.y+r.height*.5,width:r.width})}`);
+    const box = await evaluate(`{const r=document.querySelector('${name==='convex'?'#object-carriage':'#stage'}').getBoundingClientRect();({x:r.x+r.width*.6,y:r.y+r.height*.5,width:r.width})}`);
     await send('Input.dispatchMouseEvent', { type: 'mousePressed', x: box.x, y: box.y, button: 'left', clickCount: 1 });
     await send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: box.x + (name === 'convex' ? 70 : -70), y: box.y, button: 'left', buttons: 1 });
     await send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: box.x + (name === 'convex' ? 70 : -70), y: box.y, button: 'left', clickCount: 1 });
@@ -148,10 +148,33 @@ try {
     assert(await evaluate(`document.querySelector('#fullscreen').getAttribute('aria-pressed')==='true'`));
     assert(await evaluate(`document.querySelector('#reset').inert`));
     assert(await evaluate(`getComputedStyle(document.querySelector('.stage-caption > span:first-child')).display==='none'`));
+    if(name==='convex') {
+      assert(await evaluate(`document.querySelector('.stage-wrap .screen-preview')!==null && document.querySelectorAll('#preview').length===1`), 'live preview is inside fullscreen');
+      assert(await evaluate(`[...document.querySelectorAll('.move-hint')].every(el=>getComputedStyle(el).display!=='none')`), 'movement indicators visible');
+      const dragScreen = async cm => {
+        const drag = await evaluate(`{const r=document.querySelector('[data-move="screen"]').getBoundingClientRect(),matrix=document.querySelector('#stage > svg').getScreenCTM();const a=new DOMPoint(...iso([0,0,0],P)).matrixTransform(matrix),b=new DOMPoint(...iso([${cm*3},0,0],P)).matrixTransform(matrix);({x:r.x+r.width/2,y:r.y+r.height/2,dx:b.x-a.x,dy:b.y-a.y})}`);
+        await send('Input.dispatchMouseEvent', {type:'mousePressed', x:drag.x, y:drag.y, button:'left', clickCount:1});
+        await send('Input.dispatchMouseEvent', {type:'mouseMoved', x:drag.x+drag.dx, y:drag.y+drag.dy, button:'left', buttons:1});
+        await send('Input.dispatchMouseEvent', {type:'mouseReleased', x:drag.x+drag.dx, y:drag.y+drag.dy, button:'left', clickCount:1});
+        await settle();
+      };
+      await dragScreen(10);
+      assert(await evaluate(`Math.abs(convex.getState().s-40)<.01 && convex.getState().u===60`), 'screen drags independently');
+      assert.equal(await evaluate(`document.querySelector('#preview-status').textContent`),'OUT OF FOCUS');
+      await dragScreen(-10); assert(await evaluate('convex.getState().sharp'), 'screen drag restores focus');
+      await key('ArrowRight'); assert.equal(await evaluate(`document.querySelector('#preview-status').textContent`),'OUT OF FOCUS');
+      await key('ArrowLeft'); assert(await evaluate('convex.getState().sharp'), 'keyboard moves selected screen');
+      await evaluate(`document.querySelector('[data-move="object"]').focus()`);
+    }
     await key('Home'); await screenshot(`${name}-fullscreen`);
+    if(name==='convex') {
+      assert.equal(await evaluate(`document.querySelector('#preview-status').textContent`),'NO SHARP IMAGE');
+      assert.equal(await evaluate(`document.querySelector('#preview-arrow').getAttribute('opacity')`),'0');
+    }
     await click('#fullscreen'); await wait(150);
     assert(await evaluate(`document.fullscreenElement===null && !document.querySelector('#reset').inert`));
     assert.equal(await evaluate('document.activeElement.id'), 'fullscreen');
+    if(name==='convex')assert(await evaluate(`document.querySelector('aside .screen-preview')!==null && document.querySelectorAll('#preview').length===1`), 'preview returns to sidebar');
     await evaluate(`document.querySelector('.stage-wrap').requestFullscreen=undefined`);
     await click('#fullscreen'); assert(await evaluate(`document.querySelector('.stage-wrap').classList.contains('is-fullscreen')`));
     await send('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Escape' });
@@ -166,6 +189,7 @@ try {
     await screenshot(`${name}-phone`);
     await click('#fullscreen'); await wait(100); await screenshot(`${name}-phone-fullscreen`);
     assert(await evaluate(`document.querySelector('.stage-wrap').getBoundingClientRect().width===innerWidth`));
+    if(name==='convex')assert(await evaluate(`{const r=document.querySelector('.stage-wrap .screen-preview').getBoundingClientRect();r.height>0&&r.bottom<=innerHeight&&r.right<=innerWidth}`), 'phone fallback contains the preview');
     await click('#fullscreen');
     await send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] });
     await key('End'); assert.equal(await evaluate(`${name}.getState().auto`), false);

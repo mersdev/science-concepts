@@ -14,6 +14,8 @@ Each normal page has a title and short description, with its formula above the l
 
 **Full Screen** opens only the model and live output. Dragging and keyboard controls remain available. Use **Exit Full Screen** or Escape to return. Browsers without the Fullscreen API use a viewport-filling fallback.
 
+The convex-lens fullscreen also includes a live white-screen close-up and movement labels for the object and screen. Drag either component or focus its label and use the arrow keys to explore focus.
+
 Each folder contains its HTML model, animation logic and material colors. `shared.css`, `shared.js` and `geometry.js` provide the common layout, fullscreen behavior and isometric projection. Edit these files directly; generated copies and external toolkit installations are unnecessary.
 
 Run browser checks with Node.js 22+ and Chrome or Chromium:

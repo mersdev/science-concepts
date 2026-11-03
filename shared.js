@@ -9,6 +9,7 @@
     button.textContent = active ? 'Exit Full Screen' : 'Full Screen';
     button.setAttribute('aria-pressed', String(active));
     document.body.classList.toggle('model-fullscreen', active);
+    document.dispatchEvent(new CustomEvent('model-fullscreen-change', { detail: active }));
     if (active && !inactive.length) {
       for (const control of document.querySelectorAll('button, input, [tabindex]')) {
         if (!model.contains(control) && !control.inert) {
