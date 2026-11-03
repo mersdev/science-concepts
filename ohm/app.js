@@ -10,6 +10,14 @@ function model(v,kind='resistor'){
 }
 let kind='resistor',target=6,current=6,auto=false,compare=false,visible=true,frame=0,last=0,tourTime=0;
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+const stage=$('#stage');
+stage.setAttribute('role','group');
+for(const attr of ['aria-valuemin','aria-valuemax','aria-valuenow'])stage.removeAttribute(attr);
+stage.insertAdjacentHTML('beforeend','<button type="button" class="move-hint" role="slider" aria-label="Rheostat contact: change voltage. Drag or use arrow keys." aria-valuemin="0" aria-valuemax="12" aria-valuenow="6">↔ Slide contact</button>');
+const contactHint=stage.querySelector('.move-hint');
+const positionHint=()=>positionMoveHint(contactHint,[70+(current/12-.5)*80,-67,72],P);
+document.addEventListener('model-fullscreen-change',positionHint);
+new ResizeObserver(positionHint).observe(stage);
 function graph(){
  const ox=43,oy=229,w=350,h=196,X=i=>ox+i/1.2*w,Y=v=>oy-v/12*h,m=model(current,kind);
  let out='';
@@ -27,7 +35,7 @@ function draw(){
  $('#resistance-note').textContent=m.r===null?'V / I is undefined at 0 / 0':kind==='resistor'?'Constant · V / I':'Increases as filament heats';
  $('#current-bar').style.width=m.i/1.2*100+'%';
  $('[data-readout]').textContent=`${m.v.toFixed(1)} V · ${m.i.toFixed(3)} A`;
- $('#stage').setAttribute('aria-valuenow',m.v.toFixed(1));$('#stage').setAttribute('aria-valuetext',`${m.v.toFixed(1)} volts; ${m.i.toFixed(3)} amperes; ${kind==='lamp'?'filament bulb':'fixed resistor'}`);
+ contactHint.setAttribute('aria-valuenow',m.v.toFixed(1));contactHint.setAttribute('aria-valuetext',`${m.v.toFixed(1)} volts; ${m.i.toFixed(3)} amperes; ${kind==='lamp'?'filament bulb':'fixed resistor'}`);positionHint();
  $('#voltage').value=current;$('#voltage').style.setProperty('--fill',current/12*100+'%');
  $('#double').disabled=target>6||target===0;
  for(const [n,x,y,f] of [[0,-106,62,m.i/1.2],[1,95,62,m.v/12]]){const angle=Math.PI*(1+f);$(`#needle-${n}`).setAttribute('d',lineOnTop([x,y],[x+Math.cos(angle)*20,y+Math.sin(angle)*15],39.2,P));}

@@ -73,8 +73,8 @@ try {
     const { data } = await send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false });
     writeFileSync(join(artifacts, `${name}.png`), Buffer.from(data, 'base64'));
   };
-  const key = async value => {
-    await evaluate(`document.querySelector('#stage').focus()`);
+  const key = async (value, selector = '#stage') => {
+    await evaluate(`document.querySelector(${JSON.stringify(selector)}).focus()`);
     await send('Input.dispatchKeyEvent', { type: 'keyDown', key: value });
     await send('Input.dispatchKeyEvent', { type: 'keyUp', key: value });
     await settle();
@@ -92,6 +92,7 @@ try {
     assert(await evaluate(`Boolean(document.querySelector('.page-intro p').textContent.trim())`));
     assert.equal(await evaluate(`document.querySelectorAll('.formula-card').length`), 1);
     assert(await evaluate(`document.querySelector('aside').firstElementChild.classList.contains('formula-card')`));
+    assert(await evaluate(`document.querySelectorAll('.move-hint').length>0 && [...document.querySelectorAll('.move-hint')].every(el=>getComputedStyle(el).display==='none')`), 'movement indicators hidden outside fullscreen');
     if (name === 'boyle') {
       assert(await evaluate('[20,30,60,100].every(v=>Math.abs(boyle.model(v).p*v-6000)<1e-9)'));
       await click('#half'); await settle();
@@ -148,6 +149,20 @@ try {
     assert(await evaluate(`document.querySelector('#fullscreen').getAttribute('aria-pressed')==='true'`));
     assert(await evaluate(`document.querySelector('#reset').inert`));
     assert(await evaluate(`getComputedStyle(document.querySelector('.stage-caption > span:first-child')).display==='none'`));
+    assert(await evaluate(`[...document.querySelectorAll('.move-hint')].every(el=>{const r=el.getBoundingClientRect();return r.width>0&&r.height>0&&r.left>=0&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight})`), 'fullscreen movement indicators visible and in bounds');
+    if(name!=='convex') {
+      const before=await evaluate(`${name}.getState().current`);
+      const hint=await evaluate(`{const r=document.querySelector('.move-hint').getBoundingClientRect();({x:r.x+r.width/2,y:r.y+r.height/2})}`);
+      await send('Input.dispatchMouseEvent',{type:'mousePressed',x:hint.x,y:hint.y,button:'left',clickCount:1});
+      await send('Input.dispatchMouseEvent',{type:'mouseMoved',x:hint.x+35,y:hint.y,button:'left',buttons:1});
+      await send('Input.dispatchMouseEvent',{type:'mouseReleased',x:hint.x+35,y:hint.y,button:'left',clickCount:1});
+      await settle();
+      const afterDrag=await evaluate(`${name}.getState().current`);
+      assert(afterDrag>before,'dragging indicator moves its component');
+      assert(await evaluate(`{const r=document.querySelector('.move-hint').getBoundingClientRect();Math.abs(r.x+r.width/2-${hint.x})>1}`),'indicator follows component');
+      await key('ArrowRight','.move-hint');
+      assert(await evaluate(`${name}.getState().current>${afterDrag}`),'focused indicator supports keyboard movement');
+    }
     if(name==='convex') {
       assert(await evaluate(`document.querySelector('.stage-wrap .screen-preview')!==null && document.querySelectorAll('#preview').length===1`), 'live preview is inside fullscreen');
       assert(await evaluate(`[...document.querySelectorAll('.move-hint')].every(el=>getComputedStyle(el).display!=='none')`), 'movement indicators visible');
@@ -174,6 +189,7 @@ try {
     await click('#fullscreen'); await wait(150);
     assert(await evaluate(`document.fullscreenElement===null && !document.querySelector('#reset').inert`));
     assert.equal(await evaluate('document.activeElement.id'), 'fullscreen');
+    assert(await evaluate(`[...document.querySelectorAll('.move-hint')].every(el=>getComputedStyle(el).display==='none')`), 'indicators disappear after exit');
     if(name==='convex')assert(await evaluate(`document.querySelector('aside .screen-preview')!==null && document.querySelectorAll('#preview').length===1`), 'preview returns to sidebar');
     await evaluate(`document.querySelector('.stage-wrap').requestFullscreen=undefined`);
     await click('#fullscreen'); assert(await evaluate(`document.querySelector('.stage-wrap').classList.contains('is-fullscreen')`));
@@ -189,6 +205,7 @@ try {
     await screenshot(`${name}-phone`);
     await click('#fullscreen'); await wait(100); await screenshot(`${name}-phone-fullscreen`);
     assert(await evaluate(`document.querySelector('.stage-wrap').getBoundingClientRect().width===innerWidth`));
+    assert(await evaluate(`[...document.querySelectorAll('.move-hint')].every(el=>{const r=el.getBoundingClientRect();return r.width>0&&r.left>=0&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight})`), 'phone fallback movement indicators in bounds');
     if(name==='convex')assert(await evaluate(`{const r=document.querySelector('.stage-wrap .screen-preview').getBoundingClientRect();r.height>0&&r.bottom<=innerHeight&&r.right<=innerWidth}`), 'phone fallback contains the preview');
     await click('#fullscreen');
     await send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] });

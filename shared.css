@@ -88,11 +88,14 @@ small { font-weight: 400; }
 .stage-note, .stage-notes { display: flex; align-items: center; gap: 10px; padding: 20px 28px 0; min-height: 58px; padding-right: 145px; }
 .pill { font-size: 9px; letter-spacing: .6px; color: var(--muted); border: 1px solid #d7e3d7; padding: 7px 10px; border-radius: 20px; white-space: nowrap; }
 .pill.warm { color: #a6763c; border-color: #eadcc5; background: #fcf7ec; }
-#stage { width: 100%; aspect-ratio: 1.85; display: grid; place-items: center; cursor: ew-resize; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+#stage { position: relative; width: 100%; aspect-ratio: 1.85; display: grid; place-items: center; cursor: ew-resize; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
 #stage > svg { display: block; width: 100%; height: 100%; overflow: visible; }
 .stage-caption { display: flex; justify-content: space-between; gap: 14px; padding: 15px 28px 22px; font-size: 10px; color: var(--muted); }
 [data-readout] { color: var(--teal); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .fullscreen-button { position: absolute; top: 18px; right: 22px; z-index: 2; background: var(--paper); padding: 9px 12px; font-size: 11px; }
+.move-hint { display: none; position: absolute; transform: translate(-50%, -50%); padding: 7px 10px; background: var(--paper); color: var(--teal); border-color: #91b8a6; font-size: 11px; white-space: nowrap; cursor: ew-resize; touch-action: none; }
+.move-hint.selected { box-shadow: 0 0 0 1px currentColor; }
+.stage-wrap:is(:fullscreen, .is-fullscreen) .move-hint { display: block; }
 .controls { padding: 24px 28px; border-top: 1px solid var(--border); }
 .control-title { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 13px; }
 .control-title label { font-weight: 600; }
@@ -182,6 +185,7 @@ body.model-fullscreen { overflow: hidden; }
   .card-head { padding: 19px 16px; font-size: 9px; letter-spacing: 1px; }.card-head b { margin-right: 7px; }.live, .live-dot { font-size: 7px; }
   .stage-note, .stage-notes { padding: 18px 120px 0 16px; min-height: 62px; gap: 7px; }.pill { font-size: 7px; padding: 5px 7px; }
   .fullscreen-button { top: 18px; right: 15px; padding: 8px 10px; font-size: 10px; }
+  .move-hint { font-size: 10px; padding: 7px 9px; }
   #stage { aspect-ratio: 1.65; }.stage-caption { padding: 12px 16px 17px; font-size: 8px; gap: 8px; }
   .controls { padding: 22px 18px; }.control-title { font-size: 12px; }.control-title output, .control-title strong { font-size: 25px; }
   .actions { gap: 6px; }.actions button { font-size: 10px; padding: 11px 10px; }.legend { padding: 17px 18px; gap: 12px; font-size: 8px; }

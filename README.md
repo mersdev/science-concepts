@@ -14,7 +14,7 @@ Each normal page has a title and short description, with its formula above the l
 
 **Full Screen** opens only the model and live output. Dragging and keyboard controls remain available. Use **Exit Full Screen** or Escape to return. Browsers without the Fullscreen API use a viewport-filling fallback.
 
-The convex-lens fullscreen also includes a live white-screen close-up and movement labels for the object and screen. Drag either component or focus its label and use the arrow keys to explore focus.
+Movement labels appear only in fullscreen: “Drag piston” for Boyle, “Slide contact” for Ohm, and “Drag object” / “Drag screen” for the convex lens. Drag a label or focus it and use the arrow keys to move its component. The convex-lens fullscreen also includes a live white-screen close-up.
 
 Each folder contains its HTML model, animation logic and material colors. `shared.css`, `shared.js` and `geometry.js` provide the common layout, fullscreen behavior and isometric projection. Edit these files directly; generated copies and external toolkit installations are unnecessary.
 
@@ -26,4 +26,4 @@ node check.mjs
 
 Set `CHROME_PATH` if the executable is not in a standard location. Checks cover physics, controls, animation, desktop/mobile layout, reduced motion, native fullscreen and its fallback. Screenshots are written to ignored `artifacts/`.
 
-See [AGENT.md](AGENT.md) for the page design and repository rules.
+See [AGENTS.md](AGENTS.md) for the page design, repository rules and standard workflow for adding another physics concept with `$anatomy`.

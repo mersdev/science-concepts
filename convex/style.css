@@ -14,12 +14,7 @@
 .mat-optic{--anatomy-paper:#b4dbe6;--anatomy-top:#d5f0f4;--anatomy-shade-0:#80b3c8;--anatomy-shade-1:#98c7d7;--anatomy-shade-2:#b6dde7;--anatomy-shade-3:#c6e7ee;--anatomy-hi:#6b9fb4}
 #stage .iso-face-text{fill:#294133}#stage .lcd-readout .iso-face-text{fill:#e0edbe}
 
-#stage { position: relative; }
-.move-hint { display: none; position: absolute; transform: translate(-50%, -50%); padding: 7px 10px; background: var(--paper); font-size: 11px; white-space: nowrap; cursor: ew-resize; touch-action: none; }
 .object-hint { color: #a75539; border-color: #e5b29e; }
-.screen-hint { color: var(--teal); border-color: #91b8a6; }
-.move-hint.selected { box-shadow: 0 0 0 1px currentColor; }
-.optical-fullscreen .move-hint { display: block; }
 .optical-fullscreen #object-carriage, .optical-fullscreen #screen-carriage { cursor: ew-resize; }
 .stage-wrap.optical-fullscreen .screen-preview { flex: none; align-self: center; width: min(560px, 100%); padding: 14px 18px; }
 .stage-wrap.optical-fullscreen #preview { height: 95px; margin-top: 10px; }
@@ -28,5 +23,4 @@
   .stage-wrap.optical-fullscreen { padding-top: 55px; padding-bottom: 12px; }
   .stage-wrap.optical-fullscreen #preview { height: 80px; }
   .stage-wrap.optical-fullscreen .stage-caption { font-size: 11px; }
-  .move-hint { font-size: 10px; padding: 7px 9px; }
 }

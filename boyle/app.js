@@ -5,6 +5,13 @@ const reduced=matchMedia('(prefers-reduced-motion: reduce)');
 const model=v=>({v,p:6000/v,product:6000});
 let current=60,target=60,auto=false,visible=true,frame=0,last=0,time=0,inverse=false,announceTimer;
 const volume=$('#volume'),stage=$('#stage'),gas=$('#gas'),piston=$('#piston');
+stage.setAttribute('role','group');
+for(const attr of ['aria-valuemin','aria-valuemax','aria-valuenow'])stage.removeAttribute(attr);
+stage.insertAdjacentHTML('beforeend','<button type="button" class="move-hint" role="slider" aria-label="Piston: change gas volume. Drag or use arrow keys." aria-valuemin="20" aria-valuemax="100" aria-valuenow="60">↔ Drag piston</button>');
+const pistonHint=stage.querySelector('.move-hint');
+const positionHint=()=>positionMoveHint(pistonHint,[-101+current*1.9,0,102],PROJECTION);
+document.addEventListener('model-fullscreen-change',positionHint);
+new ResizeObserver(positionHint).observe(stage);
 const pt=p=>iso(p,PROJECTION),polygon=pts=>pts.map(p=>pt(p).join(',')).join(' ');
 const particles=Array.from({length:24},(_,i)=>({phase:(i*.6180339)%1,y:(i*.381966)%1,z:(i*.754877)%1,speed:15+(i%5)*2}));
 gas.innerHTML=`<polygon id="gas-body" fill="#8bc9ae" opacity=".27"/><g>${particles.map(()=>'<circle r="2.4" fill="#167e70" stroke="#c0e2bf" stroke-width=".6"/>').join('')}</g>`;
@@ -45,11 +52,12 @@ function draw(){
  $('#sensor-text text').textContent=p.toFixed(0)+' kPa';
  $('#ratio').textContent=(p/100).toFixed(2)+'×';$('#pressure-bar').style.width=(p/300*100)+'%';
  $('[data-readout]').textContent=`${v.toFixed(1)} mL · ${p.toFixed(1)} kPa`;
+ pistonHint.setAttribute('aria-valuenow',v.toFixed(1));pistonHint.setAttribute('aria-valuetext',`${v.toFixed(1)} millilitres, ${p.toFixed(1)} kilopascals absolute pressure`);positionHint();
  volume.value=String(Math.round(v));volume.style.background=`linear-gradient(to right,var(--teal) ${(v-20)/80*100}%,var(--border) ${(v-20)/80*100}%)`;
  $('#half').disabled=target<40;$('#half').style.opacity=target<40?'.45':'1';$('#half').title=target<40?'Halving would go below the apparatus minimum of 20 mL':'Halve the current volume';
  graph();
 }
-function describe(){stage.setAttribute('aria-valuenow',String(Math.round(target)));stage.setAttribute('aria-valuetext',`${target.toFixed(0)} millilitres, ${(6000/target).toFixed(1)} kilopascals absolute pressure`);clearTimeout(announceTimer);announceTimer=setTimeout(()=>{$('#announcement').textContent=stage.getAttribute('aria-valuetext');},700);}
+function describe(){clearTimeout(announceTimer);announceTimer=setTimeout(()=>{$('#announcement').textContent=pistonHint.getAttribute('aria-valuetext');},700);}
 function playState(){const paused=reduced.matches||!auto;$('#play').disabled=reduced.matches;$('#play').textContent=reduced.matches?'Motion reduced':paused?'▷ Auto explore':'Ⅱ Pause tour';$('#play').setAttribute('aria-pressed',String(!paused));}
 function steer(value){auto=false;target=clamp(value);playState();describe();if(reduced.matches){current=target;draw();}run();}
 function tick(now){const dt=last?Math.min((now-last)/1000,.033):0;last=now;if(!reduced.matches){time+=dt;if(auto)target=60+35*Math.sin(time*.35);current+=(target-current)*(1-Math.exp(-dt/0.18));if(Math.abs(target-current)<.015)current=target;}else current=target;draw();frame=visible&&!document.hidden&&!reduced.matches?requestAnimationFrame(tick):0;}

@@ -34,3 +34,15 @@ function translateAlong(projection, by) {
 }
 
 const lineOnTop=(from,to,z,projection)=>pathOf([from,to].map(([x,y])=>iso([x,y,z],projection)));
+
+// Anchor a fullscreen movement label to a point on the live apparatus.
+function positionMoveHint(hint, worldPoint, projection) {
+    const stage = hint.closest('#stage');
+    if (!stage.closest('.stage-wrap').matches(':fullscreen, .is-fullscreen')) return;
+    const matrix = stage.querySelector('svg').getScreenCTM();
+    if (!matrix) return;
+    const point = new DOMPoint(...iso(worldPoint, projection)).matrixTransform(matrix);
+    const box = stage.getBoundingClientRect(), margin = hint.offsetWidth / 2 + 8;
+    hint.style.left = Math.max(margin, Math.min(box.width - margin, point.x - box.left)) + 'px';
+    hint.style.top = Math.max(18, Math.min(box.height - 30, point.y - box.top - 22)) + 'px';
+}
