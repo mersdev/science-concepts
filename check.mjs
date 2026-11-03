@@ -87,8 +87,11 @@ try {
     await send('Page.navigate', { url: pathToFileURL(resolve(root, name, 'index.html')).href });
     await wait(500);
     assert(await evaluate(`Boolean(window.${name})`), `${name}: application initialized`);
-    assert.equal(await evaluate(`document.querySelectorAll('header,nav,footer,.quiz,.notebook,.intro,.investigation').length`), 0);
+    assert.equal(await evaluate(`document.querySelectorAll('nav,footer,.quiz,.notebook,.intro,.investigation').length`), 0);
+    assert.equal(await evaluate(`document.querySelectorAll('.page-intro h1').length`), 1);
+    assert(await evaluate(`Boolean(document.querySelector('.page-intro p').textContent.trim())`));
     assert.equal(await evaluate(`document.querySelectorAll('.formula-card').length`), 1);
+    assert(await evaluate(`document.querySelector('aside').firstElementChild.classList.contains('formula-card')`));
     if (name === 'boyle') {
       assert(await evaluate('[20,30,60,100].every(v=>Math.abs(boyle.model(v).p*v-6000)<1e-9)'));
       await click('#half'); await settle();
@@ -141,18 +144,26 @@ try {
     await evaluate('document.activeElement.blur()');
     await screenshot(`${name}-desktop`);
     await click('#fullscreen'); await wait(250);
-    assert(await evaluate(`document.fullscreenElement===document.querySelector('.stage-wrap')`), 'native fullscreen');
+    assert(await evaluate(`document.fullscreenElement===document.querySelector('.workspace')`), 'native fullscreen');
     assert(await evaluate(`document.querySelector('#fullscreen').getAttribute('aria-pressed')==='true'`));
-    assert(await evaluate(`document.querySelector('#reset').inert`));
+    assert.equal(await evaluate(`document.querySelector('#reset').inert`), false);
+    assert(await evaluate(`getComputedStyle(document.querySelector('.page-intro')).display==='none'`));
+    assert(await evaluate(`getComputedStyle(document.querySelector('.formula-card')).display==='none'`));
+    assert(await evaluate(`getComputedStyle(document.querySelector('.graph-card')).display==='none'`));
     assert(await evaluate(`getComputedStyle(document.querySelector('.stage-caption > span:first-child')).display==='none'`));
-    await key('Home'); await screenshot(`${name}-fullscreen`);
+    await input(name==='boyle'?'#volume':name==='convex'?'#object':'#voltage', name==='boyle'?40:name==='convex'?40:3);
+    if (name==='boyle') assert(await evaluate(`document.querySelector('#pressure').textContent.includes('150.0')`));
+    if (name==='convex') assert(await evaluate(`document.querySelector('#image-distance').textContent.includes('40.0')`));
+    if (name==='ohm') assert(await evaluate(`document.querySelector('#current').textContent.includes('0.300')`));
+    assert(await evaluate(`document.querySelectorAll('.readings .metric').length===2 && [...document.querySelectorAll('.readings .metric')].every(el=>{const r=el.getBoundingClientRect();return r.width>0&&r.height>0&&r.bottom<=innerHeight})`));
+    await screenshot(`${name}-fullscreen`);
     await click('#fullscreen'); await wait(150);
     assert(await evaluate(`document.fullscreenElement===null && !document.querySelector('#reset').inert`));
     assert.equal(await evaluate('document.activeElement.id'), 'fullscreen');
-    await evaluate(`document.querySelector('.stage-wrap').requestFullscreen=undefined`);
-    await click('#fullscreen'); assert(await evaluate(`document.querySelector('.stage-wrap').classList.contains('is-fullscreen')`));
+    await evaluate(`document.querySelector('.workspace').requestFullscreen=undefined`);
+    await click('#fullscreen'); assert(await evaluate(`document.querySelector('.workspace').classList.contains('is-fullscreen')`));
     await send('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Escape' });
-    assert.equal(await evaluate(`document.querySelector('.stage-wrap').classList.contains('is-fullscreen')`), false);
+    assert.equal(await evaluate(`document.querySelector('.workspace').classList.contains('is-fullscreen')`), false);
     for (const width of [320, 390, 768, 1024]) {
       await send('Emulation.setDeviceMetricsOverride', { width, height: 844, deviceScaleFactor: 1, mobile: false });
       assert(await evaluate('document.documentElement.scrollWidth<=innerWidth'), `${name}: overflow at ${width}px`);
@@ -162,7 +173,10 @@ try {
     assert(await evaluate('document.documentElement.scrollWidth<=innerWidth'), 'phone has no horizontal overflow');
     await screenshot(`${name}-phone`);
     await click('#fullscreen'); await wait(100); await screenshot(`${name}-phone-fullscreen`);
-    assert(await evaluate(`document.querySelector('.stage-wrap').getBoundingClientRect().width===innerWidth`));
+    assert(await evaluate(`document.querySelector('.workspace').getBoundingClientRect().width===innerWidth`));
+    assert(await evaluate(`document.querySelector('#reset').getBoundingClientRect().bottom<=innerHeight`), 'fullscreen controls fit on phone');
+    assert(await evaluate(`document.querySelector('.readings').getBoundingClientRect().bottom<=innerHeight`), 'fullscreen outputs fit on phone');
+    assert(await evaluate(`[...document.querySelectorAll('.controls input')].every(el=>{const r=el.getBoundingClientRect();return r.width>0&&r.bottom<=innerHeight})`), 'sliders visible in fullscreen');
     await click('#fullscreen');
     await send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] });
     await key('End'); assert.equal(await evaluate(`${name}.getState().auto`), false);
