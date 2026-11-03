@@ -211,3 +211,73 @@ body.model-fullscreen { overflow: hidden; }
   .page-intro h1 { font-size: 26px; }
   .page-intro p { font-size: 12px; }
 }
+
+/* Fit the desktop overview at normal browser zoom without shrinking its text. */
+@media (min-width: 1000px) {
+  body:not(.model-fullscreen) main { padding: 16px; }
+  body:not(.model-fullscreen) .page-intro { margin-bottom: 12px; }
+  body:not(.model-fullscreen) .page-intro p { font-size: 14px; line-height: 1.5; }
+  body:not(.model-fullscreen) .workspace { gap: 18px; }
+  body:not(.model-fullscreen) .card-head { padding: 12px 20px; font-size: 11px; letter-spacing: 1.2px; }
+  body:not(.model-fullscreen) .live, body:not(.model-fullscreen) .live-dot { font-size: 10px; }
+  body:not(.model-fullscreen) .stage-note, body:not(.model-fullscreen) .stage-notes { min-height: 44px; padding: 10px 140px 0 20px; }
+  body:not(.model-fullscreen) .pill { font-size: 10px; padding: 5px 8px; }
+  body:not(.model-fullscreen) #stage { height: clamp(170px, calc(100dvh - 570px), 330px); aspect-ratio: auto; grid-template-rows: minmax(0, 1fr); }
+  body:not(.model-fullscreen) .stage-wrap:has(#object-carriage) #stage { height: clamp(250px, calc(100dvh - 470px), 430px); }
+  body:not(.model-fullscreen) .stage-wrap:has(#piston, #rheostat-slider) #stage { height: clamp(260px, calc(100dvh - 450px), 450px); }
+  body:not(.model-fullscreen) #stage > svg { min-height: 0; min-width: 0; max-height: 100%; }
+  body:not(.model-fullscreen) .stage-caption { padding: 10px 20px; font-size: 11px; }
+  body:not(.model-fullscreen) .fullscreen-button { top: 10px; right: 16px; font-size: 12px; padding: 7px 10px; }
+  body:not(.model-fullscreen) .controls { padding: 16px 20px; }
+  body:not(.model-fullscreen) .controls:has(> #object) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; }
+  body:not(.model-fullscreen) .controls:has(> #object) > .control-title { grid-column: 1; grid-row: 1; }
+  body:not(.model-fullscreen) .controls > #object { grid-column: 1; grid-row: 2; }
+  body:not(.model-fullscreen) .controls:has(> #object) > .range-labels { grid-column: 1; grid-row: 3; }
+  body:not(.model-fullscreen) .controls:has(> #object) > .presets { grid-column: 1; grid-row: 4; }
+  body:not(.model-fullscreen) .controls:has(> #object) > .screen-control { grid-column: 2; grid-row: 1 / 5; margin: 0; padding: 0; border: 0; }
+  body:not(.model-fullscreen) .controls:has(> #object) > .actions { grid-column: 1 / -1; }
+  body:not(.model-fullscreen) .control-title { font-size: 15px; }
+  body:not(.model-fullscreen) .control-title output, body:not(.model-fullscreen) .control-title strong { font-size: 26px; }
+  body:not(.model-fullscreen) .control-title small { font-size: 12px; }
+  body:not(.model-fullscreen) input[type=range] { margin: 16px 0 10px; }
+  body:not(.model-fullscreen) .range-labels { font-size: 12px; }
+  body:not(.model-fullscreen) .range-labels span:nth-child(2):not(:last-child) { font-size: 10px; }
+  body:not(.model-fullscreen) .actions { margin-top: 14px; }
+  body:not(.model-fullscreen) button { font-size: 13px; padding: 8px 12px; }
+  body:not(.model-fullscreen) .presets { margin-top: 12px; }
+  body:not(.model-fullscreen) .presets button { font-size: 12px; padding: 7px 5px; }
+  body:not(.model-fullscreen) .screen-control { margin-top: 14px; padding-top: 14px; }
+  body:not(.model-fullscreen) .focus-feedback { padding: 10px 20px; }
+  body:not(.model-fullscreen) #focus-title { font-size: 13px; }
+  body:not(.model-fullscreen) .focus-tag { font-size: 10px; }
+  body:not(.model-fullscreen) .legend { padding: 12px 20px; font-size: 11px; }
+  body:not(.model-fullscreen) .selector { margin: 0 20px 12px; }
+  body:not(.model-fullscreen) .selector small { font-size: 10px; }
+  body:not(.model-fullscreen) aside { gap: 10px; }
+  body:not(.model-fullscreen) .readings { gap: 12px; }
+  body:not(.model-fullscreen) .metric { padding: 10px 16px; }
+  body:not(.model-fullscreen) .metric > span:first-child { font-size: 11px; letter-spacing: .6px; }
+  body:not(.model-fullscreen) .metric strong { margin: 6px 0 4px; font-size: clamp(28px, 2.3vw, 36px); white-space: normal; }
+  body:not(.model-fullscreen) .metric strong small { display: inline-block; font-size: 12px; }
+  body:not(.model-fullscreen) .metric p, body:not(.model-fullscreen) .metric > div { font-size: 12px; line-height: 1.4; }
+  body:not(.model-fullscreen) .meter { margin-top: 10px !important; }
+  body:not(.model-fullscreen) .tag, body:not(.model-fullscreen) .constant-check { margin-top: 6px; font-size: 10px; }
+  body:not(.model-fullscreen) .formula-card { display: grid; grid-template-columns: auto 1fr; align-items: baseline; gap: 8px 20px; padding: 14px 18px; }
+  body:not(.model-fullscreen) .formula-card > span { grid-column: 1; grid-row: 1; }
+  body:not(.model-fullscreen) .formula-card small { grid-column: 2; grid-row: 1; text-align: right; }
+  body:not(.model-fullscreen) .formula-card > span { font-size: 11px; letter-spacing: 1.2px; }
+  body:not(.model-fullscreen) .formula-card strong { margin: 0; font-size: 28px; }
+  body:not(.model-fullscreen) .formula-card p { margin: 0; font-size: 18px; }
+  body:not(.model-fullscreen) .formula-card small { font-size: 12px; }
+  body:not(.model-fullscreen) .screen-preview { padding: 14px 18px; }
+  body:not(.model-fullscreen) .screen-preview > div { font-size: 11px; letter-spacing: .6px; }
+  body:not(.model-fullscreen) #preview { height: 64px; margin-top: 8px; }
+  body:not(.model-fullscreen) .screen-preview p { margin-top: 8px; font-size: 12px; }
+  body:not(.model-fullscreen) .graph-card { padding: 16px 18px; }
+  body:not(.model-fullscreen) .graph-card:has(> .graph-tabs) { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; }
+  body:not(.model-fullscreen) .graph-card h2 { font-size: 18px; }
+  body:not(.model-fullscreen) .tabs button, body:not(.model-fullscreen) .graph-tabs button { font-size: 12px; padding: 6px 9px; white-space: nowrap; }
+  body:not(.model-fullscreen) .graph-tabs { margin: 0; }
+  body:not(.model-fullscreen) #graph { grid-column: 1 / -1; height: clamp(180px, 24dvh, 240px); margin-top: 8px; }
+  body:not(.model-fullscreen) #graph text { font-size: 18px; }
+}

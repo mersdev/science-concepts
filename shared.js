@@ -2,13 +2,24 @@
 (() => {
   const model = document.querySelector('.stage-wrap');
   const button = document.querySelector('#fullscreen');
+  const svg = model.querySelector('#stage > svg');
+  const originalViewBox = svg.getAttribute('viewBox');
+  const desktop = matchMedia('(min-width: 1000px)');
   let inactive = [];
+
+  function frameOverview() {
+    const active = document.fullscreenElement === model || model.classList.contains('is-fullscreen');
+    svg.setAttribute('viewBox', desktop.matches && !active && svg.dataset.overviewViewbox ? svg.dataset.overviewViewbox : originalViewBox);
+  }
+  desktop.addEventListener('change', frameOverview);
+  frameOverview();
 
   function sync() {
     const active = document.fullscreenElement === model || model.classList.contains('is-fullscreen');
     button.textContent = active ? 'Exit Full Screen' : 'Full Screen';
     button.setAttribute('aria-pressed', String(active));
     document.body.classList.toggle('model-fullscreen', active);
+    frameOverview();
     document.dispatchEvent(new CustomEvent('model-fullscreen-change', { detail: active }));
     if (active && !inactive.length) {
       for (const control of document.querySelectorAll('button, input, [tabindex]')) {

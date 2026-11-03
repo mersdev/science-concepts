@@ -69,7 +69,7 @@ function graphMode(value){inverse=value;$('#pv').classList.toggle('selected',!va
 $('#pv').onclick=()=>graphMode(false);$('#inverse').onclick=()=>graphMode(true);
 stage.addEventListener('keydown',e=>{let next;if(e.key==='ArrowRight'||e.key==='ArrowUp')next=current+(e.shiftKey?10:1);if(e.key==='ArrowLeft'||e.key==='ArrowDown')next=current-(e.shiftKey?10:1);if(e.key==='Home')next=20;if(e.key==='End')next=100;if(next!==undefined){e.preventDefault();steer(Math.round(next));}});
 let drag=null;
-stage.addEventListener('pointerdown',e=>{if(e.button!==0)return;auto=false;playState();const box=stage.getBoundingClientRect(),[a,b]=[pt([0,0,0]),pt([1,0,0])];drag={x:e.clientX,y:e.clientY,v:current,ax:(b[0]-a[0])*box.width/780,ay:(b[1]-a[1])*box.width/780};stage.setPointerCapture(e.pointerId);});
+stage.addEventListener('pointerdown',e=>{if(e.button!==0)return;auto=false;playState();const matrix=stage.querySelector('svg').getScreenCTM(),[a,b]=[pt([0,0,0]),pt([1,0,0])];drag={x:e.clientX,y:e.clientY,v:current,ax:matrix.a*(b[0]-a[0])+matrix.c*(b[1]-a[1]),ay:matrix.b*(b[0]-a[0])+matrix.d*(b[1]-a[1])};stage.setPointerCapture(e.pointerId);});
 stage.addEventListener('pointermove',e=>{if(!drag)return;const shift=((e.clientX-drag.x)*drag.ax+(e.clientY-drag.y)*drag.ay)/(drag.ax**2+drag.ay**2);steer(drag.v+shift/1.9);});
 for(const type of ['pointerup','pointercancel'])stage.addEventListener(type,e=>{drag=null;if(stage.hasPointerCapture(e.pointerId))stage.releasePointerCapture(e.pointerId);});
 new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;if(visible)run();}).observe(stage);

@@ -93,6 +93,15 @@ try {
     assert.equal(await evaluate(`document.querySelectorAll('.formula-card').length`), 1);
     assert(await evaluate(`document.querySelector('aside').firstElementChild.classList.contains('formula-card')`));
     assert(await evaluate(`document.querySelectorAll('.move-hint').length>0 && [...document.querySelectorAll('.move-hint')].every(el=>getComputedStyle(el).display==='none')`), 'movement indicators hidden outside fullscreen');
+    for(const [width,height] of [[1366,768],[1440,900]]) {
+      await send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false});
+      await wait(80);
+      assert(await evaluate('document.documentElement.scrollHeight<=innerHeight+1 && document.documentElement.scrollWidth<=innerWidth'),`${name}: overview fits at 100% on ${width}×${height}`);
+      assert(await evaluate(`{const stage=document.querySelector('#stage').getBoundingClientRect(),svg=document.querySelector('#stage > svg').getBoundingClientRect();svg.top>=stage.top-1&&svg.bottom<=stage.bottom+1&&svg.left>=stage.left-1&&svg.right<=stage.right+1}`),'model stays within stage without overlapping controls');
+      assert(await evaluate(`parseFloat(getComputedStyle(document.querySelector('.control-title label')).fontSize)>=14`),'desktop controls remain readable');
+      if(width===1366)await screenshot(`${name}-laptop`);
+    }
+    await send('Emulation.setDeviceMetricsOverride',{width:1440,height:1200,deviceScaleFactor:1,mobile:false});
     if (name === 'boyle') {
       assert(await evaluate('[20,30,60,100].every(v=>Math.abs(boyle.model(v).p*v-6000)<1e-9)'));
       await click('#half'); await settle();
