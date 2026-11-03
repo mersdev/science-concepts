@@ -1,0 +1,8 @@
+.DS_Store
+.venv/
+node_modules/
+.codegraph/
+**/shots/
+artifacts/
+design-qa.md
+*.log

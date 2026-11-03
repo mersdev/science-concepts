@@ -1,3 +1,4 @@
+const PROJECTION={"origin":[293.6525729250011,269.8648520935587],"scale":1.2723739219375128,"azimuth":61,"elevation":27};
 const $=s=>document.querySelector(s);
 const clamp=(v,min=20,max=100)=>Math.max(min,Math.min(max,v));
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
@@ -54,12 +55,10 @@ function steer(value){auto=false;target=clamp(value);playState();describe();if(r
 function tick(now){const dt=last?Math.min((now-last)/1000,.033):0;last=now;if(!reduced.matches){time+=dt;if(auto)target=60+35*Math.sin(time*.35);current+=(target-current)*(1-Math.exp(-dt/0.18));if(Math.abs(target-current)<.015)current=target;}else current=target;draw();frame=visible&&!document.hidden&&!reduced.matches?requestAnimationFrame(tick):0;}
 function run(){if(!frame&&visible&&!document.hidden){last=0;frame=requestAnimationFrame(tick);}}
 volume.addEventListener('input',()=>steer(+volume.value));
-$('#half').onclick=()=>steer(target/2);$('#reset').onclick=()=>steer(60);
-$('#try').onclick=()=>{steer(30);stage.scrollIntoView({behavior:reduced.matches?'instant':'smooth',block:'center'});};
+$('#half').onclick=()=>steer(target/2);$('#reset').onclick=()=>{graphMode(false);steer(60);};
 $('#play').onclick=()=>{if(reduced.matches){steer(target>40?30:60);return;}auto=!auto;time=0;playState();run();};
-function graphMode(value){inverse=value;$('#pv').classList.toggle('selected',!value);$('#inverse').classList.toggle('selected',value);$('#pv').setAttribute('aria-pressed',String(!value));$('#inverse').setAttribute('aria-pressed',String(value));$('#graph-caption').innerHTML='<span class="graph-key"></span>'+ (value?'A straight line through the origin: P ∝ 1/V.':'An inverse relationship: V goes down, P goes up.');graph();}
+function graphMode(value){inverse=value;$('#pv').classList.toggle('selected',!value);$('#inverse').classList.toggle('selected',value);$('#pv').setAttribute('aria-pressed',String(!value));$('#inverse').setAttribute('aria-pressed',String(value));graph();}
 $('#pv').onclick=()=>graphMode(false);$('#inverse').onclick=()=>graphMode(true);
-$('#theme').onclick=()=>{const dark=document.body.dataset.theme!=='dark';document.body.dataset.theme=dark?'dark':'light';$('#theme').setAttribute('aria-label',`Switch to ${dark?'light':'dark'} theme`);};
 stage.addEventListener('keydown',e=>{let next;if(e.key==='ArrowRight'||e.key==='ArrowUp')next=current+(e.shiftKey?10:1);if(e.key==='ArrowLeft'||e.key==='ArrowDown')next=current-(e.shiftKey?10:1);if(e.key==='Home')next=20;if(e.key==='End')next=100;if(next!==undefined){e.preventDefault();steer(Math.round(next));}});
 let drag=null;
 stage.addEventListener('pointerdown',e=>{if(e.button!==0)return;auto=false;playState();const box=stage.getBoundingClientRect(),[a,b]=[pt([0,0,0]),pt([1,0,0])];drag={x:e.clientX,y:e.clientY,v:current,ax:(b[0]-a[0])*box.width/780,ay:(b[1]-a[1])*box.width/780};stage.setPointerCapture(e.pointerId);});
