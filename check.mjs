@@ -80,6 +80,29 @@ try {
     await settle();
   };
   await send('Runtime.enable'); await send('Page.enable');
+  // The catalogue must also work directly from disk, with no running simulations.
+  await send('Page.navigate', { url: pathToFileURL(resolve(root, 'index.html')).href });
+  await wait(400);
+  const catalogueFolders = ['boyle', 'convex', 'ohm', 'latent-heat', 'liquid-pressure', 'free-fall'];
+  assert.deepEqual(await evaluate(`[...document.querySelectorAll('.experiment-card')].map(a=>a.getAttribute('href'))`), catalogueFolders.map(name=>`${name}/index.html`));
+  assert(await evaluate(`[...document.images].length===6 && [...document.images].every(img=>img.complete&&img.naturalWidth>0)`), 'all offline apparatus previews load');
+  assert.equal(await evaluate('document.scripts.length'), 0, 'catalogue needs no runtime scripts');
+  for (const [width,height] of [[1366,768],[1440,900],[390,844],[320,740]]) {
+    await send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false});
+    await wait(80);
+    await screenshot(`index-${width}`);
+    assert(await evaluate('document.documentElement.scrollWidth<=innerWidth'), `catalogue fits ${width}px`);
+    if(width>900) assert(await evaluate('document.documentElement.scrollHeight<=innerHeight+1'), 'desktop catalogue fits without scrolling');
+    assert(await evaluate(`[...document.querySelectorAll('.experiment-card')].every(el=>{const r=el.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth&&r.height>200})`));
+  }
+  await evaluate(`document.querySelector('.experiment-card').focus()`);
+  assert.equal(await evaluate(`document.activeElement.getAttribute('href')`), 'boyle/index.html');
+  await send('Input.dispatchKeyEvent',{type:'keyDown',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});
+  await send('Input.dispatchKeyEvent',{type:'keyUp',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});
+  await wait(300);
+  assert(await evaluate(`location.pathname.endsWith('/boyle/index.html')`), 'Enter opens the selected experiment');
+  assert.deepEqual(errors,[]);
+  console.log('PASS experiment index: offline previews, all links, keyboard navigation and desktop/phone layouts');
   for (const name of ['boyle', 'convex', 'ohm']) {
     activeExperiment = name;
     errors.length = 0;

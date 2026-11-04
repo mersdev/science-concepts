@@ -2,6 +2,8 @@
 
 Small, interactive physics experiments. Open an `index.html` directly in your browser; no build, installation or network connection is required.
 
+Start at the [experiment index](index.html) to browse all six apparatus previews and open an experiment. The responsive catalogue works offline and supports keyboard navigation. Its static SVG previews reuse the experiments’ actual geometry without running simulations in the background. After changing apparatus artwork or the catalogue entries, run `node build-index.mjs` to refresh the page and previews using Node.js and Chrome/Chromium; no toolkit installation is required.
+
 | Experiment | Page | Formula |
 | --- | --- | --- |
 | Boyle’s law | [boyle/index.html](boyle/index.html) | PV = constant |
