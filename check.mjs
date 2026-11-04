@@ -300,6 +300,100 @@ try {
   await click('#reset');assert(await evaluate('liquidPressure.getState().h===.1 && liquidPressure.getState().rho===1000 && liquidPressure.getState().angle===0 && liquidPressure.getState().mode==="depth"'));
   await send('Emulation.setEmulatedMedia',{features:[]});assert.deepEqual(errors,[]);
   console.log('PASS liquid pressure: physics, controlled comparisons, isotropy, manometer, drag, keyboard, animation, layouts and fullscreen');
+  // Free fall: physical time is independent of playback speed and ball mass.
+  {
+  activeExperiment='freeFall'; errors.length=0;
+  await send('Emulation.setDeviceMetricsOverride',{width:1366,height:768,deviceScaleFactor:1,mobile:false});
+  await send('Page.navigate',{url:pathToFileURL(resolve(root,'free-fall/index.html')).href});await wait(400);
+  assert(await evaluate('Boolean(window.freeFall)'));
+  assert(await evaluate('freeFall.getState().height===1.5 && freeFall.getState().t===0 && freeFall.getState().mass===100 && freeFall.getState().phase==="held" && freeFall.getState().g===null'));
+  assert(await evaluate(`[.25,.5,1.5,2].every(H=>[50,100,250].every(m=>{const a=freeFall.model(H,0,m),b=freeFall.model(H,1e3,m),c=freeFall.model(H,a.duration/2,m);return a.h===0&&a.v===0&&a.g===null&&Math.abs(b.h-H)<1e-12&&Math.abs(a.duration**2-2*H/9.81)<1e-12&&Math.abs(c.h-H/4)<1e-12&&Math.abs(c.v-9.81*c.t)<1e-12&&Math.abs(c.g-9.81)<1e-12&&a.duration===freeFall.model(H,0,100).duration}))`),'free-fall equations and mass independence');
+  assert(await evaluate(`document.querySelector('aside').firstElementChild.matches('.formula-card') && [...document.querySelectorAll('.move-hint')].every(el=>getComputedStyle(el).display==='none')`));
+  for(const [width,height] of [[1366,768],[1440,900]]){
+    await send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false});await wait(80);
+    assert(await evaluate('document.documentElement.scrollHeight<=innerHeight+1 && document.documentElement.scrollWidth<=innerWidth'),`free fall overview fits ${width}×${height}`);
+    assert(await evaluate(`{const a=document.querySelector('#stage').getBoundingClientRect(),b=document.querySelector('#stage>svg').getBoundingClientRect();b.top>=a.top-1&&b.bottom<=a.bottom+1}`));
+    assert(await evaluate(`parseFloat(getComputedStyle(document.querySelector('.control-title label')).fontSize)>=14`));
+    await screenshot(`free-fall-${width}`);
+  }
+  await input('#height',2);await input('#mass',250);
+  assert(await evaluate('freeFall.getState().height===2 && freeFall.getState().t===0 && freeFall.getState().mass===250'));
+  await click('#release');
+  assert(await evaluate('freeFall.getState().t===0 && freeFall.getState().phase==="falling" && document.querySelector("#timer-digits").textContent==="0.000"'),'release starts at zero');
+  await wait(450);assert(await evaluate('freeFall.getState().t>0 && freeFall.getState().t<.2'),'quarter-speed physical clock');
+  await click('#release');const frozen=await evaluate('freeFall.getState().t');await wait(150);
+  assert.equal(await evaluate('freeFall.getState().t'),frozen,'pause freezes ball and timer');
+  await input('#time',.5);
+  assert(await evaluate('Math.abs(freeFall.getState().h-1.22625)<1e-10 && Math.abs(freeFall.getState().v-4.905)<1e-10'));
+  assert.equal(await evaluate(`document.querySelector('#timer-digits').textContent`),'0.500');
+  assert(await evaluate(`{const a=[...document.querySelectorAll('[data-sample]')];const ys=a.map(e=>+e.getAttribute('cy'));a.length===6&&a.every((e,i)=>Math.abs(+e.dataset.sample-i*.1)<1e-9)&&ys.slice(2).every((y,i)=>y-ys[i+1]>ys[i+1]-ys[i])}`),'equal-time markers spread increasingly far apart');
+  assert(await evaluate(`Math.abs(+document.querySelector('#graph-point').getAttribute('cx')-(48+.25/.45*340))<1e-8`),'graph uses squared physical time');
+  await screenshot('free-fall-in-motion');
+  await click('#reset');await click('#release');await wait(2500);
+  assert(await evaluate('freeFall.getState().phase==="landed" && freeFall.getState().h===1.5 && freeFall.getState().trials.length===1 && !freeFall.getState().running'));
+  const stopped=await evaluate('freeFall.getState().t');await wait(120);assert.equal(await evaluate('freeFall.getState().t'),stopped,'detector stops clock');
+  assert.equal(await evaluate(`document.querySelector('#timer-phase').textContent`),'STOPPED');
+  await screenshot('free-fall-detected');
+  // Record the same geometry drawn by the page, including extreme and intermediate poses.
+  const geometry=await evaluate(`{const poses=[];for(const H of [.25,1.5,2])for(const m of [50,100,250])for(const f of [0,.5,1]){freeFall.setHeight(H);freeFall.setMass(m);freeFall.setTime(f*freeFall.model(H).duration);const b=document.querySelector('#apparatus').getBBox();if(b.x<0||b.y<0||b.x+b.width>760||b.y+b.height>430)throw Error('Apparatus leaves stage');poses.push({H,m,f,magnetZ:freeFall.geometry.magnetZ(),ball:freeFall.geometry.ballPoint(),radius:freeFall.geometry.radius()});}({P:freeFall.geometry.P,solids:freeFall.geometry.solids,poses})}`);
+  writeFileSync(join(artifacts,'free-fall-geometry.json'),JSON.stringify(geometry));
+  await click('#reset');await key('Home');assert.equal(await evaluate('freeFall.getState().height'),.25);
+  await key('End');assert.equal(await evaluate('freeFall.getState().height'),2);
+  const dragFall=async(selector,dx,dy)=>{
+    const b=await evaluate(`{const r=document.querySelector('${selector}').getBoundingClientRect();({x:r.x+r.width/2,y:r.y+r.height/2})}`);
+    await send('Input.dispatchMouseEvent',{type:'mousePressed',x:b.x,y:b.y,button:'left',clickCount:1});
+    await send('Input.dispatchMouseEvent',{type:'mouseMoved',x:b.x+dx,y:b.y+dy,button:'left',buttons:1});
+    await send('Input.dispatchMouseEvent',{type:'mouseReleased',x:b.x+dx,y:b.y+dy,button:'left',clickCount:1});
+  };
+  await dragFall('#magnet',0,30);assert(await evaluate('freeFall.getState().height<2 && freeFall.getState().t===0'));
+  await dragFall('#ball',0,40);assert(await evaluate('freeFall.getState().t>0 && freeFall.getState().phase==="paused"'));
+  await click('#reset');await dragFall('#ball',0,0);assert(await evaluate('freeFall.getState().running'),'tapping ball releases it');
+  await key('Enter');assert.equal(await evaluate('freeFall.getState().running'),false,'Enter pauses the fall');
+  await click('#reset');await click('#tour');await wait(300);assert(await evaluate('freeFall.getState().auto && freeFall.getState().t>0 && freeFall.getState().mass===100'));
+  // Hidden documents must not accumulate physical time, including on resumption.
+  await evaluate(`Object.defineProperty(document,'hidden',{configurable:true,value:true});document.dispatchEvent(new Event('visibilitychange'));`);
+  const hiddenT=await evaluate('freeFall.getState().t');await wait(250);assert.equal(await evaluate('freeFall.getState().t'),hiddenT);
+  await evaluate(`delete document.hidden;document.dispatchEvent(new Event('visibilitychange'));`);await wait(100);
+  assert(await evaluate(`freeFall.getState().t>${hiddenT} && freeFall.getState().t<${hiddenT+.1}`));
+  await evaluate(`document.querySelector('#stage').style.transform='translateY(-2000px)'`);await wait(100);
+  const offscreenT=await evaluate('freeFall.getState().t');await wait(200);assert.equal(await evaluate('freeFall.getState().t'),offscreenT,'offscreen apparatus pauses');
+  await evaluate(`document.querySelector('#stage').style.transform=''`);await wait(100);assert(await evaluate(`freeFall.getState().t>${offscreenT}`));
+  await click('#tour');assert.equal(await evaluate('freeFall.getState().auto'),false);
+  await click('#reset');await screenshot('free-fall-desktop');await click('#fullscreen');await wait(150);
+  assert(await evaluate(`document.fullscreenElement===document.querySelector('.stage-wrap') && document.querySelector('#reset').inert`));
+  assert(await evaluate(`getComputedStyle(document.querySelector('.stage-note')).display==='none' && [...document.querySelectorAll('.move-hint')].every(el=>getComputedStyle(el).display!=='none')`));
+  const labelY=await evaluate(`document.querySelector('[data-move="height"]').getBoundingClientRect().y`);
+  await dragFall('[data-move="height"]',0,25);assert(await evaluate('freeFall.getState().height<1.5'));
+  assert(await evaluate(`document.querySelector('[data-move="height"]').getBoundingClientRect().y>${labelY}`),'height label follows carriage');
+  await key('Enter','[data-move="time"]');await wait(100);assert(await evaluate('freeFall.getState().running && freeFall.getState().t>0'),'fullscreen can release the ball');
+  await key('Enter','[data-move="time"]');assert.equal(await evaluate('freeFall.getState().running'),false);
+  await key('End','[data-move="time"]');assert(await evaluate('freeFall.getState().phase==="landed"'));
+  await key('Home','[data-move="time"]');await key('ArrowRight','[data-move="time"]');assert.equal(await evaluate('freeFall.getState().t'),.01);
+  await dragFall('[data-move="time"]',0,35);assert(await evaluate('freeFall.getState().t>.01'));
+  await screenshot('free-fall-fullscreen');
+  const mechanism=await evaluate(`{const r=document.querySelector('#magnet').getBoundingClientRect();({x:r.x-10,y:r.y-10,width:r.width+20,height:r.height+45,scale:4})}`);
+  const close=await send('Page.captureScreenshot',{format:'png',clip:mechanism});writeFileSync(join(artifacts,'free-fall-mechanism.png'),Buffer.from(close.data,'base64'));
+  await click('#fullscreen');await wait(150);assert.equal(await evaluate('document.activeElement.id'),'fullscreen');
+  await evaluate(`document.querySelector('.stage-wrap').requestFullscreen=undefined`);await click('#fullscreen');
+  assert(await evaluate(`document.querySelector('.stage-wrap').classList.contains('is-fullscreen')`));
+  await send('Input.dispatchKeyEvent',{type:'keyDown',key:'Escape'});assert(await evaluate(`!document.querySelector('.stage-wrap').classList.contains('is-fullscreen') && document.activeElement.id==='fullscreen'`));
+  for(const width of [390,320]){
+    await send('Emulation.setDeviceMetricsOverride',{width,height:844,deviceScaleFactor:1,mobile:false});await click('#reset');
+    await wait(100);
+    assert(await evaluate(`document.querySelector('#stage>svg').getAttribute('viewBox')==='175 10 415 420'`),'phone uses the closer apparatus framing');
+    assert(await evaluate('document.documentElement.scrollWidth<=innerWidth'));await screenshot(`free-fall-phone-${width}`);
+    await click('#fullscreen');await wait(100);
+    assert(await evaluate(`[...document.querySelectorAll('.move-hint')].every(el=>{const r=el.getBoundingClientRect();return r.width>0&&r.left>=0&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight})`));
+    await screenshot(`free-fall-phone-fullscreen-${width}`);await click('#fullscreen');
+  }
+  await send('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]});
+  await click('#reset');await click('#release');assert(await evaluate('freeFall.getState().t===0 && !freeFall.getState().running && document.querySelector("#tour").disabled'));
+  await click('#release');assert.equal(await evaluate('freeFall.getState().t'),.1);
+  await click('#reset');assert(await evaluate('freeFall.getState().height===1.5 && freeFall.getState().mass===100 && freeFall.getState().t===0 && freeFall.getState().trials.length===0 && document.querySelectorAll("#markers circle").length===0'));
+  assert(await evaluate(`[...document.querySelectorAll('.move-hint')].every(el=>getComputedStyle(el).display==='none')`));
+  await send('Emulation.setEmulatedMedia',{features:[]});assert.deepEqual(errors,[]);
+  console.log('PASS free fall: uniform acceleration, mass independence, release clock, equal-time markers, detector, graph, controls, pause, fullscreen and responsive layouts');
+  }
   // Latent heat: only a phase change, with no pre-completion temperature rise.
   activeExperiment = 'latentHeat'; errors.length = 0;
   await send('Emulation.setDeviceMetricsOverride', {width:1366,height:768,deviceScaleFactor:1,mobile:false});

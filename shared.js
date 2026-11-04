@@ -5,13 +5,16 @@
   const svg = model.querySelector('#stage > svg');
   const originalViewBox = svg.getAttribute('viewBox');
   const desktop = matchMedia('(min-width: 1000px)');
+  const phone = matchMedia('(max-width: 760px)');
   let inactive = [];
 
   function frameOverview() {
     const active = document.fullscreenElement === model || model.classList.contains('is-fullscreen');
-    svg.setAttribute('viewBox', desktop.matches && !active && svg.dataset.overviewViewbox ? svg.dataset.overviewViewbox : originalViewBox);
+    const viewBox = phone.matches && svg.dataset.phoneViewbox || (desktop.matches && !active && svg.dataset.overviewViewbox ? svg.dataset.overviewViewbox : originalViewBox);
+    svg.setAttribute('viewBox', viewBox);
   }
   desktop.addEventListener('change', frameOverview);
+  phone.addEventListener('change', frameOverview);
   frameOverview();
 
   function sync() {

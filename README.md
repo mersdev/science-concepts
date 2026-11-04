@@ -9,6 +9,7 @@ Small, interactive physics experiments. Open an `index.html` directly in your br
 | Ohm’s law | [ohm/index.html](ohm/index.html) | V = IR |
 | Latent heat of fusion | [latent-heat/index.html](latent-heat/index.html) | Q = mLf |
 | Liquid pressure | [liquid-pressure/index.html](liquid-pressure/index.html) | P = ρgh |
+| Free fall | [free-fall/index.html](free-fall/index.html) | h = ½gt²; g = 2h/t² |
 
 Drag a model, adjust its sliders, or focus the model and use the arrow keys. Home and End select the limits. Auto explore animates the experiment; Reset restores its starting state. Reduced-motion preferences are respected.
 
@@ -17,6 +18,8 @@ Each normal page has a title and short description, with its formula above the l
 The latent-heat rig melts crushed ice at 0°C, collects the water on a balance, and traces a flat heating-curve segment. Adjust heater power or ice mass, or scrub supplied energy. The heater cuts off when melting finishes. Readouts obey Q = mLf throughout; temperature never rises during melting. A fullscreen label follows the adjustable heater dial.
 
 The liquid-pressure bench connects a draggable membrane probe to a U-tube manometer. Compare depth at fixed density, then density at fixed depth. Rotate the probe to see that pressure is independent of orientation; fullscreen labels move depth and orientation.
+
+The free-fall tower releases a steel ball from an electromagnet and stops its timer at an impact detector. Equal-time position markers show uniform acceleration. Adjust height and mass, scrub the fall, and explore the h-versus-t² graph. All masses fall with the same g when air resistance is negligible.
 
 The desktop overview fits at 100% browser zoom on a 1366×768 laptop display, with readable labels, compact cards and tightly framed models. The convex distance controls sit side by side on desktop; phone controls remain stacked.
 
