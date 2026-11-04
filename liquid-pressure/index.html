@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Liquid Pressure · The Pressure Lab</title><link rel="stylesheet" href="../shared.css"><link rel="stylesheet" href="style.css"></head>
+<body class="iso" data-theme="light"><main>
+<header class="page-intro"><h1>Liquid Pressure</h1><p>Lower a membrane probe, compare liquids, and discover why pressure grows with depth and acts equally in every direction.</p></header>
+<div class="workspace"><section class="experiment iso-plate">
+<div class="card-head"><span><b>04</b> THE PRESSURE BENCH</span><span class="live-dot">LIVE MODEL</span></div>
+<div class="stage-wrap"><button id="fullscreen" class="fullscreen-button" aria-pressed="false">Full Screen</button><div class="stage-note"><span class="pill" id="liquid-name">WATER</span><span class="pill warm">OPEN TO AIR</span></div>
+<div id="stage" tabindex="0" role="group" aria-label="Pressure probe. Drag vertically or use arrow keys to change depth."><svg class="iso-svg" viewBox="45 40 680 370" role="img" aria-label="Clear liquid tank with a movable membrane probe connected by an air hose to a U-tube manometer"><defs>
+<linearGradient id="water" x2="0" y2="1"><stop stop-color="#8ce7ef" stop-opacity=".48"/><stop offset="1" stop-color="#17a7c7" stop-opacity=".7"/></linearGradient>
+<linearGradient id="metal"><stop stop-color="#658b94"/><stop offset=".4" stop-color="#f4fcfc"/><stop offset=".65" stop-color="#b5d0d5"/><stop offset="1" stop-color="#567d88"/></linearGradient>
+<radialGradient id="membrane"><stop stop-color="#ffe7a6"/><stop offset=".7" stop-color="#f5aa42"/><stop offset="1" stop-color="#c96b20"/></radialGradient>
+</defs><g id="apparatus"></g></svg>
+<button class="move-hint" data-move="depth" role="slider" aria-label="Probe depth" aria-valuemin="0" aria-valuemax="0.6" aria-valuenow="0.1">↕ Drag probe</button>
+<button class="move-hint" data-move="angle" role="slider" aria-label="Probe orientation" aria-valuemin="0" aria-valuemax="360" aria-valuenow="0">↻ Rotate probe</button></div>
+<div class="stage-caption"><span>Drag the probe ↕ · rotate its orange handle</span><span data-readout></span></div></div>
+<div class="controls"><div class="control-grid">
+<div><div class="control-title"><label for="depth">Depth <i>h</i></label><span><output id="depth-value">0.10</output> <small>m</small></span></div><input id="depth" type="range" min="0" max="0.6" step="0.01" value="0.1"><div class="range-labels"><span>Surface · 0 m</span><span>0.60 m</span></div></div>
+<div><div class="control-title"><label for="density">Density <i>ρ</i></label><span><output id="density-value">1000</output> <small>kg/m³</small></span></div><input id="density" type="range" min="800" max="1260" step="10" value="1000"><div class="range-labels"><span>Oil · 800</span><span>Water · 1000</span><span>Glycerol · 1260</span></div></div>
+<div class="angle-control"><label for="angle">Probe orientation <output id="angle-value">0°</output></label><input id="angle" type="range" min="0" max="360" step="5" value="0"><span>Same depth → same pressure at every angle.</span></div>
+</div><div class="comparison" role="group" aria-label="Controlled comparison"><button id="depth-mode" aria-pressed="true">Compare depth · ρ fixed</button><button id="density-mode" aria-pressed="false">Compare density · h fixed</button><button id="free-mode" aria-pressed="false">Free explore</button></div>
+<div class="actions"><button id="compare">Lower probe</button><button id="tour" aria-pressed="false">▷ Auto explore</button><button id="reset">Reset</button></div><p id="comparison-note">Depth comparison: water density stays at 1000 kg/m³.</p></div>
+</section><aside><section class="formula-card"><span>HYDROSTATIC PRESSURE</span><strong>P = ρgh</strong><p id="substitution"></p><small>Gauge pressure · g = 9.81 m/s²</small></section>
+<div class="readings"><section class="metric"><span>PROBE PRESSURE <i>P</i></span><strong id="pressure"></strong><p>Above atmospheric pressure</p></section><section class="metric"><span>MANOMETER DIFFERENCE <i>ΔH</i></span><strong id="difference"></strong><p>P = ρ<sub>m</sub>gΔH · ρ<sub>m</sub> = 1000 kg/m³</p></section></div>
+<section class="graph-card"><div class="graph-heading"><h2>Pressure vs depth</h2><span class="graph-key">● current liquid</span></div><svg id="graph" viewBox="0 0 420 260" role="img" aria-label="Pressure versus depth: a straight line through the origin"><g id="plot"></g></svg><p class="graph-note">Steeper line = denser liquid. Dashed line: water.</p></section>
+<p class="physics-note">At a point in a stationary fluid, pressure is equal in all directions. Equal inward arrows show pressure, not liquid flow.</p>
+</aside></div><div id="announcement" class="sr-only" aria-live="polite"></div>
+</main><script src="../geometry.js"></script><script src="app.js"></script><script src="../shared.js"></script></body></html>

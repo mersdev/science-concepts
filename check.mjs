@@ -223,6 +223,83 @@ try {
     assert.deepEqual(errors, [], `${name}: browser console errors`);
     console.log(`PASS ${name}: physics, controls, animation, drag, keyboard, fullscreen, mobile and reduced motion`);
   }
+  // Liquid-pressure cases use their own ranges, equations and vertical mechanism.
+  activeExperiment = 'liquidPressure';
+  errors.length = 0;
+  await send('Emulation.setDeviceMetricsOverride', {width:1366,height:768,deviceScaleFactor:1,mobile:false});
+  await send('Page.navigate', {url:pathToFileURL(resolve(root,'liquid-pressure/index.html')).href});
+  await wait(500);
+  assert(await evaluate('Boolean(window.liquidPressure)'));
+  assert(await evaluate('liquidPressure.getState().h===.1 && liquidPressure.getState().rho===1000 && liquidPressure.getState().p===981'));
+  assert(await evaluate(`[0,.1,.3,.6].every(h=>[800,1000,1260].every(rho=>{const s=liquidPressure.model(h,rho);return Math.abs(s.p-rho*9.81*h)<1e-8&&Math.abs(s.p-1000*9.81*s.delta)<1e-8}))`));
+  assert(await evaluate(`document.querySelector('aside').firstElementChild.matches('.formula-card')`));
+  assert(await evaluate(`[...document.querySelectorAll('.move-hint')].every(el=>getComputedStyle(el).display==='none')`));
+  for(const [width,height] of [[1366,768],[1440,900]]){
+    await send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false});await wait(80);
+    assert(await evaluate('document.documentElement.scrollHeight<=innerHeight+1 && document.documentElement.scrollWidth<=innerWidth'),'liquid pressure overview fits');
+    assert(await evaluate(`{const a=document.querySelector('#stage').getBoundingClientRect(),b=document.querySelector('#stage>svg').getBoundingClientRect();b.top>=a.top-1&&b.bottom<=a.bottom+1}`));
+    await screenshot(`liquid-pressure-${width}`);
+  }
+  await click('#compare');assert(await evaluate('liquidPressure.getState().h===.5 && liquidPressure.getState().rho===1000'));
+  await input('#depth',.6);assert.equal(await evaluate('liquidPressure.getState().p'),5886);
+  await click('#density-mode');await click('#compare');
+  assert(await evaluate('liquidPressure.getState().h===.6 && liquidPressure.getState().rho===1260 && Math.abs(liquidPressure.getState().delta-.756)<1e-10'));
+  assert(await evaluate(`document.querySelector('#depth').disabled && !document.querySelector('#density').disabled`));
+  const pressure=await evaluate('liquidPressure.getState().p');
+  await input('#angle',180);assert.equal(await evaluate('liquidPressure.getState().p'),pressure);
+  assert.equal(await evaluate(`document.querySelector('#orientation-part').getAttribute('transform')`),'rotate(180 248 0)');
+  assert.equal(await evaluate(`document.querySelector('#pressure').textContent.trim()`),'7.42 kPa');
+  assert.equal(await evaluate(`document.querySelector('#difference').textContent.trim()`),'75.6 cm');
+  await screenshot('liquid-pressure-dense');
+  // Both menisci conserve volume and their drawn difference matches the physical model.
+  assert(await evaluate(`{const d=document.querySelector('#indicator-liquid').getAttribute('d');const a=+d.match(/^M510 ([\\d.]+)/)[1],b=+d.match(/V([\\d.]+)$/)[1];Math.abs(a+b-450)<1e-8&&Math.abs(a-b-liquidPressure.getState().delta*200)<1e-8}`));
+  await click('#reset');await key('Home');assert.equal(await evaluate('liquidPressure.getState().p'),0);
+  assert.equal(await evaluate(`document.querySelector('#pressure-arrows').childElementCount`),0);
+  await key('End');assert.equal(await evaluate('liquidPressure.getState().h'),.6);
+  await click('#reset');
+  await click('#tour');await wait(300);assert(await evaluate('liquidPressure.getState().auto && liquidPressure.getState().h>.1 && liquidPressure.getState().rho===1000'));
+  await click('#tour');assert.equal(await evaluate('liquidPressure.getState().auto'),false);
+  await click('#density-mode');const fixedDepth=await evaluate('liquidPressure.getState().h');
+  await click('#tour');await wait(300);assert(await evaluate(`liquidPressure.getState().h===${fixedDepth} && liquidPressure.getState().rho>1000`));await click('#tour');
+  await click('#reset');
+  const dragPressure = async (selector,dx,dy)=>{
+    const b=await evaluate(`{const r=document.querySelector('${selector}').getBoundingClientRect();({x:r.x+r.width/2,y:r.y+r.height/2})}`);
+    await send('Input.dispatchMouseEvent',{type:'mousePressed',x:b.x,y:b.y,button:'left',clickCount:1});
+    await send('Input.dispatchMouseEvent',{type:'mouseMoved',x:b.x+dx,y:b.y+dy,button:'left',buttons:1});
+    await send('Input.dispatchMouseEvent',{type:'mouseReleased',x:b.x+dx,y:b.y+dy,button:'left',clickCount:1});
+  };
+  await dragPressure('#probe',0,30);assert(await evaluate('liquidPressure.getState().h>.1'));
+  await dragPressure('#rotation-handle',30,0);assert(await evaluate('liquidPressure.getState().angle>0'));
+  await click('#reset');await screenshot('liquid-pressure-desktop');
+  await click('#fullscreen');await wait(200);
+  assert(await evaluate(`document.fullscreenElement===document.querySelector('.stage-wrap')`));
+  assert(await evaluate(`document.querySelector('#reset').inert && getComputedStyle(document.querySelector('.stage-note')).display==='none'`));
+  const before=await evaluate('liquidPressure.getState().h');
+  await dragPressure('[data-move="depth"]',0,30);assert(await evaluate(`liquidPressure.getState().h>${before}`));
+  await key('ArrowRight','[data-move="angle"]');assert.equal(await evaluate('liquidPressure.getState().angle'),5);
+  await key('End','[data-move="angle"]');assert.equal(await evaluate('liquidPressure.getState().angle'),360);
+  await key('Home','[data-move="angle"]');await screenshot('liquid-pressure-fullscreen');
+  // Close-up of the membrane, rotary grip, rail and hose coupling.
+  const clip=await evaluate(`{const r=document.querySelector('#probe').getBoundingClientRect();({x:r.x-15,y:r.y-15,width:r.width+30,height:r.height+30,scale:4})}`);
+  const close=await send('Page.captureScreenshot',{format:'png',clip});writeFileSync(join(artifacts,'liquid-pressure-mechanism.png'),Buffer.from(close.data,'base64'));
+  await click('#fullscreen');assert.equal(await evaluate('document.activeElement.id'),'fullscreen');
+  assert(await evaluate(`[...document.querySelectorAll('.move-hint')].every(el=>getComputedStyle(el).display==='none')`));
+  await evaluate(`document.querySelector('.stage-wrap').requestFullscreen=undefined`);
+  await click('#fullscreen');assert(await evaluate(`document.querySelector('.stage-wrap').classList.contains('is-fullscreen')`));
+  await send('Input.dispatchKeyEvent',{type:'keyDown',key:'Escape'});
+  assert(await evaluate(`!document.querySelector('.stage-wrap').classList.contains('is-fullscreen') && document.activeElement.id==='fullscreen'`));
+  for(const width of [390,320]){
+    await send('Emulation.setDeviceMetricsOverride',{width,height:844,deviceScaleFactor:1,mobile:false});await click('#reset');
+    assert(await evaluate('document.documentElement.scrollWidth<=innerWidth'));
+    await screenshot(`liquid-pressure-phone-${width}`);await click('#fullscreen');await wait(100);
+    assert(await evaluate(`[...document.querySelectorAll('.move-hint')].every(el=>{const r=el.getBoundingClientRect();return r.width>0&&r.left>=0&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight})`));
+    await screenshot(`liquid-pressure-phone-fullscreen-${width}`);await click('#fullscreen');
+  }
+  await send('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]});
+  await key('End');assert(await evaluate(`liquidPressure.getState().h===.6 && !liquidPressure.getState().auto && document.querySelector('#tour').disabled`));
+  await click('#reset');assert(await evaluate('liquidPressure.getState().h===.1 && liquidPressure.getState().rho===1000 && liquidPressure.getState().angle===0 && liquidPressure.getState().mode==="depth"'));
+  await send('Emulation.setEmulatedMedia',{features:[]});assert.deepEqual(errors,[]);
+  console.log('PASS liquid pressure: physics, controlled comparisons, isotropy, manometer, drag, keyboard, animation, layouts and fullscreen');
 } finally {
   socket?.close();
   const stopped = new Promise(done => chrome.once('exit', done));
