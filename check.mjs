@@ -300,6 +300,94 @@ try {
   await click('#reset');assert(await evaluate('liquidPressure.getState().h===.1 && liquidPressure.getState().rho===1000 && liquidPressure.getState().angle===0 && liquidPressure.getState().mode==="depth"'));
   await send('Emulation.setEmulatedMedia',{features:[]});assert.deepEqual(errors,[]);
   console.log('PASS liquid pressure: physics, controlled comparisons, isotropy, manometer, drag, keyboard, animation, layouts and fullscreen');
+  // Latent heat: only a phase change, with no pre-completion temperature rise.
+  activeExperiment = 'latentHeat'; errors.length = 0;
+  await send('Emulation.setDeviceMetricsOverride', {width:1366,height:768,deviceScaleFactor:1,mobile:false});
+  await send('Page.navigate',{url:pathToFileURL(resolve(root,'latent-heat/index.html')).href});
+  await wait(350);
+  assert(await evaluate('Boolean(window.latentHeat)'));
+  assert(await evaluate(`document.querySelector('aside').firstElementChild.classList.contains('formula-card')`));
+  assert(await evaluate(`getComputedStyle(document.querySelector('.move-hint')).display==='none'`));
+  assert(await evaluate(`document.querySelectorAll('.page-intro h1').length===1 && document.querySelectorAll('nav,footer,.quiz,.notebook').length===0`));
+  assert(await evaluate(`[50,100,200].every(mass=>[0,.01,.25,.5,.999,1].every(f=>{
+    const m=latentHeat.model(mass/1000*334000*f,mass);
+    return m.temperature===0 && Math.abs(m.melted-mass*f)<1e-9 && Math.abs(m.melted+m.remaining-mass)<1e-9 && Math.abs(m.q-m.melted/1000*334000)<1e-8;
+  }))`));
+  assert(await evaluate('latentHeat.model(-100).q===0 && latentHeat.model(1e9).melted===100 && latentHeat.model(1e9).temperature===0'));
+  for(const [width,height] of [[1366,768],[1440,900]]) {
+    await send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false});await wait(80);
+    assert(await evaluate('document.documentElement.scrollHeight<=innerHeight+1 && document.documentElement.scrollWidth<=innerWidth'),`latent heat overview fits ${width}×${height}`);
+    assert(await evaluate(`parseFloat(getComputedStyle(document.querySelector('.control-title label')).fontSize)>=14`));
+    assert(await evaluate(`{const r=document.querySelector('#stage').getBoundingClientRect(),s=document.querySelector('#stage>svg').getBoundingClientRect();s.top>=r.top-1&&s.bottom<=r.bottom+1}`));
+    await screenshot(`latent-heat-${width===1366?'laptop':'desktop'}`);
+  }
+  await input('#energy',16700);
+  assert(await evaluate(`latentHeat.getState().q===16700 && document.querySelector('#melted').textContent.includes('50.0') && document.querySelector('#scale-reading').textContent==='50.0 g' && document.querySelector('#graph-point').getAttribute('cy')==='115'`));
+  await screenshot('latent-heat-half-melted');
+  await send('Page.captureScreenshot',{format:'png',clip:{x:30,y:160,width:800,height:300,scale:3}}).then(({data})=>writeFileSync(join(artifacts,'latent-heat-mechanism-closeup.png'),Buffer.from(data,'base64')));
+  await input('#mass',200);assert.equal(await evaluate('latentHeat.getState().q'),0);
+  assert.equal(await evaluate(`Number(document.querySelector('#energy').max)`),66800);
+  await input('#energy',66800);assert(await evaluate(`document.querySelector('#heater').disabled && document.querySelector('[data-readout]').textContent.includes('0.0°C')`));
+  assert(await evaluate(`[...document.querySelectorAll('[data-ice]')].every(el=>getComputedStyle(el).visibility==='hidden')`));
+  await screenshot('latent-heat-all-melted');
+  await click('#reset');await click('#heater');await wait(300);
+  assert(await evaluate('latentHeat.getState().q>500 && latentHeat.getState().q<3000 && latentHeat.getState().running'));
+  await click('#heater');const pausedQ=await evaluate('latentHeat.getState().q');await wait(120);
+  assert.equal(await evaluate('latentHeat.getState().q'),pausedQ);
+  await input('#energy',33390);await click('#heater');await wait(120);
+  assert(await evaluate('latentHeat.getState().q===33400 && !latentHeat.getState().running'));
+  await click('#reset');await click('#tour');await wait(180);
+  assert(await evaluate('latentHeat.getState().auto && latentHeat.getState().q>0'));
+  await click('#tour');assert(await evaluate('!latentHeat.getState().auto && !latentHeat.getState().running'));
+  await key('Home');assert.equal(await evaluate('latentHeat.getState().power'),100);
+  await key('End');assert.equal(await evaluate('latentHeat.getState().power'),1000);
+  const dragLatent = async(selector,dx)=>{
+    const b=await evaluate(`{const r=document.querySelector(${JSON.stringify(selector)}).getBoundingClientRect();({x:r.x+r.width/2,y:r.y+r.height/2})}`);
+    await send('Input.dispatchMouseEvent',{type:'mousePressed',...b,button:'left',clickCount:1});
+    await send('Input.dispatchMouseEvent',{type:'mouseMoved',x:b.x+dx,y:b.y,buttons:1,button:'left'});
+    await send('Input.dispatchMouseEvent',{type:'mouseReleased',x:b.x+dx,y:b.y,button:'left',clickCount:1});
+  };
+  await dragLatent('#power-dial',-55);assert(await evaluate('latentHeat.getState().power<1000'));
+  assert(await evaluate('getSelection().isCollapsed'));
+  await click('#reset');await click('#fullscreen');await wait(120);
+  assert(await evaluate(`document.fullscreenElement===document.querySelector('.stage-wrap') && document.querySelector('#reset').inert`));
+  assert(await evaluate(`getComputedStyle(document.querySelector('.stage-caption > span:first-child')).display==='none'`));
+  assert(await evaluate(`getComputedStyle(document.querySelector('.move-hint')).display!=='none'`));
+  await dragLatent('.move-hint',55);assert(await evaluate('latentHeat.getState().power>500'));
+  await key('Home','.move-hint');await key('ArrowRight','.move-hint');assert.equal(await evaluate('latentHeat.getState().power'),110);
+  await key('End','.move-hint');assert.equal(await evaluate('latentHeat.getState().power'),1000);
+  await screenshot('latent-heat-fullscreen');
+  await click('#fullscreen');await wait(100);assert.equal(await evaluate('document.activeElement.id'),'fullscreen');
+  assert(await evaluate(`!document.querySelector('#reset').inert && getComputedStyle(document.querySelector('.move-hint')).display==='none'`));
+  await evaluate(`document.querySelector('.stage-wrap').requestFullscreen=undefined`);
+  for(const width of [320,390]) {
+    await send('Emulation.setDeviceMetricsOverride',{width,height:844,deviceScaleFactor:1,mobile:false});
+    await click('#reset');await wait(80);
+    assert(await evaluate('document.documentElement.scrollWidth<=innerWidth'),`latent heat phone ${width}`);
+    await screenshot(`latent-heat-phone-${width}`);await click('#fullscreen');await wait(100);
+    assert(await evaluate(`document.querySelector('.stage-wrap').classList.contains('is-fullscreen')`));
+    assert(await evaluate(`{const r=document.querySelector('.move-hint').getBoundingClientRect();r.width>0&&r.left>=0&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight}`));
+    await key('ArrowRight','.move-hint');assert.equal(await evaluate('latentHeat.getState().power'),510);
+    await screenshot(`latent-heat-phone-fullscreen-${width}`);
+    await send('Input.dispatchKeyEvent',{type:'keyDown',key:'Escape'});await wait(50);
+    assert.equal(await evaluate('document.activeElement.id'),'fullscreen');
+    assert(await evaluate(`!document.querySelector('.stage-wrap').classList.contains('is-fullscreen')`));
+  }
+  await send('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]});
+  await wait(80);await evaluate('scrollTo(0,0)');await wait(80);
+  await click('#reset');await click('#heater');await wait(250);
+  assert(await evaluate('latentHeat.getState().q>0'),'reduced motion still allows explicitly started heating');
+  const arrow=await evaluate(`document.querySelector('#heat-arrows').getAttribute('transform')`);
+  await wait(120);assert.equal(await evaluate(`document.querySelector('#heat-arrows').getAttribute('transform')`),arrow);
+  await evaluate('scrollTo(0,document.documentElement.scrollHeight)');await wait(100);
+  const offscreenQ=await evaluate('latentHeat.getState().q');await wait(150);
+  assert.equal(await evaluate('latentHeat.getState().q'),offscreenQ,'offscreen model pauses heat input');
+  await evaluate('scrollTo(0,0)');await wait(200);
+  assert(await evaluate(`latentHeat.getState().q>${offscreenQ}`),'visible model resumes without catching up');
+  await click('#heater');await click('#reset');
+  assert(await evaluate(`latentHeat.getState().q===0 && latentHeat.getState().power===500 && latentHeat.getState().mass===100 && document.querySelector('#graph-point').getAttribute('cx')==='65'`));
+  await send('Emulation.setEmulatedMedia',{features:[]});assert.deepEqual(errors,[]);
+  console.log('PASS latent heat: constant-temperature melting, energy conservation, controls, cutoff, drag, keyboard, native/fallback fullscreen and responsive layouts');
 } finally {
   socket?.close();
   const stopped = new Promise(done => chrome.once('exit', done));

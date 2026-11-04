@@ -1,0 +1,46 @@
+:root {--teal:#237c91;--graph:#258ea6;--coral:#f18d50;--stage:#f1f7f7;--border:#d9e5df;}
+.material-base{--anatomy-hi:#abcac6}.material-metal{--anatomy-hi:#c6dedc}.material-dark{--anatomy-hi:#4c7278}.material-rubber{--anatomy-hi:#51656a}.material-coral{--anatomy-hi:#ef9a6c}.material-ice{--anatomy-hi:#b3e8f4}.material-glass{--anatomy-hi:#def3f3}.material-water{--anatomy-hi:#57b8dd}.material-cream{--anatomy-hi:#fff3cd}
+[class*="material-"]{--anatomy-paper:var(--anatomy-hi);--anatomy-top:color-mix(in srgb,var(--anatomy-hi),white 25%);--anatomy-shade-0:color-mix(in srgb,var(--anatomy-hi),#15465d 32%);--anatomy-shade-1:color-mix(in srgb,var(--anatomy-hi),#15465d 22%);--anatomy-shade-2:color-mix(in srgb,var(--anatomy-hi),#15465d 12%);--anatomy-shade-3:var(--anatomy-hi)}
+[class*="material-"] .iso-edge{stroke:color-mix(in srgb,var(--anatomy-hi),#225668 40%)}
+[class*="material-"] .iso-bevel{stroke:color-mix(in srgb,var(--anatomy-hi),white 55%)}
+#stage{aspect-ratio:1.8;cursor:default;touch-action:pan-y;}
+#power-dial{cursor:ew-resize;touch-action:none;}
+.control-pair{display:grid;grid-template-columns:1fr 1fr;gap:26px;}
+.energy-control{margin-top:22px;padding-top:18px;border-top:1px solid var(--border);}
+#status{display:block;min-height:30px;margin:14px 0 0;font-size:12px;line-height:1.5;color:var(--teal);}
+.metric:first-child{background:#e3f2f6;border-color:#cfE6ee;}.metric:nth-child(2){background:#eeebf8;}
+.metric strong{color:#237c91;}.meter i{background:#46a2b9;}
+.formula-card #substitution{font:13px ui-monospace,monospace;letter-spacing:-.3px;}
+#graph{height:200px;}.graph-card p{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:0;}
+#graph text{font-size:14px;}#graph .axis-title{font-size:13px;}
+.stage-caption{font-size:11px;align-items:center;}
+.legend{font-size:11px;}
+.legend .blue{background:#64bfdc;}.legend .purple{background:#a28ccc;}
+@media(min-width:1000px){
+ body:not(.model-fullscreen) #stage{height:clamp(270px,calc(100dvh - 442px),440px);}
+ body:not(.model-fullscreen) .controls{display:grid;grid-template-columns:2fr 1fr;column-gap:26px;padding:15px 20px;}
+ body:not(.model-fullscreen) .control-pair{grid-column:1;gap:26px;}
+ body:not(.model-fullscreen) .control-title output{font-size:24px;}
+ body:not(.model-fullscreen) .energy-control{grid-column:2;margin:0;padding:0;border:0;}
+ body:not(.model-fullscreen) input[type=range]{margin:18px 0 10px;}
+ body:not(.model-fullscreen) .actions{grid-column:1 / -1;margin-top:16px;}
+ body:not(.model-fullscreen) #status{grid-column:1 / -1;margin:9px 0 0;min-height:18px;}
+ body:not(.model-fullscreen) .stage-caption{padding:10px 20px;}
+ body:not(.model-fullscreen) .legend{padding:10px 20px;}
+ body:not(.model-fullscreen) .formula-card{display:block;}
+ body:not(.model-fullscreen) .formula-card strong{margin:10px 0;}
+ body:not(.model-fullscreen) .formula-card small{display:block;text-align:left;line-height:1.5;}
+ body:not(.model-fullscreen) .formula-card #substitution{margin:8px 0 0;font-size:13px;}
+ body:not(.model-fullscreen) #graph{height:195px;}
+ body:not(.model-fullscreen) #graph text{font-size:14px;}
+}
+@media(max-width:760px){
+ .control-pair{gap:18px;}.control-title label{font-size:13px;}.control-title output{font-size:22px;}
+ .stage-note{padding-right:115px;}.stage-note .pill{font-size:8px;}
+ .stage-caption{font-size:10px;flex-wrap:wrap;}.stage-caption [data-readout]{font-size:11px;}
+ .formula-card{padding:20px;}.formula-card #substitution{font-size:11px;}
+ .metric strong{font-size:30px;}.metric strong small{display:inline;margin:0;font-size:12px;}
+ .legend{gap:12px;font-size:10px;}.legend span:last-child{margin-left:0;}
+ .stage-wrap:is(:fullscreen,.is-fullscreen) .stage-caption{font-size:12px;padding:12px 0;}
+ .stage-wrap:is(:fullscreen,.is-fullscreen) .stage-caption [data-readout]{font-size:12px;}
+}
