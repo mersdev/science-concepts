@@ -1,0 +1,63 @@
+<template>
+  <style>
+  :root { --ground:#f5f7f3; --ink:#263e39; --muted:#61736c; --teal:#3d8d7e; --coral:#e99161; --line:#dce4dc; --font:"Noto Sans JP",sans-serif; }
+  * { box-sizing:border-box; }
+  #boyle { position:absolute; inset:0; overflow:hidden; background:var(--ground); color:var(--ink); font-family:var(--font); }
+  .surface { position:absolute; inset:0; }
+  .kicker { position:absolute; top:176px; left:64px; max-width:940px; color:var(--teal); font-size:30px; line-height:1.25; font-weight:700; letter-spacing:.01em; }
+  h1 { position:absolute; top:222px; left:62px; margin:0; color:var(--ink); font-size:70px; line-height:1.06; font-weight:800; letter-spacing:-.025em; }
+  h1 span { display:block; }
+  .subline { position:absolute; top:376px; left:66px; margin:0; max-width:950px; color:var(--muted); font-size:32px; line-height:1.25; font-weight:600; }
+  .source-window { position:absolute; overflow:hidden; margin:0; border:2px solid var(--line); border-radius:26px; background:#fff; }
+  .model-window { left:60px; top:430px; width:960px; height:509px; }
+  .output-window { left:110px; top:954px; width:860px; height:371px; }
+  .fall .output-window { left:165px; width:750px; height:366px; }
+  .source-window img { position:absolute; inset:0; display:block; width:100%; height:100%; object-fit:cover; }
+  .source-window .after { opacity:0; }
+  .cursor { position:absolute; z-index:4; width:56px; height:68px; left:var(--cx); top:var(--cy); opacity:0; color:var(--coral); }
+  .cursor svg { display:block; width:100%; height:100%; }
+  .closing-kicker { position:absolute; top:190px; left:64px; color:var(--teal); font-size:32px; font-weight:700; }
+  .closing-title { position:absolute; top:255px; left:60px; margin:0; color:var(--ink); font-size:68px; line-height:1.12; font-weight:800; }
+  .closing-title span { display:block; }
+  .closing-note { position:absolute; top:428px; left:66px; max-width:900px; margin:0; color:var(--muted); font-size:36px; line-height:1.25; font-weight:600; }
+  .concept-list { position:absolute; left:66px; top:560px; display:grid; grid-template-columns:1fr 1fr; column-gap:48px; row-gap:22px; color:var(--ink); font-size:32px; line-height:1.25; font-weight:700; }
+  .concept-list span { white-space:nowrap; }
+  .download-label { position:absolute; left:66px; top:1000px; color:var(--ink); font-size:38px; line-height:1.3; font-weight:800; }
+  .repo-url { position:absolute; left:66px; top:1072px; color:var(--teal); font-family:var(--font); font-size:32px; font-weight:700; }
+  .download-note { position:absolute; left:66px; top:1135px; color:var(--muted); font-size:30px; line-height:1.35; font-weight:600; }
+  .cta-rule { position:absolute; left:66px; top:1208px; height:6px; width:0; border-radius:3px; background:var(--coral); }
+</style>
+  <div data-hf-id="hf-9jfj" id="boyle" data-composition-id="boyle" data-width="1080" data-height="1920" class="scene boyle">
+    <div data-hf-id="hf-9rgx" class="surface">
+          <div data-hf-id="hf-j6pj" class="kicker">老师课堂演示 · 学生自主探究</div>
+          <h1 data-hf-id="hf-uy24" data-beat="hook"><span data-hf-id="hf-dfa8">亲手改变量</span><span data-hf-id="hf-iw0h">实时看结果</span></h1>
+          <p data-hf-id="hf-st6s" class="subline">体积减半 · 压强翻倍</p>
+          <figure data-hf-id="hf-bvx6" class="source-window model-window" aria-label="波义耳定律真实页面：活塞从60毫升移到30毫升">
+            <img data-hf-id="hf-m4y2" src="assets/screens/boyle-model-before.png" alt="波义耳定律实验页面，60毫升、100千帕" />
+            <img data-hf-id="hf-6bj6" class="after" src="assets/screens/boyle-model-after.png" alt="波义耳定律实验页面，30毫升、200千帕" />
+            <div data-hf-id="hf-vt4j" class="cursor" style="--cx:39%;--cy:42%" aria-hidden="true"><svg data-hf-id="hf-crzi" viewBox="0 0 48 58"><path data-hf-id="hf-ue1m" d="M5 3v43l11-11 8 18 9-4-8-18 16 1L5 3Z" fill="currentColor" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/></svg></div>
+          </figure>
+          <figure data-hf-id="hf-m5x7" class="source-window output-window" aria-label="波义耳定律公式和实时读数">
+            <img data-hf-id="hf-3nea" src="assets/screens/boyle-output-before.png" alt="PV恒定，60毫升对应100千帕" />
+            <img data-hf-id="hf-nvpq" class="after" src="assets/screens/boyle-output-after.png" alt="PV恒定，30毫升对应200千帕" />
+          </figure>
+        </div>
+  </div>
+  <script>
+    const root = document.getElementById("boyle");
+    window.__timelines = window.__timelines || {};
+    
+      const timeline = gsap.timeline({ paused: true });
+      const cursor = root.querySelector(".cursor");
+      const modelAfter = root.querySelector(".model-window .after");
+      const outputAfter = root.querySelector(".output-window .after");
+      if (cursor) {
+        timeline.fromTo(cursor, { x:-58, y:-36, scale:0.82, opacity:0 }, { x:0, y:0, scale:1, opacity:1, duration:0.38, ease:"power2.out" }, 0.12);
+        timeline.to(cursor, { scale:0.82, duration:0.08, ease:"power1.in" }, 0.56);
+        timeline.to(cursor, { scale:1, duration:0.1, ease:"power1.out" }, 0.64);
+      }
+      if (modelAfter) timeline.to(modelAfter, { opacity:1, duration:0.22, ease:"none" }, 0.68);
+      if (outputAfter) timeline.to(outputAfter, { opacity:1, duration:0.22, ease:"none" }, 0.68);
+      window.__timelines["boyle"] = timeline;
+  </script>
+</template>

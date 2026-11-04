@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="zh-Hans" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      * { box-sizing:border-box; }
+      html, body { margin:0; width:1080px; height:1920px; overflow:hidden; background:#f5f7f3; }
+      #root { position:relative; width:1080px; height:1920px; overflow:hidden; background:#f5f7f3; }
+      .scene-host { position:absolute; inset:0; }
+    </style>
+  </head>
+  <body>
+    <main data-hf-id="hf-c02k" id="root" data-composition-id="main" data-start="0" data-duration="22" data-width="1080" data-height="1920">
+      <div data-hf-id="hf-f0zv" id="boyle" class="clip scene-host" data-composition-id="boyle" data-composition-src="compositions/boyle.html" data-start="0" data-duration="2.8" data-track-index="0" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
+      <div data-hf-id="hf-4f8p" id="convex" class="clip scene-host" data-composition-id="convex" data-composition-src="compositions/convex.html" data-start="2.8" data-duration="2.8" data-track-index="0" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
+      <div data-hf-id="hf-coat" id="ohm" class="clip scene-host" data-composition-id="ohm" data-composition-src="compositions/ohm.html" data-start="5.6" data-duration="2.8" data-track-index="0" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
+      <div data-hf-id="hf-ravq" id="latent" class="clip scene-host" data-composition-id="latent" data-composition-src="compositions/latent.html" data-start="8.4" data-duration="2.8" data-track-index="0" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
+      <div data-hf-id="hf-pz0b" id="liquid" class="clip scene-host" data-composition-id="liquid" data-composition-src="compositions/liquid.html" data-start="11.2" data-duration="2.8" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
+      <div data-hf-id="hf-on98" id="free-fall" class="clip scene-host" data-composition-id="free-fall" data-composition-src="compositions/free-fall.html" data-start="14" data-duration="2.8" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
+      <div data-hf-id="hf-5vyv" id="end-card" class="clip scene-host" data-composition-id="end-card" data-composition-src="compositions/end-card.html" data-start="16.8" data-duration="5.2" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
+    </main>
+    <script>
+      window.__timelines = window.__timelines || {};
+      window.__timelines.main = gsap.timeline({ paused:true });
+    </script>
+  </body>
+</html>
