@@ -19,6 +19,8 @@ Each normal page has a title and short description, with its formula above the l
 
 Every experiment has a **Home** link to the root catalogue. It is hidden and unavailable to keyboard focus in native and fallback fullscreen, then restored on exit. The shared Science Concepts icon appears on the catalogue, Home links and browser tabs.
 
+Pages center horizontally and vertically in the available viewport. Content taller than the viewport starts at the top and scrolls normally, keeping phone controls accessible.
+
 The latent-heat rig melts crushed ice at 0°C, collects the water on a balance, and traces a flat heating-curve segment. Adjust heater power or ice mass, or scrub supplied energy. The heater cuts off when melting finishes. Readouts obey Q = mLf throughout; temperature never rises during melting. A fullscreen label follows the adjustable heater dial.
 
 The liquid-pressure bench connects a draggable membrane probe to a U-tube manometer. Compare depth at fixed density, then density at fixed depth. Rotate the probe to see that pressure is independent of orientation; fullscreen labels move depth and orientation.

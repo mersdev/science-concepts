@@ -81,6 +81,9 @@ try {
     await settle();
   };
   const screenshot = async name => {
+    if (!await evaluate(`document.body.classList.contains('model-fullscreen')`)) {
+      assert(await evaluate(`{const r=document.querySelector('main').getBoundingClientRect();Math.abs(r.left+r.width/2-document.documentElement.clientWidth/2)<1&&Math.abs(r.top+scrollY-Math.max(0,(innerHeight-r.height)/2))<1}`), `${name}: page is centered with safe vertical overflow`);
+    }
     if (await evaluate(`Boolean(document.querySelector('.home-link'))`)) {
       assert(await evaluate(`{const home=document.querySelector('.home-link'),full=document.body.classList.contains('model-fullscreen');Boolean(home.getClientRects().length)===!full&&home.inert===full}`), `${name}: Home is visible and focusable only outside fullscreen`);
     }

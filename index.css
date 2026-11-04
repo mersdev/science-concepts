@@ -1,5 +1,5 @@
 body{margin:0;background:#f7f8f3}
-body main.catalog{width:min(1180px,calc(100% - 64px));max-width:1180px;margin:0 auto;padding:22px 0 12px}
+body main.catalog{width:min(1180px,calc(100% - 64px));max-width:1180px;margin:auto;padding:22px 0}
 .catalog-header{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:24px}
 .brand-heading{display:flex;align-items:center;gap:12px}
 .site-icon{display:block;flex:none;border-radius:12px}
