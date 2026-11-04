@@ -6,6 +6,9 @@ import { join } from 'node:path';
 // Reuse the actual apparatus geometry; previews never run six simulations.
 const root = new URL('.', import.meta.url);
 const read = path => readFileSync(new URL(path, root), 'utf8');
+// Previews need the SVG renderer and palette, not the experiment page layouts.
+const shared = read('shared.css');
+const svgStyles = shared.slice(0, shared.indexOf(':root')) + shared.match(/:root \{[\s\S]*?\n\}/)[0];
 const experiments = [
   ['boyle', 'Boyle’s law', 'Gases', 'Compress a sealed gas and compare pressure with volume.', 'PV = constant'],
   ['convex', 'Convex lens', 'Optics', 'Move the object and screen to bring an image into focus.', '1/f = 1/u + 1/v'],
@@ -48,6 +51,7 @@ try {
     const timer = setTimeout(() => { pending.delete(id); fail(Error(`${method} timed out`)); }, 15000);
     pending.set(id, {done, fail, timer}); socket.send(JSON.stringify({id, method, params}));
   });
+  await send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] });
   for (const [folder] of experiments) {
     await send('Page.navigate', { url: new URL(`${folder}/index.html`, root).href });
     const result = await send('Runtime.evaluate', {
@@ -68,7 +72,7 @@ const cards = experiments.map(([folder, title, topic, description, formula], ind
   if (viewbox) svg = svg.replace(/ viewBox="[^"]+"/, ` viewBox="${viewbox}"`);
   svg = svg.replace('<svg ', '<svg id="stage" ');
   if (!svg.includes('xmlns=')) svg = svg.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" ');
-  const styles = (read('shared.css') + read(`${folder}/style.css`)).replaceAll('#stage svg', '#stage');
+  const styles = (svgStyles + read(`${folder}/style.css`)).replaceAll('#stage svg', '#stage');
   svg = svg.replace(/(<svg\b[^>]*>)/, `$1<style>${styles}\n:root{background:transparent}#stage{width:100%;height:100%;overflow:hidden;aspect-ratio:auto;background:transparent}*{animation:none!important}</style>`);
   writeFileSync(new URL(`assets/catalog/${folder}.svg`, root), svg);
   return `<a class="experiment-card" href="${folder}/index.html" aria-labelledby="title-${folder}">
@@ -83,14 +87,16 @@ writeFileSync(new URL('index.html', root), `<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Six hands-on physics experiments. Explore gases, optics, electricity, heat, fluids and motion with interactive apparatus.">
-<title>Science concepts · Experiment index</title>
+<meta name="description" content="Interactive Form 4 &amp; 5 Physics experiments. Explore gases, optics, electricity, heat, fluids and motion with hands-on apparatus.">
+<title>Science Concepts · Form 4 &amp; 5 Physics</title>
+<link rel="icon" type="image/png" href="assets/science-concepts-icon.png">
+<link rel="apple-touch-icon" href="assets/science-concepts-icon.png">
 <link rel="stylesheet" href="shared.css">
 <link rel="stylesheet" href="index.css">
 </head>
 <body>
 <main class="catalog">
-<header class="catalog-header"><div><span class="eyebrow">THE PHYSICS BENCH</span><h1>Science concepts<span aria-hidden="true">.</span></h1><p>Choose an experiment. Move the apparatus. See the relationship.</p></div><span class="catalog-count">06 EXPERIMENTS <span aria-hidden="true">/</span> INTERACTIVE MODELS</span></header>
+<header class="catalog-header"><div><div class="brand-heading"><img class="site-icon" src="assets/science-concepts-icon.png" alt="" width="56" height="56"><div><span class="eyebrow">FORM 4 &amp; 5 PHYSICS</span><h1>Science Concepts<span aria-hidden="true">.</span></h1></div></div><p>Choose an experiment. Move the apparatus. See the relationship.</p></div><span class="catalog-count">${String(experiments.length).padStart(2, '0')} EXPERIMENTS <span aria-hidden="true">/</span> INTERACTIVE MODELS</span></header>
 <nav class="experiment-grid" aria-label="All experiments">
 ${cards}
 </nav>
@@ -99,4 +105,4 @@ ${cards}
 </body>
 </html>
 `);
-console.log(`Built index and ${cards.match(/class="experiment-card"/g).length} apparatus previews.`);
+console.log(`Built index and ${experiments.length} apparatus previews.`);

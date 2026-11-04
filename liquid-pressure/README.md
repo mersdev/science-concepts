@@ -1,5 +1,7 @@
 # Liquid pressure
 
+Use **Home** to return to the [experiment index](../index.html). The link appears only outside fullscreen.
+
 Open `index.html` directly; no network, installation or build is needed.
 
 The clear tank, sliding membrane probe, air hose and open U-tube manometer form one Anatomy Figure. Lowering the membrane increases the pressure and pushes the connected manometer column down while the open column rises.

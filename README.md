@@ -1,6 +1,6 @@
 # Science concepts
 
-Small, interactive physics experiments. Open an `index.html` directly in your browser; no build, installation or network connection is required.
+Small, interactive experiments for Form 4 & 5 Physics. Open an `index.html` directly in your browser; no build, installation or network connection is required. The catalogue currently contains six experiments.
 
 Start at the [experiment index](index.html) to browse all six apparatus previews and open an experiment. The responsive catalogue works offline and supports keyboard navigation. Its static SVG previews reuse the experiments’ actual geometry without running simulations in the background. After changing apparatus artwork or the catalogue entries, run `node build-index.mjs` to refresh the page and previews using Node.js and Chrome/Chromium; no toolkit installation is required.
 
@@ -16,6 +16,8 @@ Start at the [experiment index](index.html) to browse all six apparatus previews
 Drag a model, adjust its sliders, or focus the model and use the arrow keys. Home and End select the limits. Auto explore animates the experiment; Reset restores its starting state. Reduced-motion preferences are respected.
 
 Each normal page has a title and short description, with its formula above the live output cards.
+
+Every experiment has a **Home** link to the root catalogue. It is hidden and unavailable to keyboard focus in native and fallback fullscreen, then restored on exit. The shared Science Concepts icon appears on the catalogue, Home links and browser tabs.
 
 The latent-heat rig melts crushed ice at 0°C, collects the water on a balance, and traces a flat heating-curve segment. Adjust heater power or ice mass, or scrub supplied energy. The heater cuts off when melting finishes. Readouts obey Q = mLf throughout; temperature never rises during melting. A fullscreen label follows the adjustable heater dial.
 

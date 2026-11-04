@@ -55,7 +55,18 @@ try {
     if (response.exceptionDetails) throw Error(response.exceptionDetails.exception?.description || response.exceptionDetails.text);
     return response.result.value;
   };
-  const click = selector => evaluate(`document.querySelector(${JSON.stringify(selector)}).click()`);
+  const click = async selector => {
+    const previous = selector === '#fullscreen' ? await evaluate(`document.querySelector('#fullscreen').getAttribute('aria-pressed')`) : null;
+    await evaluate(`document.querySelector(${JSON.stringify(selector)}).click()`);
+    if (previous !== null) {
+      const deadline = Date.now() + 3000;
+      while (Date.now() < deadline) {
+        if (await evaluate(`document.querySelector('#fullscreen').getAttribute('aria-pressed')!==${JSON.stringify(previous)} && document.activeElement.id==='fullscreen'`)) return;
+        await wait(20);
+      }
+      assert.fail('Fullscreen transition did not finish and restore button focus');
+    }
+  };
   let activeExperiment;
   const settle = async () => {
     const deadline = Date.now() + 10000;
@@ -70,6 +81,9 @@ try {
     await settle();
   };
   const screenshot = async name => {
+    if (await evaluate(`Boolean(document.querySelector('.home-link'))`)) {
+      assert(await evaluate(`{const home=document.querySelector('.home-link'),full=document.body.classList.contains('model-fullscreen');Boolean(home.getClientRects().length)===!full&&home.inert===full}`), `${name}: Home is visible and focusable only outside fullscreen`);
+    }
     const { data } = await send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false });
     writeFileSync(join(artifacts, `${name}.png`), Buffer.from(data, 'base64'));
   };
@@ -85,10 +99,13 @@ try {
   await wait(400);
   const catalogueFolders = ['boyle', 'convex', 'ohm', 'latent-heat', 'liquid-pressure', 'free-fall'];
   assert.deepEqual(await evaluate(`[...document.querySelectorAll('.experiment-card')].map(a=>a.getAttribute('href'))`), catalogueFolders.map(name=>`${name}/index.html`));
-  assert(await evaluate(`[...document.images].length===6 && [...document.images].every(img=>img.complete&&img.naturalWidth>0)`), 'all offline apparatus previews load');
+  assert(await evaluate(`document.querySelectorAll('.apparatus img').length===6 && [...document.images].every(img=>img.complete&&img.naturalWidth>0)`), 'all offline apparatus previews and the site icon load');
+  assert.equal(await evaluate(`document.querySelectorAll('.home-link').length`), 0, 'root has no Home button');
+  assert(await evaluate(`document.querySelector('.eyebrow').textContent.includes('FORM 4 & 5')`));
   assert.equal(await evaluate('document.scripts.length'), 0, 'catalogue needs no runtime scripts');
   for (const [width,height] of [[1366,768],[1440,900],[390,844],[320,740]]) {
     await send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false});
+    await evaluate('scrollTo(0,0)');
     await wait(80);
     await screenshot(`index-${width}`);
     assert(await evaluate('document.documentElement.scrollWidth<=innerWidth'), `catalogue fits ${width}px`);
@@ -103,6 +120,18 @@ try {
   assert(await evaluate(`location.pathname.endsWith('/boyle/index.html')`), 'Enter opens the selected experiment');
   assert.deepEqual(errors,[]);
   console.log('PASS experiment index: offline previews, all links, keyboard navigation and desktop/phone layouts');
+  for (const name of catalogueFolders) {
+    await send('Page.navigate', { url: pathToFileURL(resolve(root, name, 'index.html')).href });
+    await wait(250);
+    assert.equal(await evaluate(`document.querySelectorAll('.home-link').length`), 1);
+    assert(await evaluate(`{const a=document.querySelector('.home-link');a.getAttribute('href')==='../index.html'&&a.getClientRects().length>0&&a.querySelector('img').naturalWidth>0}`), `${name}: Home and icon available`);
+    await evaluate(`document.querySelector('.home-link').focus()`);
+    await send('Input.dispatchKeyEvent',{type:'keyDown',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});
+    await send('Input.dispatchKeyEvent',{type:'keyUp',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});
+    await wait(150);
+    assert.equal(await evaluate('location.href'), pathToFileURL(resolve(root,'index.html')).href, `${name}: Home keyboard navigation returns to root`);
+  }
+  console.log('PASS Home links: all six experiments return to root with Enter');
   for (const name of ['boyle', 'convex', 'ohm']) {
     activeExperiment = name;
     errors.length = 0;

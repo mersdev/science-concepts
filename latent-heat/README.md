@@ -1,5 +1,7 @@
 # Latent heat of fusion
 
+Use **Home** to return to the [experiment index](../index.html). The link appears only outside fullscreen.
+
 Open `index.html` directly in a browser. No installation or network is needed.
 
 The Figure is an insulated melting tray on four legs, with crushed ice, an immersed thermometer, a side-wall heater, a drain and a collecting beaker on a balance. Ice shrinks and the beaker fills from the same energy model. Blue indicates ice and water; coral indicates supplied energy.

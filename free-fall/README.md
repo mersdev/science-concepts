@@ -1,5 +1,7 @@
 # Free Fall
 
+Use **Home** to return to the [experiment index](../index.html). The link appears only outside fullscreen.
+
 Open `index.html` directly in a browser. No installation, build or network is needed.
 
 A steel ball is held by an adjustable electromagnet above an impact detector. Releasing the magnet starts the timer at zero; the detector stops it at first contact. Translucent amber markers retain successive ball positions at equal **0.10 s** physical intervals. Their increasing separation shows acceleration.

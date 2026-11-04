@@ -1,5 +1,7 @@
 # Ohm’s law
 
+Use **Home** to return to the [experiment index](../index.html). The link appears only outside fullscreen.
+
 Open `index.html`. Drag the bench or adjust voltage from 0–12 V. Double voltage, use Auto sweep or Reset to 6 V. Switch between the fixed resistor and filament bulb; Compare overlays both curves. Full Screen shows only the interactive circuit and voltage/current output.
 
 The “Slide contact” label appears above the movable rheostat contact in fullscreen only. Drag it or focus it and use the arrow keys, Home or End to change voltage.

@@ -1,5 +1,7 @@
 # Boyle’s law
 
+Use **Home** to return to the [experiment index](../index.html). The link appears only outside fullscreen.
+
 Open `index.html`. Drag the orange piston or adjust volume from 20–100 mL. Halve the volume, use Auto explore, or Reset to 60 mL. Full Screen shows only the interactive apparatus and its volume/pressure output.
 
 The “Drag piston” label appears above the movable piston in fullscreen only. Drag it or focus it and use the arrow keys, Home or End to change volume.
