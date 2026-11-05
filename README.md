@@ -35,6 +35,8 @@ Movement labels appear only in fullscreen: “Drag piston” for Boyle, “Slide
 
 Each folder contains its HTML model, animation logic and material colors. `shared.css`, `shared.js` and `geometry.js` provide the common layout, fullscreen behavior and isometric projection. Edit these files directly; generated copies and external toolkit installations are unnecessary.
 
+The original transparent science-teacher mascot, six experiment poses and layered campaign cover are in [social-posts](social-posts/README.md).
+
 Run browser checks with Node.js 22+ and Chrome or Chromium:
 
 ```sh

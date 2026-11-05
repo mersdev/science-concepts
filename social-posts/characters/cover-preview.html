@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>拖一拖，物理就动起来</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #f7f8f3; }
+  .poster {
+    position: relative; width: min(100vw, 540px); aspect-ratio: 3 / 4; overflow: hidden;
+    background: #293e3c; color: #fffefa; font-family: "PingFang SC", "Noto Sans CJK SC", sans-serif;
+  }
+  .audience { position: absolute; top: 4.5%; left: 0; right: 0; margin: 0; text-align: center; color: #e58663; font-size: clamp(14px, 4.2vw, 24px); font-weight: 700; letter-spacing: .04em; }
+  h1 { position: absolute; z-index: 1; top: 11%; left: 0; right: 0; margin: 0; text-align: center; font-size: clamp(44px, 10.2vw, 82px); line-height: 1.12; font-weight: 900; letter-spacing: .025em; }
+  h1 span { display: block; }
+  h1 span:last-child { color: #dfe5db; font-size: .88em; margin-top: .08em; }
+  .hero { position: absolute; left: -5%; bottom: -8%; width: 110%; height: auto; display: block; }
+</style>
+<main class="poster" aria-label="中四、中五物理互动实验封面">
+  <p class="audience">中四 · 中五物理互动实验</p>
+  <h1><span>拖一拖，</span><span>物理就动起来</span></h1>
+  <img class="hero" src="cover-mascot-half.png" alt="科学家吉祥物邀请你拖动实验滑块">
+</main>
+</html>

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1440" role="img" aria-label="拖一拖，物理就动起来">
+  <path fill="#293e3c" d="M0 0h1080v1440H0z"/>
+  <text x="540" y="110" text-anchor="middle" fill="#e58663" font-family="PingFang SC, Noto Sans CJK SC, sans-serif" font-size="32" font-weight="700">中四 · 中五物理互动实验</text>
+  <image href="cover-title.svg" x="0" y="145" width="1080" height="380"/>
+  <image href="cover-mascot-half.png" x="-50" y="465" width="1180" height="1113" preserveAspectRatio="xMidYMid meet"/>
+</svg>
