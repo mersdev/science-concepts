@@ -1,3 +1,4 @@
+import { checkSharpener } from './primary/pencil-sharpener/check.mjs';
 import { checkScrew } from './primary/screw/check.mjs';
 import './primary/screw/audit.mjs';
 import { checkWedge } from './primary/wedge/check.mjs';
@@ -107,6 +108,7 @@ try {
     await settle();
   };
   await send('Runtime.enable'); await send('Page.enable');
+  if (!process.env.SHARPENER_ONLY) {
   if (!process.env.SCREW_ONLY) {
   if (!process.env.RAMP_ONLY && !process.env.DOOR_ONLY && !process.env.TOWER_ONLY && !process.env.BRIDGES_ONLY && !process.env.GEARS_ONLY && !process.env.SEESAW_ONLY) {
   await send('Page.navigate',{url:pathToFileURL(resolve(root,'index.html')).href});await wait(250);
@@ -602,6 +604,11 @@ try {
   if (process.env.SCREW_ONLY || !['TOWER_ONLY','BRIDGES_ONLY','SEESAW_ONLY','GEARS_ONLY','DOOR_ONLY','RAMP_ONLY','WEDGE_ONLY'].some(key=>process.env[key])) {
     activeExperiment='screw';
     await checkScrew({send,evaluate,click,key,wait,screenshot,url:pathToFileURL(resolve(root,'primary/screw/index.html')).href,assert});
+  }
+  }
+  if (process.env.SHARPENER_ONLY || !['TOWER_ONLY','BRIDGES_ONLY','SEESAW_ONLY','GEARS_ONLY','DOOR_ONLY','RAMP_ONLY','WEDGE_ONLY','SCREW_ONLY'].some(key=>process.env[key])) {
+    activeExperiment='sharpener';
+    await checkSharpener({send,evaluate,click,key,wait,screenshot,url:pathToFileURL(resolve(root,'primary/pencil-sharpener/index.html')).href,assert});
   }
   assert.deepEqual(errors,[]);
 } finally {

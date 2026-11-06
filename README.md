@@ -19,8 +19,11 @@ Start at the [experiment index](secondary/index.html) to browse all six apparatu
 
 [Moving Loads with an Inclined Plane](primary/inclined-plane/index.html) compares identical loads on two adjustable ramps reaching the same height. Its [README](primary/inclined-plane/README.md) documents the ideal force–distance model and marks the calculations as an extension.
 
+[Inside a Mechanical Pencil Sharpener](primary/pencil-sharpener/index.html) combines a crank, axle, planetary gears and wedge-shaped cutting edges. Disassemble five assemblies, inspect their roles, reassemble and sharpen a virtual pencil. Its [README](primary/pencil-sharpener/README.md) records the supplied SK/SJKC curriculum notes, gear kinematics and illustrative cutter/point model.
+
 | Experiment | Page | Formula |
 | --- | --- | --- |
+| Inside a Mechanical Pencil Sharpener (Primary) | [primary/pencil-sharpener/index.html](primary/pencil-sharpener/index.html) | Turn → transfer → cut |
 | How Screws Turn Rotation into Movement (Primary) | [primary/screw/index.html](primary/screw/index.html) | N = L/p |
 | Moving Loads with an Inclined Plane (Primary) | [primary/inclined-plane/index.html](primary/inclined-plane/index.html) | F = mgh/L |
 | How a Wedge Splits Materials (Primary) | [primary/wedge/index.html](primary/wedge/index.html) | Push down → split apart |
