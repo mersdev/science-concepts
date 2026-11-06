@@ -6,10 +6,13 @@ The existing experiments are in `secondary/`.
 
 [Primary Science](primary/index.html) includes [Pulley Lab](primary/pulley/index.html), a colorful Grade 3 lesson comparing fixed, movable and combined pulleys, pull direction, effort and rope travel. It is the only bilingual page and supports Simplified Chinese and English. Open it directly from disk; the ideal model and research sources are documented in its [README](primary/pulley/README.md).
 
+[Build a More Stable Tower](primary/tower/index.html) adds a colorful Year 6 stability lesson with adjustable height, base size and shape, sideways tests, and a live tipping graph. Its [README](primary/tower/README.md) records the curriculum mapping and model assumptions.
+
 Start at the [experiment index](secondary/index.html) to browse all six apparatus previews and open an experiment. The responsive catalogue works offline and supports keyboard navigation. Its static SVG previews reuse the experiments’ actual geometry without running simulations in the background. After changing apparatus artwork or the catalogue entries, run `node build-index.mjs` to refresh the page and previews using Node.js and Chrome/Chromium; no toolkit installation is required.
 
 | Experiment | Page | Formula |
 | --- | --- | --- |
+| Build a More Stable Tower (Primary Year 6) | [primary/tower/index.html](primary/tower/index.html) | aₜᵢₚ = gb/h꜀ |
 | Boyle’s law | [secondary/boyle/index.html](secondary/boyle/index.html) | PV = constant |
 | Convex lens | [secondary/convex/index.html](secondary/convex/index.html) | 1/f = 1/u + 1/v |
 | Ohm’s law | [secondary/ohm/index.html](secondary/ohm/index.html) | V = IR |

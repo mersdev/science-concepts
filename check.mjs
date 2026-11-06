@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import './primary/pulley/audit.mjs';
+import { checkTower } from './primary/tower/check.mjs';
 
 // A dependency-free Chrome DevTools check; no application build is needed.
 const root = fileURLToPath(new URL('.', import.meta.url));
@@ -98,9 +99,10 @@ try {
     await settle();
   };
   await send('Runtime.enable'); await send('Page.enable');
+  if (!process.env.TOWER_ONLY) {
   await send('Page.navigate', { url: pathToFileURL(resolve(root, 'primary', 'index.html')).href });
   await wait(250);
-  assert.deepEqual(await evaluate(`[...document.querySelectorAll('.experiment-card')].map(a=>a.getAttribute('href'))`), ['pulley/index.html']);
+  assert.deepEqual(await evaluate(`[...document.querySelectorAll('.experiment-card')].map(a=>a.getAttribute('href'))`), ['pulley/index.html', 'tower/index.html']);
   assert(await evaluate(`document.documentElement.lang==='en'&&document.querySelectorAll('#language,[data-en],[data-zh]').length===0&&document.querySelector('.apparatus svg[role="img"]')`), 'primary catalogue is English-only and uses the shared card design');
   assert.equal(await evaluate('document.scripts.length'), 0, 'primary catalogue needs no runtime scripts');
   for (const [width,height] of [[1366,768],[1440,900],[390,844],[320,740]]) {
@@ -618,6 +620,10 @@ try {
   assert(await evaluate('pulley.getState().h===0&&pulley.getState().w===20&&pulley.getState().mode==="fixed"&&!pulley.getState().auto'));
   assert.deepEqual(errors,[]);console.log('PASS pulley: rope conservation, force/distance, configurations, controls, drag/keys, pause, reduced/hidden/offscreen motion, fullscreen and responsive layouts');
 
+  }
+  activeExperiment = 'tower';
+  await checkTower({send,evaluate,click,key,wait,screenshot,url:pathToFileURL(resolve(root,'primary/tower/index.html')).href,assert});
+  assert.deepEqual(errors,[]);
 } finally {
   socket?.close();
   const stopped = new Promise(done => chrome.once('exit', done));
