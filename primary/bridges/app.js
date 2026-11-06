@@ -54,7 +54,7 @@ function graph(){const X=f=>44+f/100*330,Y=d=>180-d/13*150;let out='';for(const 
  $('#graph').innerHTML=out;$('#graph').setAttribute('aria-label',`Deflection versus load at span ${span} cm. Selected ${shape}: ${current.toFixed(1)} N gives ${state().delta.toFixed(2)} mm.`);
 }
 function stop(){auto=false;$('#play').textContent='▷ Auto explore';$('#play').setAttribute('aria-pressed','false');}
-function change(id,value){stop();if(id==='load'){load=clamp(Math.round(value),0,100);target=load;}else span=clamp(Math.round(value),80,160);wake();render();}
+function change(id,value){stop();if(id==='load'){load=clamp(Math.round(value),0,100);target=load;}else span=clamp(Math.round(value),80,160);if(!visible)current=target;wake();render();}
 function select(mode){shape=mode;document.querySelectorAll('[data-shape]').forEach(b=>{b.classList.toggle('selected',b.dataset.shape===shape);b.setAttribute('aria-pressed',b.dataset.shape===shape);});render();}
 function wake(){if(reduced.matches){current=target;render();return;}if(!frame&&visible&&!document.hidden)frame=requestAnimationFrame(tick);}
 function tick(now){frame=0;const dt=last?Math.min((now-last)/1000,.04):0;last=now;if(auto){time+=dt;target=load*(1-Math.cos(time*1.5))/2;}
@@ -62,7 +62,7 @@ function tick(now){frame=0;const dt=last?Math.min((now-last)/1000,.04):0;last=no
 }
 for(const id of ['load','span'])$('#'+id).oninput=e=>change(id,+e.target.value);
 for(const b of document.querySelectorAll('[data-shape]'))b.onclick=()=>{stop();select(b.dataset.shape);};
-$('#test').onclick=()=>{stop();target=target>0?0:load;wake();render();};
+$('#test').onclick=()=>{stop();target=target>0?0:load;if(!visible)current=target;wake();render();};
 $('#reset').onclick=()=>{stop();load=60;span=120;target=current=0;select('rectangle');render();};
 $('#play').onclick=()=>{if(auto){stop();return;}if(reduced.matches){target=target>0?0:load;wake();return;}auto=true;time=0;$('#play').textContent='Ⅱ Pause';$('#play').setAttribute('aria-pressed','true');wake();};
 function keys(e,id){const old=id==='load'?load:span,step=e.shiftKey?10:1,values={ArrowUp:old+step,ArrowRight:old+step,ArrowDown:old-step,ArrowLeft:old-step,Home:id==='load'?0:80,End:id==='load'?100:160};if(e.key in values){e.preventDefault();change(id,values[e.key]);}}

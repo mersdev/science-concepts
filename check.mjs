@@ -572,5 +572,5 @@ try {
   socket?.close();
   const stopped = new Promise(done => chrome.once('exit', done));
   chrome.kill(); await stopped;
-  rmSync(profile, { recursive: true, force: true });
+  rmSync(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
 }
