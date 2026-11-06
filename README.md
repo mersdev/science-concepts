@@ -21,8 +21,11 @@ Start at the [experiment index](secondary/index.html) to browse all six apparatu
 
 [Inside a Mechanical Pencil Sharpener](primary/pencil-sharpener/index.html) combines a crank, axle, planetary gears and wedge-shaped cutting edges. Disassemble five assemblies, inspect their roles, reassemble and sharpen a virtual pencil. Its [README](primary/pencil-sharpener/README.md) records the supplied SK/SJKC curriculum notes, gear kinematics and illustrative cutter/point model.
 
+[How Scissors and Hole Punches Work](primary/scissors-punch/index.html) combines colored lever handles, pivots and cutting wedges, with an exploded hole-punch extension and persistent paper results. Its [README](primary/scissors-punch/README.md) records the geometry and assumptions.
+
 | Experiment | Page | Formula |
 | --- | --- | --- |
+| How Scissors and Hole Punches Work (Primary) | [primary/scissors-punch/index.html](primary/scissors-punch/index.html) | Lever + wedge |
 | Inside a Mechanical Pencil Sharpener (Primary) | [primary/pencil-sharpener/index.html](primary/pencil-sharpener/index.html) | Turn → transfer → cut |
 | How Screws Turn Rotation into Movement (Primary) | [primary/screw/index.html](primary/screw/index.html) | N = L/p |
 | Moving Loads with an Inclined Plane (Primary) | [primary/inclined-plane/index.html](primary/inclined-plane/index.html) | F = mgh/L |
