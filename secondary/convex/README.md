@@ -8,4 +8,4 @@ Full Screen shows the bench, live distances and white-screen preview. The “Dra
 
 The ideal thin lens has fixed `f = 20 cm`, `1/f = 1/u + 1/v` and signed magnification `m = −v/u`. A real image is inverted; a virtual image is upright and cannot be focused on a screen. At u = f the image is at infinity. Blur is illustrative geometric defocus. Focus tolerance is ±0.35 cm; some real images lie beyond screen travel.
 
-Edit `index.html`, `app.js` and `style.css` directly. Run `node check.mjs` from the repository root. See the root [README](../README.md) for common controls and file organization.
+Edit `index.html`, `app.js` and `style.css` directly. Run `node check.mjs` from the repository root. See the root [README](../../README.md) for common controls and file organization.

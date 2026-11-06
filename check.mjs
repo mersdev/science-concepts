@@ -98,12 +98,12 @@ try {
   };
   await send('Runtime.enable'); await send('Page.enable');
   // The catalogue must also work directly from disk, with no running simulations.
-  await send('Page.navigate', { url: pathToFileURL(resolve(root, 'index.html')).href });
+  await send('Page.navigate', { url: pathToFileURL(resolve(root, 'secondary', 'index.html')).href });
   await wait(400);
   const catalogueFolders = ['boyle', 'convex', 'ohm', 'latent-heat', 'liquid-pressure', 'free-fall'];
   assert.deepEqual(await evaluate(`[...document.querySelectorAll('.experiment-card')].map(a=>a.getAttribute('href'))`), catalogueFolders.map(name=>`${name}/index.html`));
   assert(await evaluate(`document.querySelectorAll('.apparatus img').length===6 && [...document.images].every(img=>img.complete&&img.naturalWidth>0)`), 'all offline apparatus previews and the site icon load');
-  assert.equal(await evaluate(`document.querySelectorAll('.home-link').length`), 0, 'root has no Home button');
+  assert.equal(await evaluate(`document.querySelectorAll('.home-link').length`), 0, 'catalogue has no Home button');
   assert(await evaluate(`document.querySelector('.eyebrow').textContent.includes('FORM 4 & 5')`));
   assert.equal(await evaluate('document.scripts.length'), 0, 'catalogue needs no runtime scripts');
   for (const [width,height] of [[1366,768],[1440,900],[390,844],[320,740]]) {
@@ -120,11 +120,11 @@ try {
   await send('Input.dispatchKeyEvent',{type:'keyDown',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});
   await send('Input.dispatchKeyEvent',{type:'keyUp',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});
   await wait(300);
-  assert(await evaluate(`location.pathname.endsWith('/boyle/index.html')`), 'Enter opens the selected experiment');
+  assert(await evaluate(`location.pathname.endsWith('/secondary/boyle/index.html')`), 'Enter opens the selected experiment');
   assert.deepEqual(errors,[]);
   console.log('PASS experiment index: offline previews, all links, keyboard navigation and desktop/phone layouts');
   for (const name of catalogueFolders) {
-    await send('Page.navigate', { url: pathToFileURL(resolve(root, name, 'index.html')).href });
+    await send('Page.navigate', { url: pathToFileURL(resolve(root, 'secondary', name, 'index.html')).href });
     await wait(250);
     assert.equal(await evaluate(`document.querySelectorAll('.home-link').length`), 1);
     assert(await evaluate(`{const a=document.querySelector('.home-link');a.getAttribute('href')==='../index.html'&&a.getClientRects().length>0&&a.querySelector('img').naturalWidth>0}`), `${name}: Home and icon available`);
@@ -132,14 +132,14 @@ try {
     await send('Input.dispatchKeyEvent',{type:'keyDown',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});
     await send('Input.dispatchKeyEvent',{type:'keyUp',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});
     await wait(150);
-    assert.equal(await evaluate('location.href'), pathToFileURL(resolve(root,'index.html')).href, `${name}: Home keyboard navigation returns to root`);
+    assert.equal(await evaluate('location.href'), pathToFileURL(resolve(root,'secondary','index.html')).href, `${name}: Home keyboard navigation returns to catalogue`);
   }
-  console.log('PASS Home links: all six experiments return to root with Enter');
+  console.log('PASS Home links: all six experiments return to the catalogue with Enter');
   for (const name of ['boyle', 'convex', 'ohm']) {
     activeExperiment = name;
     errors.length = 0;
     await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 1200, deviceScaleFactor: 1, mobile: false });
-    await send('Page.navigate', { url: pathToFileURL(resolve(root, name, 'index.html')).href });
+    await send('Page.navigate', { url: pathToFileURL(resolve(root, 'secondary', name, 'index.html')).href });
     await wait(500);
     assert(await evaluate(`Boolean(window.${name})`), `${name}: application initialized`);
     assert.equal(await evaluate(`document.querySelectorAll('nav,footer,.quiz,.notebook,.intro,.investigation').length`), 0);
@@ -282,7 +282,7 @@ try {
   activeExperiment = 'liquidPressure';
   errors.length = 0;
   await send('Emulation.setDeviceMetricsOverride', {width:1366,height:768,deviceScaleFactor:1,mobile:false});
-  await send('Page.navigate', {url:pathToFileURL(resolve(root,'liquid-pressure/index.html')).href});
+  await send('Page.navigate', {url:pathToFileURL(resolve(root,'secondary','liquid-pressure','index.html')).href});
   await wait(500);
   assert(await evaluate('Boolean(window.liquidPressure)'));
   assert(await evaluate('liquidPressure.getState().h===.1 && liquidPressure.getState().rho===1000 && liquidPressure.getState().p===981'));
@@ -359,7 +359,7 @@ try {
   {
   activeExperiment='freeFall'; errors.length=0;
   await send('Emulation.setDeviceMetricsOverride',{width:1366,height:768,deviceScaleFactor:1,mobile:false});
-  await send('Page.navigate',{url:pathToFileURL(resolve(root,'free-fall/index.html')).href});await wait(400);
+  await send('Page.navigate',{url:pathToFileURL(resolve(root,'secondary','free-fall','index.html')).href});await wait(400);
   assert(await evaluate('Boolean(window.freeFall)'));
   assert(await evaluate('freeFall.getState().height===1.5 && freeFall.getState().t===0 && freeFall.getState().mass===100 && freeFall.getState().phase==="held" && freeFall.getState().g===null'));
   assert(await evaluate(`[.25,.5,1.5,2].every(H=>[50,100,250].every(m=>{const a=freeFall.model(H,0,m),b=freeFall.model(H,1e3,m),c=freeFall.model(H,a.duration/2,m);return a.h===0&&a.v===0&&a.g===null&&Math.abs(b.h-H)<1e-12&&Math.abs(a.duration**2-2*H/9.81)<1e-12&&Math.abs(c.h-H/4)<1e-12&&Math.abs(c.v-9.81*c.t)<1e-12&&Math.abs(c.g-9.81)<1e-12&&a.duration===freeFall.model(H,0,100).duration}))`),'free-fall equations and mass independence');
@@ -452,7 +452,7 @@ try {
   // Latent heat: only a phase change, with no pre-completion temperature rise.
   activeExperiment = 'latentHeat'; errors.length = 0;
   await send('Emulation.setDeviceMetricsOverride', {width:1366,height:768,deviceScaleFactor:1,mobile:false});
-  await send('Page.navigate',{url:pathToFileURL(resolve(root,'latent-heat/index.html')).href});
+  await send('Page.navigate',{url:pathToFileURL(resolve(root,'secondary','latent-heat','index.html')).href});
   await wait(350);
   assert(await evaluate('Boolean(window.latentHeat)'));
   assert(await evaluate(`document.querySelector('aside').firstElementChild.classList.contains('formula-card')`));

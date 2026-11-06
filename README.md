@@ -1,23 +1,25 @@
 # Science concepts
 
-Small, interactive experiments for Form 4 & 5 Physics. Open an `index.html` directly in your browser; no build, installation or network connection is required. The catalogue currently contains six experiments.
+Small, interactive experiments for Form 4 & 5 Physics. Open `secondary/index.html` directly in your browser; no build, installation or network connection is required. The catalogue currently contains six experiments.
 
-Start at the [experiment index](index.html) to browse all six apparatus previews and open an experiment. The responsive catalogue works offline and supports keyboard navigation. Its static SVG previews reuse the experiments’ actual geometry without running simulations in the background. After changing apparatus artwork or the catalogue entries, run `node build-index.mjs` to refresh the page and previews using Node.js and Chrome/Chromium; no toolkit installation is required.
+The existing experiments are in `secondary/`; `primary/` is ready for the new series.
+
+Start at the [experiment index](secondary/index.html) to browse all six apparatus previews and open an experiment. The responsive catalogue works offline and supports keyboard navigation. Its static SVG previews reuse the experiments’ actual geometry without running simulations in the background. After changing apparatus artwork or the catalogue entries, run `node build-index.mjs` to refresh the page and previews using Node.js and Chrome/Chromium; no toolkit installation is required.
 
 | Experiment | Page | Formula |
 | --- | --- | --- |
-| Boyle’s law | [boyle/index.html](boyle/index.html) | PV = constant |
-| Convex lens | [convex/index.html](convex/index.html) | 1/f = 1/u + 1/v |
-| Ohm’s law | [ohm/index.html](ohm/index.html) | V = IR |
-| Latent heat of fusion | [latent-heat/index.html](latent-heat/index.html) | Q = mLf |
-| Liquid pressure | [liquid-pressure/index.html](liquid-pressure/index.html) | P = ρgh |
-| Free fall | [free-fall/index.html](free-fall/index.html) | h = ½gt²; g = 2h/t² |
+| Boyle’s law | [secondary/boyle/index.html](secondary/boyle/index.html) | PV = constant |
+| Convex lens | [secondary/convex/index.html](secondary/convex/index.html) | 1/f = 1/u + 1/v |
+| Ohm’s law | [secondary/ohm/index.html](secondary/ohm/index.html) | V = IR |
+| Latent heat of fusion | [secondary/latent-heat/index.html](secondary/latent-heat/index.html) | Q = mLf |
+| Liquid pressure | [secondary/liquid-pressure/index.html](secondary/liquid-pressure/index.html) | P = ρgh |
+| Free fall | [secondary/free-fall/index.html](secondary/free-fall/index.html) | h = ½gt²; g = 2h/t² |
 
 Drag a model, adjust its sliders, or focus the model and use the arrow keys. Home and End select the limits. Auto explore animates the experiment; Reset restores its starting state. Reduced-motion preferences are respected.
 
 Each normal page has a title and short description, with its formula above the live output cards.
 
-Every experiment has a **Home** link to the root catalogue. It is hidden and unavailable to keyboard focus in native and fallback fullscreen, then restored on exit. The shared Science Concepts icon appears on the catalogue, Home links and browser tabs.
+Every experiment has a **Home** link to the secondary catalogue. It is hidden and unavailable to keyboard focus in native and fallback fullscreen, then restored on exit. The shared Science Concepts icon appears on the catalogue, Home links and browser tabs.
 
 Pages center horizontally and vertically in the available viewport. Content taller than the viewport starts at the top and scrolls normally, keeping phone controls accessible.
 
