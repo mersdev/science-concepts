@@ -1,9 +1,5 @@
 (() => {
-  const configurations = {
-    fixed: {n:1,direction:1,title:'轮子固定，改变方向',text:'向下拉绳，重物向上。拉 10 cm，重物就升高 10 cm。'},
-    movable: {n:2,direction:-1,title:'轮子跟着重物一起上升',text:'两段绳子分担重量。拉力减半，但拉 20 cm，重物只上升 10 cm。'},
-    combined: {n:2,direction:1,title:'一样省力，换个方向拉',text:'增加的定滑轮让你向下拉；仍由两段绳子承重，拉力和动滑轮一样。'}
-  };
+  const configurations = {fixed:{n:1,direction:1},movable:{n:2,direction:-1},combined:{n:2,direction:1}};
   const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
   function model(mode='fixed',height=0,weight=20) {
     const c=configurations[mode],h=clamp(height,0,30),w=clamp(weight,10,40),lift=2.5*h;
@@ -22,6 +18,10 @@
   globalThis.pulleyPhysics={model};
   if(typeof document==='undefined')return;
   const $=s=>document.querySelector(s),stage=$('#stage'),svg=stage.querySelector('svg'),reduced=matchMedia('(prefers-reduced-motion: reduce)');
+  const words={fixed:['轮子固定，改变方向','向下拉绳，重物向上。拉 10 cm，重物就升高 10 cm。','Fixed pulley changes direction','Pull down 10 cm; the load rises 10 cm.'],movable:['轮子跟着重物一起上升','两段绳子分担重量。拉力减半，但拉 20 cm，重物只上升 10 cm。','The wheel rises with the load','Two rope sections share the load. Pull 20 cm to raise it 10 cm, with half the force.'],combined:['一样省力，换个方向拉','增加的定滑轮让你向下拉；仍由两段绳子承重，拉力和动滑轮一样。','Same force advantage, pull a different way','The added fixed pulley lets you pull down. Two rope sections still share the load.']};
+  const english=()=>window.primaryLanguage?.get()==='en';
+  const put=(s,zh,en)=>{const el=$(s);if(el)el.textContent=english()?en:zh;};
+  const labelText=(s,zh,en)=>{const el=$(s);if(el?.firstChild)el.firstChild.nodeValue=english()?en:zh;};
   const P={origin:[0,0],scale:1/Math.sqrt(1.6),azimuth:90,elevation:0};
   let mode='fixed',weight=20,current=0,target=0,auto=false,visible=true,frame=0,last=0,clock=0,drag=null;
   const circle=(x,y,r,fill,extra='')=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${fill}" ${extra}/>`;
@@ -70,11 +70,27 @@
     const x=s=>47+s/60*320,y=h=>177-h/30*148;
     $('#graph').innerHTML=[0,10,20,30].map(h=>`<path d="M47 ${y(h)}H367" stroke="#dfe5db"/><text x="35" y="${y(h)+4}" text-anchor="end">${h}</text>`).join('')+
       [0,20,40,60].map(s=>`<text x="${x(s)}" y="197" text-anchor="middle">${s}</text>`).join('')+
-      '<text x="47" y="17">上升高度 (cm)</text><text x="367" y="218" text-anchor="end">拉绳距离 (cm)</text>'+
+      `<text x="47" y="17">${english()?'Load lifted (cm)':'上升高度 (cm)'}</text><text x="367" y="218" text-anchor="end">${english()?'Rope pulled (cm)':'拉绳距离 (cm)'}</text>`+
       `<path d="M47 177L${x(30)} ${y(30)}" stroke="#dd8955" stroke-width="3" fill="none"/><path d="M47 177L${x(60)} ${y(30)}" stroke="#398f8a" stroke-width="3" fill="none"/><circle id="graph-point" cx="${x(m.s)}" cy="${y(m.h)}" r="6" fill="${m.n===1?'#dd8955':'#398f8a'}" stroke="#fffefa" stroke-width="2"/>`;
   }
   function draw(){
     const m=model(mode,current,weight),c=configurations[mode],number=v=>Number(v.toFixed(1));
+    const en=english();document.title=en?'Pulley Lab · Primary Science':'滑轮实验室 · 小学科学';
+    $('.card-head > span:first-child').textContent=en?'Grade 3 · Simple machines':'三年级 · 简单机械';$('.card-head .live').textContent=en?'Try it yourself':'动手试一试';
+    document.querySelectorAll('[data-mode]').forEach((b,i)=>b.textContent=['①','②','③'][i]+' '+(en?['Fixed pulley','Movable pulley','Pulley system'][i]:['定滑轮','动滑轮','滑轮组'][i]));
+    $('.configuration').setAttribute('aria-label',en?'Choose a pulley setup':'选择滑轮配置');
+    stage.setAttribute('aria-label',en?'Pulley lab: drag the rope handle or load. Use arrow keys to change height, Home for bottom, End for top.':'滑轮实验台：拖动绳柄或重物，上下方向键调整高度，Home 到底部，End 到顶部');
+    svg.setAttribute('aria-label',en?'A pulley rig with rope handle and load':'安装在实验台上的滑轮、绳柄和重物');
+    put('.stage-note .pill',m.direction===1?'向下拉 · 重物上升':'向上拉 · 重物上升',m.direction===1?'Pull down · load rises':'Pull up · load rises');
+    $('#handle-hint').textContent=en?'↕ Rope handle':'↕ 拉绳柄';$('#handle-hint').setAttribute('aria-label',en?'Rope handle: drag or use arrow keys to change height':'绳柄：拖动或用方向键调整高度');$('#load-hint').textContent=en?'↕ Moving load':'↕ 移动重物';$('#load-hint').setAttribute('aria-label',en?'Load: drag or use arrow keys to change height':'重物：拖动或用方向键调整高度');
+    labelText('label[for=pull]','拉绳距离','Rope pulled');labelText('label[for=weight]','重物重量','Load weight');$('.range-labels span:first-child').textContent=en?'Start':'起点';
+    $('#lift').textContent=en?'Pull 20 cm more':'再拉 20 cm';$('#reset').textContent=en?'Reset':'重置';$('#play').textContent=auto?(en?'Pause':'暂停'):(en?'Auto explore':'自动探索');
+    put('.formula-card > span','省力与距离','Force and distance');labelText('.formula-card strong','拉力 = 重量 ÷ ','Effort = load ÷ ');labelText('.formula-card p','拉绳距离 = 上升高度 × ','Rope pulled = lift × ');put('.formula-card small','理想滑轮 · 不计摩擦和轮重','Ideal pulleys · no friction or pulley weight');
+    document.querySelectorAll('.metric > span').forEach((el,i)=>el.textContent=en?['Effort needed','Load lifted'][i]:['需要的拉力','重物上升'][i]);
+    document.querySelectorAll('.legend span').forEach((el,i)=>el.lastChild.textContent=en?['Fixed frame','Rope','Coral: moving load'][i]:['固定支架','绳子','珊瑚色：升降重物'][i]);
+    put('#saving',m.n===1?'和直接提起一样用力':'只需一半拉力 · 两段绳承重',m.n===1?'Same effort as lifting directly':'Half the effort · two rope sections support the load');
+    put('#finding-title',words[mode][0],words[mode][2]);put('#finding',words[mode][1],words[mode][3]);put('.graph-heading h2','拉多少，升多高？','How far pulled, how high lifted?');$('#graph').setAttribute('aria-label',en?'Relationship between rope pulled and load lifted':'拉绳距离与重物上升高度的关系图');$('.graph-key').innerHTML=en?'<span>● Fixed</span><span>● Movable / this system</span>':'<span>● 定滑轮</span><span>● 动滑轮 / 本滑轮组</span>';
+    const caption=document.querySelector('.stage-caption > span:first-child');caption.textContent=en?'Drag handle or load · ↑↓ / Home / End':'拖动绳柄或重物 · ↑↓ / Home / End';
     $('#rope').setAttribute('d',m.rope);$('#rope-highlight').setAttribute('d',m.rope);
     $('#load').setAttribute('transform',`translate(${m.loadX} ${m.loadY})`);
     $('#handle').setAttribute('transform',`translate(${m.handleX} ${m.handleY})`);
@@ -88,7 +104,7 @@
     $('#segments').textContent=$('#segments-copy').textContent=m.n;
     $('#saving').textContent=m.n===1?'和直接提起一样用力':'只需一半拉力 · 两段绳承重';
     $('#direction').textContent=(m.direction===1?'向下拉':'向上拉')+' · 重物上升';$('#finding-title').textContent=c.title;$('#finding').textContent=c.text;
-    $('[data-readout]').textContent=`拉力 ${m.force} N · 拉绳 ${number(m.s)} cm · 上升 ${number(m.h)} cm`;
+    $('[data-readout]').textContent=en?`Effort ${m.force} N · Pull ${number(m.s)} cm · Lift ${number(m.h)} cm`:`拉力 ${m.force} N · 拉绳 ${number(m.s)} cm · 上升 ${number(m.h)} cm`;
     for(const hint of stage.querySelectorAll('.move-hint')){hint.setAttribute('aria-valuenow',number(m.h));hint.setAttribute('aria-valuetext',`重物上升 ${number(m.h)} 厘米，拉绳 ${number(m.s)} 厘米`);}
     $('#lift').disabled=target>=30;graph(m);positionHints();
   }
@@ -109,7 +125,7 @@
   $('#weight').oninput=()=>{weight=+$('#weight').value;draw();};
   $('#lift').onclick=()=>steer(target+20/configurations[mode].n);
   $('#play').onclick=()=>{auto=!auto;clock=Math.acos(1-current/15)/.65;target=current;playState();run();};
-  $('#reset').onclick=()=>{weight=20;current=target=0;select('fixed');$('#announcement').textContent='已重置：定滑轮，20 牛顿，起点。';};
+  $('#reset').onclick=()=>{weight=20;current=target=0;select('fixed');$('#announcement').textContent=english()?'Reset: fixed pulley, 20 newtons, at the start.':'已重置：定滑轮，20 牛顿，起点。';};
   stage.addEventListener('keydown',e=>{let next;const step=e.shiftKey?5:1;if(['ArrowUp','ArrowRight'].includes(e.key))next=target+step;if(['ArrowDown','ArrowLeft'].includes(e.key))next=target-step;if(e.key==='Home')next=0;if(e.key==='End')next=30;if(next!==undefined){e.preventDefault();steer(next);}});
   stage.addEventListener('pointerdown',e=>{
     if(e.button!==0)return;const part=e.target.closest('[data-drag]')?.dataset.drag||(e.target.closest('#handle-hint')?'handle':e.target.closest('#load-hint')?'load':null);if(!part)return;
@@ -122,6 +138,7 @@
   new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;if(!visible)suspend();else run();}).observe(stage);
   document.addEventListener('visibilitychange',()=>{if(document.hidden)suspend();else run();});
   reduced.addEventListener('change',()=>{suspend();auto=false;current=target;playState();draw();});
+  document.addEventListener('primary-language-change',draw);
   window.pulley={model,setHeight:steer,select,getState:()=>({...model(mode,current,weight),current,target,auto})};
   build();playState();draw();
 })();
