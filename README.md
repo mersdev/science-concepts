@@ -7,10 +7,13 @@ Primary lessons are in `primary/`; Form 4 & 5 experiments are in `secondary/`.
 
 [Build a More Stable Tower](primary/tower/index.html) adds a colorful Year 6 stability lesson with adjustable height, base size and shape, sideways tests, and a live tipping graph. Its [README](primary/tower/README.md) records the curriculum mapping and model assumptions.
 
+[Why Triangles Make Structures Stronger](primary/bridges/index.html) compares a rectangular frame, triangular truss and arch under adjustable loads and spans. Its [README](primary/bridges/README.md) explains the elastic teaching model, curriculum mapping and assumptions.
+
 Start at the [experiment index](secondary/index.html) to browse all six apparatus previews and open an experiment. The responsive catalogue works offline and supports keyboard navigation. Its static SVG previews reuse the experiments’ actual geometry without running simulations in the background. After changing apparatus artwork or the catalogue entries, run `node build-index.mjs` to refresh the root and series catalogues and previews using Node.js and Chrome/Chromium; no toolkit installation is required.
 
 | Experiment | Page | Formula |
 | --- | --- | --- |
+| Why Triangles Make Structures Stronger (Primary Year 6) | [primary/bridges/index.html](primary/bridges/index.html) | δ = F/k |
 | Build a More Stable Tower (Primary Year 6) | [primary/tower/index.html](primary/tower/index.html) | aₜᵢₚ = gb/h꜀ |
 | Boyle’s law | [secondary/boyle/index.html](secondary/boyle/index.html) | PV = constant |
 | Convex lens | [secondary/convex/index.html](secondary/convex/index.html) | 1/f = 1/u + 1/v |

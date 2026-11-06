@@ -1,0 +1,25 @@
+# Why Triangles Make Structures Stronger
+
+A colorful Year 6 lesson comparing a rectangular frame, triangular truss and arch-shaped bridge supports. Open `index.html` directly from disk. No installation or network is needed.
+
+Concept: a load on a bridge changes its shape; triangulation resists changes of shape through axial forces, while an arch carries compression into firm abutments. This is a comparison of elastic deformation, not breaking loads.
+
+Figure parts plan: four rubber feet; bench plate and inset top; two abutment bases, blocks and caps; front and back support assemblies; four end posts, four chord beams and four diagonal braces in truss mode, or twenty arch segments; nine deck boards; eight joint plates with fasteners; a loading shoe and up to ten colored load units; a bed-mounted scale with rooted ticks. At least 40 purposeful parts in each configuration. Back structure is painted before the deck and front structure. Solid members have shaded sides and end faces. The orange load shoe is the adjustable load point.
+
+Curriculum mapping supplied by the user (direct concept): SK Science Y6 Unit 12: Stability and Strength, printed pp. 199–205; SJKC Science Y6 Ch. 12, printed pp. 188–200. The page ranges are not independently verified and textbook pages are not reproduced.
+
+## Controls and model
+
+Choose Rectangle, Triangles or Arch. Test load selects 0–100 N; adjusting it applies the load. Apply load / Remove load ramps between the chosen load and zero. Changing shape preserves the applied load and span for a fair comparison. Span is 80–160 cm. Drag the orange shoe vertically or the right support horizontally. Arrow keys step by 1 N or 1 cm, Shift by 10; Home/End choose the limits. Auto explore smoothly cycles through loads up to the selected maximum; Pause stops the tour. Reset restores an unloaded rectangular bridge, 120 cm span, and 60 N test load. In reduced motion Auto explore performs one static load/unload comparison. Animations pause when hidden or offscreen.
+
+Fullscreen retains the same Apply/Remove button, load and span movement labels, bridge and live readout. Escape exits; unsupported browsers use the shared fallback. The same button returns to its controls and focus returns to Full Screen.
+
+The model is δ = F/k: F in N, k in N/mm, δ in mm. At reference span L₀ = 120 cm, effective model stiffnesses are 20 (frame), 100 (truss) and 80 (arch) N/mm. All use k(L) = k₀(L₀/L)³ as an illustrative span sensitivity. These chosen values make the shape comparison clear; they are not measurements, universal ratios, or a calculation of real bridge strength. The truss includes extra members; this is not an equal-material-quantity optimization. The frame has finite joint/bending stiffness; it is not a zero-stiffness ideal pin mechanism. The arch assumes firm abutments and has an extra illustrative stiffness value, not a universal ranking below trusses. Different joints, dimensions, materials, bracing and loads can reverse real rankings. No breaking, yield or buckling prediction is made.
+
+A centered vertical load gives end reactions F/2. For the arch, the ideal symmetric three-hinge force illustration uses horizontal thrust H = FL/(4r), with rise r = 24 cm and L in cm. Self-weight is excluded. The drawn arch centerline is parabolic from z=22 cm at the ends to z=46 cm at the crown; firm supports also carry the deck ends. Reported thrust is an ideal force illustration rather than a stress solution for every drawn segment.
+
+The geometry uses the same current F, shape and span as the readouts and graph. The small elastic vertical displacement is exaggerated ×6: z(x) is shifted by −6(δ/10)[1−(2x/L)²], converting mm to cm. The parabola is a visual interpolation, not an exact beam or truss mode shape. The model stays in the small elastic teaching regime; the largest deflection is 11.85 mm at 100 N, 160 cm, frame. At zero load all deflections and reactions are zero. No extra force is introduced by visual exaggeration. The load stack grows as force is applied; its motion represents adding weights, not a simulation of falling masses. Graphs show all three linear responses at the current span and reset with the model.
+
+Background: [PBS Shapes Lab educator guide](https://www.pbs.org/wgbh/buildingbig/educator/shape.html), [TeachEngineering: Triangles & Trusses](https://www.teachengineering.org/lessons/cub_trusses_lesson01), and [PBS Bridge Basics](https://www.pbs.org/wgbh/buildingbig/bridge/basics.html). These support the qualitative geometry principles, not the chosen stiffness numbers.
+
+Run `node check.mjs` at the repository root. `BRIDGES_ONLY=1 node check.mjs` runs only the bridge checks. Checks audit actual projected faces at all shape/span/load extremes, model equations, zero load, interactions, auto/pause, hidden/offscreen pause, reduced motion, native/fallback fullscreen, focus and button restoration, and 1366×768, 1440×900, 390 px and 320 px layouts. Screenshots and line-audit images go to ignored `artifacts/`. Geometry uses only filled convex prisms and flush joint plates; there are no cables, pipes or round-body kit dependencies.

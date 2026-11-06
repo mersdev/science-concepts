@@ -1,0 +1,8 @@
+.bridge-controls{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+#stage{touch-action:none;cursor:grab;aspect-ratio:1.9}#stage:active{cursor:grabbing}
+#apparatus polygon{stroke:#42645e;stroke-width:.6;stroke-linejoin:round}
+.formula-card strong{font-size:23px!important}.formula-card p{font-size:19px}.graph-note{font-size:12px;color:var(--muted);margin:8px 0 0}.screen-preview p{font-size:14px;line-height:1.45;margin:8px 0 0}.graph-keys{display:flex;gap:16px;font-size:12px;margin-top:8px}.rectangle{color:#b66b54}.triangle{color:#397f73}.arch{color:#6f65a0}
+.fullscreen-actions{display:none}.stage-wrap:is(:fullscreen,.is-fullscreen) .fullscreen-actions{display:flex;justify-content:center;padding-top:8px}.fullscreen-actions #test{background:var(--teal);color:white;border-color:var(--teal)}
+@media(min-width:1000px){body:not(.model-fullscreen) #stage{height:300px}body:not(.model-fullscreen) .formula-card{display:block}body:not(.model-fullscreen) .formula-card strong{display:block;margin:8px 0}body:not(.model-fullscreen) #graph{height:175px}body:not(.model-fullscreen) .controls{padding:14px 20px}body:not(.model-fullscreen) input[type=range]{margin:12px 0 8px}}
+@media(max-width:420px){.bridge-controls{grid-template-columns:1fr;gap:16px}.control-title{font-size:13px}.control-title strong{font-size:24px}.stage-caption{font-size:10px;gap:6px}[data-readout]{white-space:normal}.selector{gap:4px}.selector button{padding:9px 4px;font-size:11px}.graph-keys{gap:12px}}
+#graph text{font-size:16px}
