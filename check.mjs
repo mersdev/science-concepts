@@ -4,7 +4,6 @@ import { existsSync, mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import './primary/pulley/audit.mjs';
 import { checkTower } from './primary/tower/check.mjs';
 
 // A dependency-free Chrome DevTools check; no application build is needed.
@@ -100,10 +99,15 @@ try {
   };
   await send('Runtime.enable'); await send('Page.enable');
   if (!process.env.TOWER_ONLY) {
+  await send('Page.navigate',{url:pathToFileURL(resolve(root,'index.html')).href});await wait(250);
+  assert.deepEqual(await evaluate(`[...document.querySelectorAll('.experiment-card')].map(a=>a.getAttribute('href'))`),['primary/index.html','secondary/index.html']);
+  assert(await evaluate('document.scripts.length===0&&[...document.images].every(img=>img.complete&&img.naturalWidth>0)'));
+  for(const [width,height] of [[1366,768],[1440,900],[390,844],[320,740]]){await send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false});await wait(80);assert(await evaluate('document.documentElement.scrollWidth<=innerWidth'));if(width>900)assert(await evaluate('document.documentElement.scrollHeight<=innerHeight+1'));await screenshot('root-index-'+width);}
+  for(const series of ['primary','secondary']){await evaluate(`document.querySelector('a[href="${series}/index.html"]').focus()`);await send('Input.dispatchKeyEvent',{type:'keyDown',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});await send('Input.dispatchKeyEvent',{type:'keyUp',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});await wait(200);assert(await evaluate(`location.pathname.endsWith('/${series}/index.html')`));await evaluate(`document.querySelector('footer a').click()`);await wait(200);assert.equal(await evaluate('location.href'),pathToFileURL(resolve(root,'index.html')).href);}
   await send('Page.navigate', { url: pathToFileURL(resolve(root, 'primary', 'index.html')).href });
   await wait(250);
-  assert.deepEqual(await evaluate(`[...document.querySelectorAll('.experiment-card')].map(a=>a.getAttribute('href'))`), ['pulley/index.html', 'tower/index.html']);
-  assert(await evaluate(`document.documentElement.lang==='en'&&document.querySelectorAll('#language,[data-en],[data-zh]').length===0&&document.querySelector('.apparatus svg[role="img"]')`), 'primary catalogue is English-only and uses the shared card design');
+  assert.deepEqual(await evaluate(`[...document.querySelectorAll('.experiment-card')].map(a=>a.getAttribute('href'))`), ['tower/index.html']);
+  assert(await evaluate(`document.documentElement.lang==='en'&&document.querySelectorAll('#language,[data-en],[data-zh]').length===0&&document.querySelector('.apparatus img[src="../assets/catalog/tower.svg"]')&&[...document.images].every(img=>img.complete&&img.naturalWidth>0)`), 'primary catalogue is English-only and uses the shared card design');
   assert.equal(await evaluate('document.scripts.length'), 0, 'primary catalogue needs no runtime scripts');
   for (const [width,height] of [[1366,768],[1440,900],[390,844],[320,740]]) {
     await send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false});
@@ -554,71 +558,6 @@ try {
   console.log('PASS latent heat: constant-temperature melting, energy conservation, controls, cutoff, drag, keyboard, native/fallback fullscreen and responsive layouts');
 
   await send('Emulation.setDeviceMetricsOverride',{width:1366,height:768,deviceScaleFactor:1,mobile:false});
-  await send('Page.navigate',{url:pathToFileURL(resolve(root,'primary/pulley/index.html')).href});await wait(300);
-  activeExperiment='pulley';
-  assert(await evaluate('Boolean(window.pulley)'));
-  assert(await evaluate('pulley.getState().mode==="fixed"&&pulley.getState().w===20&&pulley.getState().h===0'));
-  const initialLanguage=await evaluate('document.documentElement.lang');
-  await click('#language');
-  assert(await evaluate(`document.documentElement.lang!==${JSON.stringify(initialLanguage)}&&document.querySelector('#fullscreen').textContent==='Full Screen'&&document.querySelector('#play').textContent==='Auto explore'&&document.querySelector('#distance').textContent.startsWith('Rope pulled')&&document.querySelector('#direction').textContent.includes('load rises')&&document.querySelector('#finding').textContent.includes('Pull down')&&document.querySelector('.home-link').textContent.includes('Home')&&document.querySelector('.move-hint').getAttribute('aria-valuetext').includes('Load lifted')`),'language toggle translates live output, instructions and accessibility text');
-  await click('#language');
-  assert.equal(await evaluate('document.documentElement.lang'),initialLanguage,'language toggle returns to the initial language');
-  for(const mode of ['fixed','movable','combined']){
-    await click('[data-mode="'+mode+'"]');
-    for(const h of [0,10,30]){
-      await evaluate('pulley.setHeight('+h+')');await settle();
-      assert(await evaluate(`{const s=pulley.getState();s.n===${mode==='fixed'?1:2}&&s.s===s.n*s.h&&s.force===s.w/s.n&&Math.abs(s.ropeLength-pulley.model('${mode}',0,s.w).ropeLength)<1e-8}`));
-      assert(await evaluate('document.querySelector("#rope").getAttribute("d")===pulley.getState().rope'));
-      assert(await evaluate('document.querySelector("[data-readout]").textContent.includes(pulley.getState().force+" N")'));
-    }
-    await screenshot('pulley-'+mode+'-top');
-  }
-  await click('#reset');await click('#lift');await settle();assert.equal(await evaluate('pulley.getState().h'),20);
-  await click('[data-mode="combined"]');assert.equal(await evaluate('pulley.getState().h'),20);
-  await click('#lift');await settle();assert.equal(await evaluate('pulley.getState().h'),30);
-  await input('#weight',40);assert.equal(await evaluate('pulley.getState().force'),20);
-  await input('#pull',20);assert.equal(await evaluate('pulley.getState().h'),10);
-  await key('End');assert.equal(await evaluate('pulley.getState().h'),30);
-  await key('Home');await key('ArrowUp');assert.equal(await evaluate('pulley.getState().h'),1);
-  const pulleyDrag=async(selector,dy)=>{const p=await evaluate(`{const r=document.querySelector('${selector}').getBoundingClientRect();({x:r.x+r.width/2,y:r.y+r.height/2})}`);await send('Input.dispatchMouseEvent',{type:'mousePressed',x:p.x,y:p.y,button:'left',clickCount:1});await send('Input.dispatchMouseEvent',{type:'mouseMoved',x:p.x,y:p.y+dy,button:'left',buttons:1});await send('Input.dispatchMouseEvent',{type:'mouseReleased',x:p.x,y:p.y+dy,button:'left',clickCount:1});await settle();};
-  await pulleyDrag('#handle',25);assert(await evaluate('pulley.getState().h>1'));
-  await pulleyDrag('#load',-20);assert(await evaluate('pulley.getState().h>5'));
-  await click('[data-mode="movable"]');await key('Home');await pulleyDrag('#handle',-25);assert(await evaluate('pulley.getState().h>0'),'movable pulley raises load when handle is pulled upward');
-  await click('#reset');await click('#play');await wait(450);assert(await evaluate('pulley.getState().h>0&&pulley.getState().auto'));
-  await click('#play');await settle();const pulleyPaused=await evaluate('pulley.getState().h');await wait(120);assert.equal(await evaluate('pulley.getState().h'),pulleyPaused);
-  await click('#reset');await click('#play');
-  await evaluate(`Object.defineProperty(document,'hidden',{configurable:true,value:true});document.dispatchEvent(new Event('visibilitychange'));`);
-  const pulleyHidden=await evaluate('pulley.getState().h');await wait(150);assert.equal(await evaluate('pulley.getState().h'),pulleyHidden);
-  await evaluate(`delete document.hidden;document.dispatchEvent(new Event('visibilitychange'));`);await wait(150);assert(await evaluate('pulley.getState().h>'+pulleyHidden));
-  await evaluate(`document.querySelector('#stage').style.transform='translateY(3000px)'`);await wait(150);
-  const pulleyOffscreen=await evaluate('pulley.getState().h');await wait(150);assert.equal(await evaluate('pulley.getState().h'),pulleyOffscreen);
-  await evaluate(`document.querySelector('#stage').style.transform=''`);await wait(150);await click('#reset');
-  for(const [width,height] of [[1366,768],[1440,900],[390,844],[320,740]]){
-    await send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false});await wait(100);
-    assert(await evaluate('document.documentElement.scrollWidth<=innerWidth'),'pulley fits width '+width);
-    if(width>=1000)assert(await evaluate('document.documentElement.scrollHeight<=innerHeight+1'),'pulley desktop fits height '+width);
-    assert(await evaluate('[...document.querySelectorAll(".move-hint")].every(e=>getComputedStyle(e).display==="none")'));
-    await screenshot('pulley-'+width);
-  }
-  await click('#fullscreen');assert(await evaluate('!!document.fullscreenElement'));
-  assert(await evaluate('[...document.querySelectorAll(".move-hint")].every(e=>getComputedStyle(e).display!=="none")'));
-  await key('ArrowUp','#handle-hint');assert.equal(await evaluate('pulley.getState().h'),1);
-  await key('End','#load-hint');assert.equal(await evaluate('pulley.getState().h'),30);
-  await key('Home','#load-hint');await pulleyDrag('#handle-hint',25);assert(await evaluate('pulley.getState().h>0'));
-  assert(await evaluate('[...document.querySelectorAll(".move-hint")].every(e=>{const r=e.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight})'));
-  await screenshot('pulley-phone-fullscreen');await click('#fullscreen');
-  assert(await evaluate('document.activeElement.id==="fullscreen"'));
-  await evaluate('document.querySelector(".stage-wrap").requestFullscreen=()=>Promise.reject(Error("test fallback"))');
-  await click('#fullscreen');assert(await evaluate('document.querySelector(".stage-wrap").classList.contains("is-fullscreen")'));
-  await key('ArrowUp','#load-hint');await key('Escape','#load-hint');
-  assert(await evaluate('!document.body.classList.contains("model-fullscreen")&&document.activeElement.id==="fullscreen"'));
-  await send('Emulation.setDeviceMetricsOverride',{width:1366,height:768,deviceScaleFactor:1,mobile:false});
-  await click('#fullscreen');await screenshot('pulley-desktop-fullscreen');await click('#fullscreen');
-  await send('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]});
-  await click('#reset');await click('#lift');assert.equal(await evaluate('pulley.getState().h'),20);assert(await evaluate('document.querySelector("#play").disabled'));
-  await send('Emulation.setEmulatedMedia',{features:[]});await click('#reset');
-  assert(await evaluate('pulley.getState().h===0&&pulley.getState().w===20&&pulley.getState().mode==="fixed"&&!pulley.getState().auto'));
-  assert.deepEqual(errors,[]);console.log('PASS pulley: rope conservation, force/distance, configurations, controls, drag/keys, pause, reduced/hidden/offscreen motion, fullscreen and responsive layouts');
 
   }
   activeExperiment = 'tower';

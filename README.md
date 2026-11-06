@@ -1,14 +1,13 @@
 # Science concepts
 
-Small, interactive experiments for primary science and Form 4 & 5 Physics. Open `primary/index.html` or `secondary/index.html` directly in your browser; no build, installation or network connection is required. The secondary catalogue currently contains six experiments.
+Small, interactive experiments for primary science and Form 4 & 5 Physics. Open [index.html](index.html) and choose Primary or Secondary; no build, installation or network connection is required. The secondary catalogue currently contains six experiments.
 
-The existing experiments are in `secondary/`.
+Primary lessons are in `primary/`; Form 4 & 5 experiments are in `secondary/`.
 
-[Primary Science](primary/index.html) includes [Pulley Lab](primary/pulley/index.html), a colorful Grade 3 lesson comparing fixed, movable and combined pulleys, pull direction, effort and rope travel. It is the only bilingual page and supports Simplified Chinese and English. Open it directly from disk; the ideal model and research sources are documented in its [README](primary/pulley/README.md).
 
 [Build a More Stable Tower](primary/tower/index.html) adds a colorful Year 6 stability lesson with adjustable height, base size and shape, sideways tests, and a live tipping graph. Its [README](primary/tower/README.md) records the curriculum mapping and model assumptions.
 
-Start at the [experiment index](secondary/index.html) to browse all six apparatus previews and open an experiment. The responsive catalogue works offline and supports keyboard navigation. Its static SVG previews reuse the experiments’ actual geometry without running simulations in the background. After changing apparatus artwork or the catalogue entries, run `node build-index.mjs` to refresh the page and previews using Node.js and Chrome/Chromium; no toolkit installation is required.
+Start at the [experiment index](secondary/index.html) to browse all six apparatus previews and open an experiment. The responsive catalogue works offline and supports keyboard navigation. Its static SVG previews reuse the experiments’ actual geometry without running simulations in the background. After changing apparatus artwork or the catalogue entries, run `node build-index.mjs` to refresh the root and series catalogues and previews using Node.js and Chrome/Chromium; no toolkit installation is required.
 
 | Experiment | Page | Formula |
 | --- | --- | --- |
@@ -19,7 +18,6 @@ Start at the [experiment index](secondary/index.html) to browse all six apparatu
 | Latent heat of fusion | [secondary/latent-heat/index.html](secondary/latent-heat/index.html) | Q = mLf |
 | Liquid pressure | [secondary/liquid-pressure/index.html](secondary/liquid-pressure/index.html) | P = ρgh |
 | Free fall | [secondary/free-fall/index.html](secondary/free-fall/index.html) | h = ½gt²; g = 2h/t² |
-| 滑轮实验室 · Pulley Lab (Primary 3) | [primary/pulley/index.html](primary/pulley/index.html) | F = W/n; s = nh |
 
 Drag a model, adjust its sliders, or focus the model and use the arrow keys. Home and End select the limits. Auto explore animates the experiment; Reset restores its starting state. Reduced-motion preferences are respected.
 
@@ -37,7 +35,7 @@ The free-fall tower releases a steel ball from an electromagnet and stops its ti
 
 The desktop overview fits at 100% browser zoom on a 1366×768 laptop display, with readable labels, compact cards and tightly framed models. The convex distance controls sit side by side on desktop; phone controls remain stacked.
 
-**Full Screen** opens only the model and live output. Dragging and keyboard controls remain available. Use **Exit Full Screen** or Escape to return. Browsers without the Fullscreen API use a viewport-filling fallback.
+**Full Screen** opens the model and live output. The tower keeps its Test tower action available inside fullscreen, using the selected disturbance; the same button returns to the normal controls on exit. Dragging and keyboard controls remain available. Use **Exit Full Screen** or Escape to return. Browsers without the Fullscreen API use a viewport-filling fallback.
 
 Movement labels appear only in fullscreen: “Drag piston” for Boyle, “Slide contact” for Ohm, and “Drag object” / “Drag screen” for the convex lens. Drag a label or focus it and use the arrow keys to move its component. The convex-lens fullscreen also includes a live white-screen close-up.
 

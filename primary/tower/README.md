@@ -4,7 +4,7 @@ An English, offline Year 6 lesson: explain how base area and height affect stabi
 
 Curriculum mapping supplied in the brief (direct concept): SK Science Y6 Unit 12, Stability and Strength, printed pp. 194–198; SJKC Science Y6 Ch. 12, printed pp. 189–191. These page references are user-provided; textbook pages are not reproduced.
 
-Adjust height (20–80 cm), base size (10–50 cm), shape, and sideways disturbance (0–10 m/s²). Drag the roof vertically or base horizontally; fullscreen has independently focusable movement labels. Arrow keys change by 1 cm, Shift changes by 5 cm, Home/End choose limits. Test tower applies the selected disturbance; Auto explore tests different heights with the same base. Pause stops the tour; Reset restores 60 cm, 24 cm square, 4 m/s² and the initial graph. Reduced motion uses immediate test results and a single comparison per Auto explore press. Hidden/offscreen motion pauses.
+Adjust height (20–80 cm), base size (10–50 cm), shape, and sideways disturbance (0–10 m/s²). Drag the roof vertically or base horizontally; fullscreen has independently focusable movement labels and a Test tower button showing the selected disturbance. The same test button moves into fullscreen and returns to its original controls on exit. Arrow keys change by 1 cm, Shift changes by 5 cm, Home/End choose limits. Test tower applies the selected disturbance; Auto explore tests different heights with the same base. Pause stops the tour; Reset restores 60 cm, 24 cm square, 4 m/s² and the initial graph. Reduced motion uses immediate test results and a single comparison per Auto explore press. Hidden/offscreen motion pauses.
 
 ## Model and limits
 

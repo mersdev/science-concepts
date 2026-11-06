@@ -3,7 +3,7 @@ import { spawn } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-// Reuse the actual apparatus geometry; previews never run six simulations.
+// Capture actual apparatus geometry once; catalogues never run simulations.
 const root = new URL('.', import.meta.url);
 const read = path => readFileSync(new URL(path, root), 'utf8');
 // Previews need the SVG renderer and palette, not the experiment page layouts.
@@ -17,6 +17,7 @@ const experiments = [
   ['liquid-pressure', 'Liquid pressure', 'Fluids', 'Lower a probe and discover how pressure changes with depth.', 'P = ρgh'],
   ['free-fall', 'Free fall', 'Mechanics', 'Release a ball and measure its uniformly accelerated fall.', 'h = ½gt²'],
 ];
+const primaryExperiments = [['tower', 'Build a More Stable Tower', 'Stability and strength', 'Year 6: change height and base, then test for tipping.', 'Wider + lower = steadier']];
 mkdirSync(new URL('assets/catalog/', root), { recursive: true });
 // Some experiments construct their geometry at startup. Serialize the initialized
 // SVG with the same dependency-free Chrome protocol used by check.mjs.
@@ -52,10 +53,10 @@ try {
     pending.set(id, {done, fail, timer}); socket.send(JSON.stringify({id, method, params}));
   });
   await send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] });
-  for (const [folder] of experiments) {
-    await send('Page.navigate', { url: new URL(`secondary/${folder}/index.html`, root).href });
+  for (const [series,lessons] of [['secondary',experiments],['primary',primaryExperiments]]) for (const [folder] of lessons) {
+    await send('Page.navigate', { url: new URL(`${series}/${folder}/index.html`, root).href });
     const result = await send('Runtime.evaluate', {
-      expression: `new Promise((done,fail)=>{const start=Date.now();const check=()=>{const svg=document.querySelector('#stage svg');if(document.readyState==='complete'&&svg?.querySelectorAll('path').length>20)done(new XMLSerializer().serializeToString(svg));else if(Date.now()-start>8000)fail(Error('Apparatus did not initialize'));else setTimeout(check,30)};check()})`,
+      expression: `new Promise((done,fail)=>{const start=Date.now();const check=()=>{const svg=document.querySelector('#stage svg');if(document.readyState==='complete'&&svg?.querySelectorAll('path,polygon').length>20)done(new XMLSerializer().serializeToString(svg));else if(Date.now()-start>8000)fail(Error('Apparatus did not initialize'));else setTimeout(check,30)};check()})`,
       awaitPromise: true, returnByValue: true,
     });
     if (result.exceptionDetails || !result.result.value) throw Error(`${folder}: preview capture failed`);
@@ -66,13 +67,13 @@ try {
   await new Promise(done => chrome.exitCode === null ? chrome.once('exit', done) : done());
   rmSync(profile, { recursive: true, force: true });
 }
-const cards = experiments.map(([folder, title, topic, description, formula], index) => {
+function cardsFor(series,lessons){return lessons.map(([folder, title, topic, description, formula], index) => {
   let svg = previews.get(folder);
   const viewbox = svg.match(/data-overview-viewbox="([^"]+)"/)?.[1];
   if (viewbox) svg = svg.replace(/ viewBox="[^"]+"/, ` viewBox="${viewbox}"`);
   svg = svg.replace('<svg ', '<svg id="stage" ');
   if (!svg.includes('xmlns=')) svg = svg.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" ');
-  const styles = (svgStyles + read(`secondary/${folder}/style.css`)).replaceAll('#stage svg', '#stage');
+  const styles = (svgStyles + read(`${series}/${folder}/style.css`)).replaceAll('#stage svg', '#stage');
   svg = svg.replace(/(<svg\b[^>]*>)/, `$1<style>${styles}\n:root{background:transparent}#stage{width:100%;height:100%;overflow:hidden;aspect-ratio:auto;background:transparent}*{animation:none!important}</style>`);
   writeFileSync(new URL(`assets/catalog/${folder}.svg`, root), svg);
   return `<a class="experiment-card" href="${folder}/index.html" aria-labelledby="title-${folder}">
@@ -81,7 +82,8 @@ const cards = experiments.map(([folder, title, topic, description, formula], ind
   <div class="card-copy"><h2 id="title-${folder}">${title}</h2><p>${description}</p></div>
   <div class="card-foot"><span class="equation">${formula}</span><span class="open">Open experiment <span aria-hidden="true">→</span></span></div>
 </a>`;
-}).join('\n');
+}).join('\n');}
+const cards = cardsFor('secondary',experiments);
 writeFileSync(new URL('secondary/index.html', root), `<!doctype html>
 <html lang="en">
 <head>
@@ -100,9 +102,17 @@ writeFileSync(new URL('secondary/index.html', root), `<!doctype html>
 <nav class="experiment-grid" aria-label="All experiments">
 ${cards}
 </nav>
-<footer><span>Small experiments. Observable physics.</span><span>Drag · Measure · Explore</span></footer>
+<footer><a href="../index.html">← Choose Primary or Secondary</a><span>Drag · Measure · Explore</span></footer>
 </main>
 </body>
 </html>
 `);
-console.log(`Built index and ${experiments.length} apparatus previews.`);
+
+
+const page=(prefix,eyebrow,description,count,cards,label)=>`<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Science Concepts · ${label}</title><link rel="icon" href="${prefix}assets/science-concepts-icon.png"><link rel="stylesheet" href="${prefix}shared.css"><link rel="stylesheet" href="${prefix}index.css"></head>
+<body><main class="catalog ${prefix?'':'catalog-series'}"><header class="catalog-header"><div><div class="brand-heading"><img class="site-icon" src="${prefix}assets/science-concepts-icon.png" width="56" height="56" alt=""><div><span class="eyebrow">${eyebrow}</span><h1>Science Concepts<span aria-hidden="true">.</span></h1></div></div><p>${description}</p></div><span class="catalog-count">${count}</span></header><nav class="experiment-grid" aria-label="${label}">${cards}</nav><footer>${prefix?'<a href="../index.html">← Choose Primary or Secondary</a>':'<span>Small experiments. Observable science.</span>'}<span>Drag · Measure · Explore</span></footer></main></body></html>`;
+writeFileSync(new URL('primary/index.html',root),page('../','PRIMARY SCIENCE','Choose a lesson. Build a model. Discover the science.','01 LESSON / INTERACTIVE MODEL',cardsFor('primary',primaryExperiments),'Primary science lessons'));
+const seriesCards=[['primary','Primary Science','Year 6 science','Build and test colorful models to discover everyday science.','tower','01 interactive lesson'],['secondary','Secondary Physics','Form 4 &amp; 5 physics','Explore gases, optics, electricity, heat, fluids and motion.','boyle','06 interactive experiments']].map(([folder,title,topic,description,preview,count],i)=>`<a class="experiment-card" href="${folder}/index.html" aria-labelledby="title-${folder}"><div class="card-label"><span>0${i+1} / ${topic}</span><span aria-hidden="true">↗</span></div><div class="apparatus"><img src="assets/catalog/${preview}.svg" alt="" width="680" height="300"></div><div class="card-copy"><h2 id="title-${folder}">${title}</h2><p>${description}</p></div><div class="card-foot"><span class="equation">${count}</span><span class="open">Explore ${folder} →</span></div></a>`).join('\n');
+writeFileSync(new URL('index.html',root),page('','INTERACTIVE SCIENCE','Choose Primary or Secondary to start exploring.','02 SERIES / HANDS-ON LEARNING',seriesCards,'Choose your series'));
+console.log('Built root, primary and secondary catalogues with 7 actual apparatus previews.');

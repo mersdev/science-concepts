@@ -6,7 +6,7 @@
 
 - Keep every page in the same Science Concepts design system. Lesson pages use `shared.css` for the page shell, cards, colors, typography, controls and responsive layout; experiment stylesheets are for apparatus and control-specific details. Do not override shared page colors or rebuild the shell per experiment.
 - Catalog pages use the shared catalog structure and `index.css`. Keep their header, card, typography, palette and mobile behavior consistent; vary the number and content of cards only.
-- Only `primary/pulley/index.html` is bilingual. It supports Simplified Chinese and English. Keep `primary/index.html` and all secondary pages in English, without language toggles or translation attributes.
+- Keep the root and series catalogues and all lesson pages in English, without language toggles or translation attributes.
 - A lesson page has a compact title and one-sentence description above its workspace. Do not add hero sections, lesson navigation, quizzes, notebooks, long explanations, promotional content or decorative sections.
 - Keep the desktop overview readable and fully visible at 100% zoom on a 1366×768 laptop. Use compact spacing, keep the full model inside its stage, and arrange related controls side by side when useful. Fullscreen may use a larger model framing. Optional `data-overview-viewbox` bounds must include every allowed mechanism pose.
 - Lesson workspace: animated model and controls on the left; formula, live outputs, relevant physical preview and relationship graph on the right, in that order. Stack on phones. Sliders sit below the model. Keep one primary action, Auto explore/Pause and Reset; controls must work with pointer and keyboard.
