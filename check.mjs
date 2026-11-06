@@ -6,6 +6,8 @@ import { join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { checkTower } from './primary/tower/check.mjs';
 import { checkBridges } from './primary/bridges/check.mjs';
+import { checkGears } from './primary/gears/check.mjs';
+import './primary/gears/audit.mjs';
 
 // A dependency-free Chrome DevTools check; no application build is needed.
 const root = fileURLToPath(new URL('.', import.meta.url));
@@ -99,7 +101,7 @@ try {
     await settle();
   };
   await send('Runtime.enable'); await send('Page.enable');
-  if (!process.env.TOWER_ONLY && !process.env.BRIDGES_ONLY) {
+  if (!process.env.TOWER_ONLY && !process.env.BRIDGES_ONLY && !process.env.GEARS_ONLY) {
   await send('Page.navigate',{url:pathToFileURL(resolve(root,'index.html')).href});await wait(250);
   assert.deepEqual(await evaluate(`[...document.querySelectorAll('.experiment-card')].map(a=>a.getAttribute('href'))`),['primary/index.html','secondary/index.html']);
   assert(await evaluate('document.scripts.length===0&&[...document.images].every(img=>img.complete&&img.naturalWidth>0)'));
@@ -107,7 +109,7 @@ try {
   for(const series of ['primary','secondary']){await evaluate(`document.querySelector('a[href="${series}/index.html"]').focus()`);await send('Input.dispatchKeyEvent',{type:'keyDown',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});await send('Input.dispatchKeyEvent',{type:'keyUp',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});await wait(200);assert(await evaluate(`location.pathname.endsWith('/${series}/index.html')`));await evaluate(`document.querySelector('footer a').click()`);await wait(200);assert.equal(await evaluate('location.href'),pathToFileURL(resolve(root,'index.html')).href);}
   await send('Page.navigate', { url: pathToFileURL(resolve(root, 'primary', 'index.html')).href });
   await wait(250);
-  assert.deepEqual(await evaluate(`[...document.querySelectorAll('.experiment-card')].map(a=>a.getAttribute('href'))`), ['tower/index.html','bridges/index.html']);
+  assert.deepEqual(await evaluate(`[...document.querySelectorAll('.experiment-card')].map(a=>a.getAttribute('href'))`), ['tower/index.html','bridges/index.html','gears/index.html']);
   assert(await evaluate(`document.documentElement.lang==='en'&&document.querySelectorAll('#language,[data-en],[data-zh]').length===0&&document.querySelector('.apparatus img[src="../assets/catalog/tower.svg"]')&&[...document.images].every(img=>img.complete&&img.naturalWidth>0)`), 'primary catalogue is English-only and uses the shared card design');
   assert.equal(await evaluate('document.scripts.length'), 0, 'primary catalogue needs no runtime scripts');
   for (const [width,height] of [[1366,768],[1440,900],[390,844],[320,740]]) {
@@ -561,12 +563,16 @@ try {
   await send('Emulation.setDeviceMetricsOverride',{width:1366,height:768,deviceScaleFactor:1,mobile:false});
 
   }
-  if (!process.env.BRIDGES_ONLY) {
+  if (!process.env.BRIDGES_ONLY && !process.env.GEARS_ONLY) {
   activeExperiment = 'tower';
   await checkTower({send,evaluate,click,key,wait,screenshot,url:pathToFileURL(resolve(root,'primary/tower/index.html')).href,assert});
   }
+  if (!process.env.GEARS_ONLY) {
   activeExperiment = 'bridges';
   await checkBridges({send,evaluate,click,key,wait,screenshot,url:pathToFileURL(resolve(root,'primary/bridges/index.html')).href,assert});
+  }
+  activeExperiment='gears';
+  await checkGears({send,evaluate,click,key,wait,screenshot,url:pathToFileURL(resolve(root,'primary/gears/index.html')).href,assert});
   assert.deepEqual(errors,[]);
 } finally {
   socket?.close();
