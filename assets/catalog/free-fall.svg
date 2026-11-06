@@ -67,8 +67,7 @@
   --anatomy-halo-opacity: .12;
   --anatomy-weight: .6px;
   --anatomy-mono: ui-monospace, monospace;
-}:root{--teal:#267d9f;--coral:#e68c4e;--stage:#f1f7fb;--graph:#298eae}
-#stage{touch-action:none;cursor:ns-resize;aspect-ratio:1.77}
+}#stage{touch-action:none;cursor:ns-resize;aspect-ratio:1.77}
 #stage text{fill:#486777;font-family:inherit;stroke:none}
 .part path,.part ellipse{stroke:color-mix(in srgb,var(--part),#314e64 30%);stroke-width:.6;stroke-linejoin:round}.part-side{fill:color-mix(in srgb,var(--part),#314e64 25%)}.part-front{fill:var(--part)}.part-top{fill:color-mix(in srgb,var(--part),white 28%)}
 #stage .apparatus-label{font-size:9px;letter-spacing:.7px}
@@ -76,8 +75,8 @@
 #stage .timer-label{font-size:5px;letter-spacing:.6px}
 #magnet,#ball{cursor:grab}
 .control-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 24px}.timeline{grid-column:1/-1}
-.control-note,.graph-note{font-size:12px;line-height:1.5;color:var(--muted);margin:10px 0 0}.graph-note{margin:0}.graph-key{font:italic 16px Georgia,serif;color:#488ca1}
-.metric:first-child{background:#e0f1f8;border-color:#c8e3ed}.metric:nth-child(2){background:#f5e8f2;border-color:#ead4e5}.metric:nth-child(2) strong{color:#a25a91}.speed-metric{background:#fdf0da;border-color:#f3dfba}.speed-metric strong{color:#b07c31}.gravity-metric{background:#e5f3eb;border-color:#cde5d5}.gravity-metric strong{color:#418b71}
+.control-note,.graph-note{font-size:12px;line-height:1.5;color:var(--muted);margin:10px 0 0}.graph-note{margin:0}.graph-key{font:italic 16px Georgia,serif;color:var(--graph)}
+
 .formula-card small{line-height:1.5}
 @media(min-width:1000px){body:not(.model-fullscreen) #stage{height:clamp(270px,calc(100dvh - 500px),390px)}body:not(.model-fullscreen) .controls{padding:12px 20px}body:not(.model-fullscreen) .control-grid{gap:10px 24px}body:not(.model-fullscreen) .metric{padding:10px 16px}body:not(.model-fullscreen) .metric strong{font-size:28px}body:not(.model-fullscreen) #graph{height:clamp(165px,22dvh,210px)}body:not(.model-fullscreen) .formula-card{gap:7px 16px}body:not(.model-fullscreen) .formula-card small{max-width:235px}body:not(.model-fullscreen) .control-title output{font-size:24px}}
 @media(max-width:760px){#stage{aspect-ratio:1}.control-grid{grid-template-columns:1fr;gap:20px}.timeline{grid-column:auto}.stage-note .pill.warm{display:none}.stage-caption{flex-wrap:wrap}.stage-caption [data-readout]{white-space:normal}.metric strong{font-size:28px}.metric{padding:18px 14px}.metric p{font-size:11px}.graph-key{font-size:14px}}
