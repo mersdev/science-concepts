@@ -2,7 +2,7 @@
 
 Small, interactive experiments for Form 4 & 5 Physics. Open `secondary/index.html` directly in your browser; no build, installation or network connection is required. The catalogue currently contains six experiments.
 
-The existing experiments are in `secondary/`; `primary/` is ready for the new series.
+The existing experiments are in `secondary/`; [Primary](primary/index.html) includes a trilingual [nervous-system model](primary/nervous-system/index.html).
 
 Start at the [experiment index](secondary/index.html) to browse all six apparatus previews and open an experiment. The responsive catalogue works offline and supports keyboard navigation. Its static SVG previews reuse the experiments’ actual geometry without running simulations in the background. After changing apparatus artwork or the catalogue entries, run `node build-index.mjs` to refresh the page and previews using Node.js and Chrome/Chromium; no toolkit installation is required.
 
