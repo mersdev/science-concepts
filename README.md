@@ -13,8 +13,11 @@ Primary lessons are in `primary/`; Form 4 & 5 experiments are in `secondary/`.
 
 Start at the [experiment index](secondary/index.html) to browse all six apparatus previews and open an experiment. The responsive catalogue works offline and supports keyboard navigation. Its static SVG previews reuse the experiments’ actual geometry without running simulations in the background. After changing apparatus artwork or the catalogue entries, run `node build-index.mjs` to refresh the root and series catalogues and previews using Node.js and Chrome/Chromium; no toolkit installation is required.
 
+[Inside a Door Handle: Wheel and Axle](primary/door-handle/index.html) shows a knob turning its spindle through the same angle, with an independently lifted cover revealing a cam-and-spring latch extension. Its [README](primary/door-handle/README.md) documents the controls and teaching model.
+
 | Experiment | Page | Formula |
 | --- | --- | --- |
+| Inside a Door Handle: Wheel and Axle (Primary) | [primary/door-handle/index.html](primary/door-handle/index.html) | θknob = θaxle |
 | Balancing a Seesaw (Primary) | [primary/seesaw/index.html](primary/seesaw/index.html) | m₁d₁ = m₂d₂ |
 | How Gears Transfer Motion (Primary) | [primary/gears/index.html](primary/gears/index.html) | N₁θ₁ + N₂θ₂ = 0 |
 | Why Triangles Make Structures Stronger (Primary Year 6) | [primary/bridges/index.html](primary/bridges/index.html) | δ = F/k |

@@ -1,0 +1,10 @@
+.door-controls{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+#stage{touch-action:none;cursor:grab}#stage:active{cursor:grabbing}
+#apparatus polygon{stroke:none}#apparatus [data-part]{cursor:grab}
+.legend .wheel-key{background:#e78d73}.legend .axle-key{background:#e6b956}.legend .latch-key{background:#78add0}
+#knob-bar{background:#dc917a}#axle-bar{background:#d1ad50}
+.graph-note{font-size:12px;line-height:1.4;color:var(--muted);margin:4px 0 0}
+.screen-preview p{font-size:13px;line-height:1.5;margin:10px 0 0}.screen-preview strong{color:var(--teal);letter-spacing:0;white-space:nowrap}
+@media(min-width:1000px){body:not(.model-fullscreen) #stage{height:290px}body:not(.model-fullscreen) #graph{height:170px}body:not(.model-fullscreen) .formula-card{display:block}body:not(.model-fullscreen) .formula-card strong{font-size:25px;margin:8px 0}body:not(.model-fullscreen) .formula-card p{font-size:20px}body:not(.model-fullscreen) .controls{padding:14px 20px}}
+@media(max-width:760px){.door-controls{gap:16px}.control-title{font-size:12px}.control-title strong{font-size:24px}.range-labels{font-size:8px}.legend{flex-wrap:wrap}.stage-caption{font-size:10px}.stage-caption [data-readout]{white-space:normal}#stage{aspect-ratio:1.5}}
+@media(max-width:360px){.door-controls{grid-template-columns:1fr;gap:12px}.screen-preview>div{flex-wrap:wrap}.actions{gap:7px}.actions button{font-size:11px;padding:10px 7px}}
