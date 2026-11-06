@@ -19,6 +19,7 @@ Start at the [experiment index](secondary/index.html) to browse all six apparatu
 
 | Experiment | Page | Formula |
 | --- | --- | --- |
+| How Screws Turn Rotation into Movement (Primary) | [primary/screw/index.html](primary/screw/index.html) | x = np |
 | How a Wedge Splits Materials (Primary) | [primary/wedge/index.html](primary/wedge/index.html) | Push down → split apart |
 | Inside a Door Handle: Wheel and Axle (Primary) | [primary/door-handle/index.html](primary/door-handle/index.html) | θknob = θaxle |
 | Balancing a Seesaw (Primary) | [primary/seesaw/index.html](primary/seesaw/index.html) | m₁d₁ = m₂d₂ |
@@ -57,6 +58,8 @@ Each folder contains its HTML model, animation logic and material colors. `share
 The [primary seesaw lesson](primary/seesaw/index.html) has independently draggable coral and blue riders, mass and distance sliders, a Balance riders action, turning-effect comparison bars and a live relationship graph. Its [README](primary/seesaw/README.md) documents the fixed fulcrum, units, limits and illustrative tilt. Fullscreen keeps both rider movement labels and the live output. `SEESAW_ONLY=1 node check.mjs` runs its focused checks.
 
 The original transparent science-teacher mascot, six experiment poses and layered campaign cover are in [social-posts](social-posts/README.md).
+
+[How Screws Turn Rotation into Movement](primary/screw/index.html) follows a real helical thread into a cutaway wooden block. Turn or withdraw the screw, compare 2–4 mm pitches, and zoom the synchronized thread close-up. Its [README](primary/screw/README.md) records the ideal engagement model and controls. Run `SCREW_ONLY=1 node check.mjs` for focused checks.
 
 Run browser checks with Node.js 22+ and Chrome or Chromium:
 
