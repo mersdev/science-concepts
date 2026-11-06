@@ -74,7 +74,7 @@
       `<path d="M47 177L${x(30)} ${y(30)}" stroke="#dd8955" stroke-width="3" fill="none"/><path d="M47 177L${x(60)} ${y(30)}" stroke="#398f8a" stroke-width="3" fill="none"/><circle id="graph-point" cx="${x(m.s)}" cy="${y(m.h)}" r="6" fill="${m.n===1?'#dd8955':'#398f8a'}" stroke="#fffefa" stroke-width="2"/>`;
   }
   function draw(){
-    const m=model(mode,current,weight),c=configurations[mode],number=v=>Number(v.toFixed(1));
+    const m=model(mode,current,weight),number=v=>Number(v.toFixed(1));
     const en=english();document.title=en?'Pulley Lab · Primary Science':'滑轮实验室 · 小学科学';
     $('.card-head > span:first-child').textContent=en?'Grade 3 · Simple machines':'三年级 · 简单机械';$('.card-head .live').textContent=en?'Try it yourself':'动手试一试';
     document.querySelectorAll('[data-mode]').forEach((b,i)=>b.textContent=['①','②','③'][i]+' '+(en?['Fixed pulley','Movable pulley','Pulley system'][i]:['定滑轮','动滑轮','滑轮组'][i]));
@@ -100,15 +100,14 @@
     if($('#fixed-wheel'))$('#fixed-wheel .spokes').setAttribute('transform',`rotate(${m.fixedAngle})`);
     $('#pull').max=30*m.n;$('#pull').value=m.s;$('#pull-max').textContent=30*m.n+' cm';$('#pull-label').textContent=number(m.s)+' cm';$('#weight').value=weight;$('#weight-label').textContent=weight+' N';
     for(const [selector,percent] of [['#pull',m.h/30*100],['#weight',(weight-10)/30*100]])$(selector).style.background=`linear-gradient(to right,var(--teal) ${percent}%,var(--border) ${percent}%)`;
-    $('#force').innerHTML=m.force+' <small>N</small>';$('#height').innerHTML=number(m.h)+' <small>cm</small>';$('#distance').textContent='拉绳 '+number(m.s)+' cm';
+    $('#force').innerHTML=m.force+' <small>N</small>';$('#height').innerHTML=number(m.h)+' <small>cm</small>';$('#distance').textContent=en?`Rope pulled ${number(m.s)} cm`:`拉绳 ${number(m.s)} cm`;
     $('#segments').textContent=$('#segments-copy').textContent=m.n;
-    $('#saving').textContent=m.n===1?'和直接提起一样用力':'只需一半拉力 · 两段绳承重';
-    $('#direction').textContent=(m.direction===1?'向下拉':'向上拉')+' · 重物上升';$('#finding-title').textContent=c.title;$('#finding').textContent=c.text;
+    $('#direction').textContent=en?(m.direction===1?'Pull down · load rises':'Pull up · load rises'):(m.direction===1?'向下拉 · 重物上升':'向上拉 · 重物上升');
     $('[data-readout]').textContent=en?`Effort ${m.force} N · Pull ${number(m.s)} cm · Lift ${number(m.h)} cm`:`拉力 ${m.force} N · 拉绳 ${number(m.s)} cm · 上升 ${number(m.h)} cm`;
-    for(const hint of stage.querySelectorAll('.move-hint')){hint.setAttribute('aria-valuenow',number(m.h));hint.setAttribute('aria-valuetext',`重物上升 ${number(m.h)} 厘米，拉绳 ${number(m.s)} 厘米`);}
+    for(const hint of stage.querySelectorAll('.move-hint')){hint.setAttribute('aria-valuenow',number(m.h));hint.setAttribute('aria-valuetext',en?`Load lifted ${number(m.h)} cm, rope pulled ${number(m.s)} cm`:`重物上升 ${number(m.h)} 厘米，拉绳 ${number(m.s)} 厘米`);}
     $('#lift').disabled=target>=30;graph(m);positionHints();
   }
-  function playState(){$('#play').textContent=auto?'Pause':'Auto explore';$('#play').setAttribute('aria-pressed',auto);$('#play').disabled=reduced.matches;}
+  function playState(){$('#play').textContent=auto?(english()?'Pause':'暂停'):(english()?'Auto explore':'自动探索');$('#play').setAttribute('aria-pressed',auto);$('#play').disabled=reduced.matches;}
   function run(){if(!frame&&visible&&!document.hidden&&(auto||current!==target)){last=0;frame=requestAnimationFrame(tick);}}
   function tick(now){
     frame=0;if(!visible||document.hidden)return;

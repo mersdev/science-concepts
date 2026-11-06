@@ -3,7 +3,7 @@
   const buttonLabel = button?.querySelector('[data-language-label]');
   let language = 'zh';
   try { language = localStorage.getItem('primary-language') === 'en' ? 'en' : 'zh'; } catch {}
-  const strings = {home:{zh:'Home',en:'Home'},target:{zh:'切换到 English',en:'切换到中文'},fullscreen:{zh:'全屏',en:'Full Screen'},exit:{zh:'退出全屏',en:'Exit Full Screen'}};
+  const strings = {home:{zh:'实验目录',en:'Home'},target:{zh:'切换到 English',en:'切换到中文'},fullscreen:{zh:'全屏',en:'Full Screen'},exit:{zh:'退出全屏',en:'Exit Full Screen'}};
   const api = window.primaryLanguage = {
     get: () => language,
     fullscreenLabel: active => strings[active ? 'exit' : 'fullscreen'][language],
@@ -15,9 +15,14 @@
     apply: next => {
       language = next;
       document.documentElement.lang = next === 'zh' ? 'zh-Hans' : 'en';
-      document.title = document.querySelector('#stage') ? (next === 'zh' ? '滑轮实验室 · 小学科学' : 'Pulley Lab · Primary Science') : (next === 'zh' ? '小学科学 · Science Concepts' : 'Primary Science · Science Concepts');
+      document.title = next === 'zh' ? '滑轮实验室 · 小学科学' : 'Pulley Lab · Primary Science';
       try { localStorage.setItem('primary-language', next); } catch {}
       document.querySelectorAll('[data-zh][data-en]').forEach(el => { el.textContent = el.dataset[next]; });
+      const home = document.querySelector('.home-link');
+      if (home) {
+        home.querySelector('[data-home-label]')?.replaceChildren(strings.home[next]);
+        home.setAttribute('aria-label', next === 'zh' ? '返回实验目录' : 'Home — all experiments');
+      }
       if (button) { if (buttonLabel) buttonLabel.textContent = next === 'zh' ? 'English' : '中文'; else button.textContent = next === 'zh' ? 'English' : '中文'; button.setAttribute('aria-label', strings.target[next]); }
       api.syncFullscreenText();
       document.dispatchEvent(new Event('primary-language-change'));

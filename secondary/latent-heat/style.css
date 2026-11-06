@@ -1,4 +1,3 @@
-:root {--teal:#237c91;--graph:#258ea6;--coral:#f18d50;--stage:#f1f7f7;--border:#d9e5df;}
 .material-base{--anatomy-hi:#abcac6}.material-metal{--anatomy-hi:#c6dedc}.material-dark{--anatomy-hi:#4c7278}.material-rubber{--anatomy-hi:#51656a}.material-coral{--anatomy-hi:#ef9a6c}.material-ice{--anatomy-hi:#b3e8f4}.material-glass{--anatomy-hi:#def3f3}.material-water{--anatomy-hi:#57b8dd}.material-cream{--anatomy-hi:#fff3cd}
 [class*="material-"]{--anatomy-paper:var(--anatomy-hi);--anatomy-top:color-mix(in srgb,var(--anatomy-hi),white 25%);--anatomy-shade-0:color-mix(in srgb,var(--anatomy-hi),#15465d 32%);--anatomy-shade-1:color-mix(in srgb,var(--anatomy-hi),#15465d 22%);--anatomy-shade-2:color-mix(in srgb,var(--anatomy-hi),#15465d 12%);--anatomy-shade-3:var(--anatomy-hi)}
 [class*="material-"] .iso-edge{stroke:color-mix(in srgb,var(--anatomy-hi),#225668 40%)}
@@ -8,8 +7,6 @@
 .control-pair{display:grid;grid-template-columns:1fr 1fr;gap:26px;}
 .energy-control{margin-top:22px;padding-top:18px;border-top:1px solid var(--border);}
 #status{display:block;min-height:30px;margin:14px 0 0;font-size:12px;line-height:1.5;color:var(--teal);}
-.metric:first-child{background:#e3f2f6;border-color:#cfE6ee;}.metric:nth-child(2){background:#eeebf8;}
-.metric strong{color:#237c91;}.meter i{background:#46a2b9;}
 .formula-card #substitution{font:13px ui-monospace,monospace;letter-spacing:-.3px;}
 #graph{height:200px;}.graph-card p{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:0;}
 #graph text{font-size:14px;}#graph .axis-title{font-size:13px;}

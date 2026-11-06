@@ -4,7 +4,7 @@ Small, interactive experiments for primary science and Form 4 & 5 Physics. Open 
 
 The existing experiments are in `secondary/`.
 
-[Primary science](primary/index.html) includes [滑轮实验室 · Pulley Lab](primary/pulley/index.html), a colorful Grade 3 experiment comparing fixed, movable and combined pulleys, pull direction, effort and rope travel. Open it directly from disk; the ideal model and research sources are documented in its [README](primary/pulley/README.md).
+[Primary Science](primary/index.html) includes [Pulley Lab](primary/pulley/index.html), a colorful Grade 3 lesson comparing fixed, movable and combined pulleys, pull direction, effort and rope travel. It is the only bilingual page and supports Simplified Chinese and English. Open it directly from disk; the ideal model and research sources are documented in its [README](primary/pulley/README.md).
 
 Start at the [experiment index](secondary/index.html) to browse all six apparatus previews and open an experiment. The responsive catalogue works offline and supports keyboard navigation. Its static SVG previews reuse the experiments’ actual geometry without running simulations in the background. After changing apparatus artwork or the catalogue entries, run `node build-index.mjs` to refresh the page and previews using Node.js and Chrome/Chromium; no toolkit installation is required.
 

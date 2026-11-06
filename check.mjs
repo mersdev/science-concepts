@@ -98,6 +98,18 @@ try {
     await settle();
   };
   await send('Runtime.enable'); await send('Page.enable');
+  await send('Page.navigate', { url: pathToFileURL(resolve(root, 'primary', 'index.html')).href });
+  await wait(250);
+  assert.deepEqual(await evaluate(`[...document.querySelectorAll('.experiment-card')].map(a=>a.getAttribute('href'))`), ['pulley/index.html']);
+  assert(await evaluate(`document.documentElement.lang==='en'&&document.querySelectorAll('#language,[data-en],[data-zh]').length===0&&document.querySelector('.apparatus svg[role="img"]')`), 'primary catalogue is English-only and uses the shared card design');
+  assert.equal(await evaluate('document.scripts.length'), 0, 'primary catalogue needs no runtime scripts');
+  for (const [width,height] of [[1366,768],[1440,900],[390,844],[320,740]]) {
+    await send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false});
+    await evaluate('scrollTo(0,0)'); await wait(80); await screenshot(`primary-index-${width}`);
+    assert(await evaluate('document.documentElement.scrollWidth<=innerWidth'), `primary catalogue fits ${width}px`);
+    if(width>900) assert(await evaluate('document.documentElement.scrollHeight<=innerHeight+1'), 'primary catalogue fits without desktop scrolling');
+    assert(await evaluate(`[...document.querySelectorAll('.experiment-card')].every(el=>{const r=el.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth&&r.height>200})`));
+  }
   // The catalogue must also work directly from disk, with no running simulations.
   await send('Page.navigate', { url: pathToFileURL(resolve(root, 'secondary', 'index.html')).href });
   await wait(400);
@@ -143,7 +155,7 @@ try {
     await send('Page.navigate', { url: pathToFileURL(resolve(root, 'secondary', name, 'index.html')).href });
     await wait(500);
     assert(await evaluate(`Boolean(window.${name})`), `${name}: application initialized`);
-    assert.equal(await evaluate(`document.querySelectorAll('nav,footer,.quiz,.notebook,.intro,.investigation').length`), 0);
+    assert.equal(await evaluate(`document.querySelectorAll('nav:not(.page-tools),footer,.quiz,.notebook,.intro,.investigation').length`), 0);
     assert.equal(await evaluate(`document.querySelectorAll('.page-intro h1').length`), 1);
     assert(await evaluate(`Boolean(document.querySelector('.page-intro p').textContent.trim())`));
     assert.equal(await evaluate(`document.querySelectorAll('.formula-card').length`), 1);
@@ -458,7 +470,7 @@ try {
   assert(await evaluate('Boolean(window.latentHeat)'));
   assert(await evaluate(`document.querySelector('aside').firstElementChild.classList.contains('formula-card')`));
   assert(await evaluate(`getComputedStyle(document.querySelector('.move-hint')).display==='none'`));
-  assert(await evaluate(`document.querySelectorAll('.page-intro h1').length===1 && document.querySelectorAll('nav,footer,.quiz,.notebook').length===0`));
+  assert(await evaluate(`document.querySelectorAll('.page-intro h1').length===1 && document.querySelectorAll('nav:not(.page-tools),footer,.quiz,.notebook').length===0`));
   assert(await evaluate(`[50,100,200].every(mass=>[0,.01,.25,.5,.999,1].every(f=>{
     const m=latentHeat.model(mass/1000*334000*f,mass);
     return m.temperature===0 && Math.abs(m.melted-mass*f)<1e-9 && Math.abs(m.melted+m.remaining-mass)<1e-9 && Math.abs(m.q-m.melted/1000*334000)<1e-8;
@@ -546,7 +558,7 @@ try {
   assert(await evaluate('pulley.getState().mode==="fixed"&&pulley.getState().w===20&&pulley.getState().h===0'));
   const initialLanguage=await evaluate('document.documentElement.lang');
   await click('#language');
-  assert(await evaluate(`document.documentElement.lang!==${JSON.stringify(initialLanguage)}&&document.querySelector('#fullscreen').textContent==='Full Screen'&&document.querySelector('#play').textContent==='Auto explore'`),'language toggle translates fullscreen and auto controls');
+  assert(await evaluate(`document.documentElement.lang!==${JSON.stringify(initialLanguage)}&&document.querySelector('#fullscreen').textContent==='Full Screen'&&document.querySelector('#play').textContent==='Auto explore'&&document.querySelector('#distance').textContent.startsWith('Rope pulled')&&document.querySelector('#direction').textContent.includes('load rises')&&document.querySelector('#finding').textContent.includes('Pull down')&&document.querySelector('.home-link').textContent.includes('Home')&&document.querySelector('.move-hint').getAttribute('aria-valuetext').includes('Load lifted')`),'language toggle translates live output, instructions and accessibility text');
   await click('#language');
   assert.equal(await evaluate('document.documentElement.lang'),initialLanguage,'language toggle returns to the initial language');
   for(const mode of ['fixed','movable','combined']){
