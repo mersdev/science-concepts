@@ -15,6 +15,7 @@ Start at the [experiment index](secondary/index.html) to browse all six apparatu
 
 | Experiment | Page | Formula |
 | --- | --- | --- |
+| Balancing a Seesaw (Primary) | [primary/seesaw/index.html](primary/seesaw/index.html) | m₁d₁ = m₂d₂ |
 | How Gears Transfer Motion (Primary) | [primary/gears/index.html](primary/gears/index.html) | N₁θ₁ + N₂θ₂ = 0 |
 | Why Triangles Make Structures Stronger (Primary Year 6) | [primary/bridges/index.html](primary/bridges/index.html) | δ = F/k |
 | Build a More Stable Tower (Primary Year 6) | [primary/tower/index.html](primary/tower/index.html) | aₜᵢₚ = gb/h꜀ |
@@ -46,6 +47,8 @@ The desktop overview fits at 100% browser zoom on a 1366×768 laptop display, wi
 Movement labels appear only in fullscreen: “Drag piston” for Boyle, “Slide contact” for Ohm, and “Drag object” / “Drag screen” for the convex lens. Drag a label or focus it and use the arrow keys to move its component. The convex-lens fullscreen also includes a live white-screen close-up.
 
 Each folder contains its HTML model, animation logic and material colors. `shared.css`, `shared.js` and `geometry.js` provide the common layout, fullscreen behavior and isometric projection. Edit these files directly; generated copies and external toolkit installations are unnecessary.
+
+The [primary seesaw lesson](primary/seesaw/index.html) has independently draggable coral and blue riders, mass and distance sliders, a Balance riders action, turning-effect comparison bars and a live relationship graph. Its [README](primary/seesaw/README.md) documents the fixed fulcrum, units, limits and illustrative tilt. Fullscreen keeps both rider movement labels and the live output. `SEESAW_ONLY=1 node check.mjs` runs its focused checks.
 
 The original transparent science-teacher mascot, six experiment poses and layered campaign cover are in [social-posts](social-posts/README.md).
 
