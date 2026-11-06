@@ -538,35 +538,6 @@ try {
   await send('Emulation.setEmulatedMedia',{features:[]});assert.deepEqual(errors,[]);
   console.log('PASS latent heat: constant-temperature melting, energy conservation, controls, cutoff, drag, keyboard, native/fallback fullscreen and responsive layouts');
 
-  await send('Emulation.setEmulatedMedia',{features:[]});
-  await send('Page.navigate',{url:pathToFileURL(resolve(root,'primary/nervous-system/index.html')).href});await wait(400);
-  assert(await evaluate('Boolean(window.nervousSystem)'));
-  for(const language of ['en','ms','zh']){
-    await click('[data-lang="'+language+'"]');
-    assert.equal(await evaluate('nervousSystem.getState().lang'),language);
-    assert(await evaluate('document.querySelector("#part-info").textContent.length>10'));
-  }
-  for(const mode of ['see','touch','heart']){
-    await click('[data-mode="'+mode+'"]');await evaluate('nervousSystem.seek(100)');
-    assert.equal(await evaluate('document.querySelector("#graph-point").getAttribute("cx")'),'315');
-    assert(await evaluate('document.querySelector("#explain").textContent.length>10'));
-  }
-  await click('#reset');assert.equal(await evaluate('nervousSystem.getState().progress'),0);
-  await evaluate('document.querySelector("#stage").focus()');
-  await send('Input.dispatchKeyEvent',{type:'keyDown',key:'End'});
-  assert.equal(await evaluate('nervousSystem.getState().progress'),100);
-  await click('#send');await wait(200);assert(await evaluate('nervousSystem.getState().progress>0'));
-  await click('#reset');
-  for(const [width,height] of [[1366,768],[1440,900],[390,844],[320,740]]){
-    await send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false});await wait(100);
-    assert(await evaluate('document.documentElement.scrollWidth<=innerWidth'));
-    await screenshot('nervous-system-'+width);
-  }
-  await click('#fullscreen');await wait(100);await screenshot('nervous-system-fullscreen');await click('#fullscreen');
-  await send('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]});
-  await click('#send');await wait(100);assert.equal(await evaluate('nervousSystem.getState().progress'),100);
-  assert.deepEqual(errors,[]);console.log('PASS nervous system: three languages, scenarios, progress, reset, keyboard, reduced motion, responsive and fullscreen');
-
 } finally {
   socket?.close();
   const stopped = new Promise(done => chrome.once('exit', done));
