@@ -1,0 +1,14 @@
+#stage{touch-action:none;cursor:ns-resize;aspect-ratio:1.7}
+#apparatus polygon{stroke:#45665e;stroke-width:.45;stroke-linejoin:round}
+[data-part=blade],[data-part=handle]{cursor:ns-resize}
+.wedge-controls{display:grid;grid-template-columns:1fr 1fr;gap:24px}.blade-key{background:#ed9277}.sample-key{background:#e8bb58}
+.graph-note,.concept-note{font-size:11px;color:var(--muted);line-height:1.5;margin:8px 0 0}
+#section-preview #preview{height:110px;background:var(--stage)}#preview text{font:12px system-ui;fill:var(--ink)}
+.stage-wrap:is(:fullscreen,.is-fullscreen) #section-preview{flex:none;width:min(400px,95%);align-self:center;padding:9px 14px}
+.stage-wrap:is(:fullscreen,.is-fullscreen) #section-preview>div,.stage-wrap:is(:fullscreen,.is-fullscreen) #section-preview p{display:none}
+.stage-wrap:is(:fullscreen,.is-fullscreen) #preview{height:90px;margin:0;border:0}
+.stage-wrap:is(:fullscreen,.is-fullscreen) #stage{grid-template-rows:minmax(0,1fr)}
+.stage-wrap:is(:fullscreen,.is-fullscreen) #stage>svg{min-height:0;max-height:100%}
+.stage-wrap:is(:fullscreen,.is-fullscreen) .stage-caption{font-size:clamp(11px,2vw,18px)}
+@media(min-width:1000px){body:not(.model-fullscreen) #stage{height:300px}body:not(.model-fullscreen) .formula-card{display:block}body:not(.model-fullscreen) .formula-card strong{font-size:26px;margin:7px 0}body:not(.model-fullscreen) .formula-card p{font-size:16px;margin:4px 0}body:not(.model-fullscreen) .formula-card small{display:block;text-align:left}body:not(.model-fullscreen) #graph{height:130px}body:not(.model-fullscreen) #graph text{font-size:14px}body:not(.model-fullscreen) #section-preview #preview{height:80px}}
+@media(max-width:420px){.wedge-controls{gap:16px}.control-title{flex-wrap:wrap;gap:4px}.wedge-controls .control-title strong{font-size:22px}.card-head{letter-spacing:.4px}.card-head b{margin-right:4px}.stage-caption{flex-wrap:wrap}[data-readout]{white-space:normal}.actions button{padding:10px 8px}.legend span:last-child{margin-left:0}}

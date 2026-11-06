@@ -15,8 +15,11 @@ Start at the [experiment index](secondary/index.html) to browse all six apparatu
 
 [Inside a Door Handle: Wheel and Axle](primary/door-handle/index.html) shows a knob turning its spindle through the same angle, with an independently lifted cover revealing a cam-and-spring latch extension. Its [README](primary/door-handle/README.md) documents the controls and teaching model.
 
+[How a Wedge Splits Materials](primary/wedge/index.html) lets Primary learners push a virtual blade and compare its width, entry and sideways opening. The [README](primary/wedge/README.md) explains the geometric model and the conceptual-only fracture animation.
+
 | Experiment | Page | Formula |
 | --- | --- | --- |
+| How a Wedge Splits Materials (Primary) | [primary/wedge/index.html](primary/wedge/index.html) | Push down → split apart |
 | Inside a Door Handle: Wheel and Axle (Primary) | [primary/door-handle/index.html](primary/door-handle/index.html) | θknob = θaxle |
 | Balancing a Seesaw (Primary) | [primary/seesaw/index.html](primary/seesaw/index.html) | m₁d₁ = m₂d₂ |
 | How Gears Transfer Motion (Primary) | [primary/gears/index.html](primary/gears/index.html) | N₁θ₁ + N₂θ₂ = 0 |
