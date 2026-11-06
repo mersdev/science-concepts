@@ -127,7 +127,7 @@ try {
     await send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false});
     await evaluate('scrollTo(0,0)'); await wait(80); await screenshot(`primary-index-${width}`);
     assert(await evaluate('document.documentElement.scrollWidth<=innerWidth'), `primary catalogue fits ${width}px`);
-    if(width>900) assert(await evaluate('document.documentElement.scrollHeight<=innerHeight+1'), 'primary catalogue fits without desktop scrolling');
+    assert(await evaluate('getComputedStyle(document.querySelector(".experiment-grid")).gridTemplateColumns.split(" ").length<=3'), 'primary catalogue has at most three columns');
     assert(await evaluate(`[...document.querySelectorAll('.experiment-card')].every(el=>{const r=el.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth&&r.height>200})`));
   }
   // The catalogue must also work directly from disk, with no running simulations.

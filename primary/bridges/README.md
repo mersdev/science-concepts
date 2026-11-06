@@ -1,6 +1,6 @@
 # Why Triangles Make Structures Stronger
 
-A colorful Year 6 lesson comparing a rectangular frame, triangular truss and arch-shaped bridge supports. Open `index.html` directly from disk. No installation or network is needed.
+A colorful lesson comparing a rectangular frame, triangular truss and arch-shaped bridge supports. Open `index.html` directly from disk. No installation or network is needed.
 
 Concept: a load on a bridge changes its shape; triangulation resists changes of shape through axial forces, while an arch carries compression into firm abutments. This is a comparison of elastic deformation, not breaking loads.
 

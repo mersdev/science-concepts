@@ -1,6 +1,6 @@
 # Build a More Stable Tower
 
-An English, offline Year 6 lesson: explain how base area and height affect stability. Open `index.html`, or use the primary catalogue.
+An English, offline lesson: explain how base area and height affect stability. Open `index.html`, or use the primary catalogue.
 
 Curriculum mapping supplied in the brief (direct concept): SK Science Y6 Unit 12, Stability and Strength, printed pp. 194–198; SJKC Science Y6 Ch. 12, printed pp. 189–191. These page references are user-provided; textbook pages are not reproduced.
 

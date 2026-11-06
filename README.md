@@ -5,7 +5,7 @@ Small, interactive experiments for primary science and Form 4 & 5 Physics. Open 
 Primary lessons are in `primary/`; Form 4 & 5 experiments are in `secondary/`.
 
 
-[Build a More Stable Tower](primary/tower/index.html) adds a colorful Year 6 stability lesson with adjustable height, base size and shape, sideways tests, and a live tipping graph. Its [README](primary/tower/README.md) records the curriculum mapping and model assumptions.
+[Build a More Stable Tower](primary/tower/index.html) adds a colorful stability lesson with adjustable height, base size and shape, sideways tests, and a live tipping graph. Its [README](primary/tower/README.md) records the curriculum mapping and model assumptions.
 
 [Why Triangles Make Structures Stronger](primary/bridges/index.html) compares a rectangular frame, triangular truss and arch under adjustable loads and spans. Its [README](primary/bridges/README.md) explains the elastic teaching model, curriculum mapping and assumptions.
 
@@ -31,8 +31,8 @@ Start at the [experiment index](secondary/index.html) to browse all six apparatu
 | How a Wedge Splits Materials (Primary) | [primary/wedge/index.html](primary/wedge/index.html) | Push down → split apart |
 | Balancing a Seesaw (Primary) | [primary/seesaw/index.html](primary/seesaw/index.html) | m₁d₁ = m₂d₂ |
 | How Gears Transfer Motion (Primary) | [primary/gears/index.html](primary/gears/index.html) | N₁θ₁ + N₂θ₂ = 0 |
-| Why Triangles Make Structures Stronger (Primary Year 6) | [primary/bridges/index.html](primary/bridges/index.html) | δ = F/k |
-| Build a More Stable Tower (Primary Year 6) | [primary/tower/index.html](primary/tower/index.html) | aₜᵢₚ = gb/h꜀ |
+| Why Triangles Make Structures Stronger (Primary) | [primary/bridges/index.html](primary/bridges/index.html) | δ = F/k |
+| Build a More Stable Tower (Primary) | [primary/tower/index.html](primary/tower/index.html) | aₜᵢₚ = gb/h꜀ |
 | Boyle’s law | [secondary/boyle/index.html](secondary/boyle/index.html) | PV = constant |
 | Convex lens | [secondary/convex/index.html](secondary/convex/index.html) | 1/f = 1/u + 1/v |
 | Ohm’s law | [secondary/ohm/index.html](secondary/ohm/index.html) | V = IR |
