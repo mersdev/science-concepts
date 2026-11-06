@@ -25,7 +25,7 @@
     frameOverview();
     document.dispatchEvent(new CustomEvent('model-fullscreen-change', { detail: active }));
     if (active && !inactive.length) {
-      for (const control of document.querySelectorAll('a[href], button, input, [tabindex]')) {
+      for (const control of document.querySelectorAll('a[href], button, input, select, [tabindex]')) {
         if (!model.contains(control) && !control.inert) {
           control.inert = true;
           inactive.push(control);
