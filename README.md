@@ -1,8 +1,10 @@
 # Science concepts
 
-Small, interactive experiments for Form 4 & 5 Physics. Open `secondary/index.html` directly in your browser; no build, installation or network connection is required. The catalogue currently contains six experiments.
+Small, interactive experiments for primary science and Form 4 & 5 Physics. Open `primary/index.html` or `secondary/index.html` directly in your browser; no build, installation or network connection is required. The secondary catalogue currently contains six experiments.
 
 The existing experiments are in `secondary/`.
+
+[Primary science](primary/index.html) includes [滑轮实验室 · Pulley Lab](primary/pulley/index.html), a colorful Grade 3 experiment comparing fixed, movable and combined pulleys, pull direction, effort and rope travel. Open it directly from disk; the ideal model and research sources are documented in its [README](primary/pulley/README.md).
 
 Start at the [experiment index](secondary/index.html) to browse all six apparatus previews and open an experiment. The responsive catalogue works offline and supports keyboard navigation. Its static SVG previews reuse the experiments’ actual geometry without running simulations in the background. After changing apparatus artwork or the catalogue entries, run `node build-index.mjs` to refresh the page and previews using Node.js and Chrome/Chromium; no toolkit installation is required.
 
@@ -14,12 +16,13 @@ Start at the [experiment index](secondary/index.html) to browse all six apparatu
 | Latent heat of fusion | [secondary/latent-heat/index.html](secondary/latent-heat/index.html) | Q = mLf |
 | Liquid pressure | [secondary/liquid-pressure/index.html](secondary/liquid-pressure/index.html) | P = ρgh |
 | Free fall | [secondary/free-fall/index.html](secondary/free-fall/index.html) | h = ½gt²; g = 2h/t² |
+| 滑轮实验室 · Pulley Lab (Primary 3) | [primary/pulley/index.html](primary/pulley/index.html) | F = W/n; s = nh |
 
 Drag a model, adjust its sliders, or focus the model and use the arrow keys. Home and End select the limits. Auto explore animates the experiment; Reset restores its starting state. Reduced-motion preferences are respected.
 
 Each normal page has a title and short description, with its formula above the live output cards.
 
-Every experiment has a **Home** link to the secondary catalogue. It is hidden and unavailable to keyboard focus in native and fallback fullscreen, then restored on exit. The shared Science Concepts icon appears on the catalogue, Home links and browser tabs.
+Every secondary experiment has a **Home** link to the secondary catalogue. It is hidden and unavailable to keyboard focus in native and fallback fullscreen, then restored on exit. The shared Science Concepts icon appears on the catalogue, Home links and browser tabs.
 
 Pages center horizontally and vertically in the available viewport. Content taller than the viewport starts at the top and scrolls normally, keeping phone controls accessible.
 
