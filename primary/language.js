@@ -8,7 +8,8 @@
     fullscreenLabel: active => strings[active ? 'exit' : 'fullscreen'][language],
     syncFullscreenText: () => {
       const fullscreen = document.querySelector('#fullscreen');
-      if (fullscreen) fullscreen.textContent = api.fullscreenLabel(fullscreen.getAttribute('aria-pressed') === 'true');
+      const label = fullscreen && api.fullscreenLabel(fullscreen.getAttribute('aria-pressed') === 'true');
+      if (fullscreen && fullscreen.textContent !== label) fullscreen.textContent = label;
     },
     apply: next => {
       language = next;

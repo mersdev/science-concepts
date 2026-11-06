@@ -544,6 +544,11 @@ try {
   activeExperiment='pulley';
   assert(await evaluate('Boolean(window.pulley)'));
   assert(await evaluate('pulley.getState().mode==="fixed"&&pulley.getState().w===20&&pulley.getState().h===0'));
+  const initialLanguage=await evaluate('document.documentElement.lang');
+  await click('#language');
+  assert(await evaluate(`document.documentElement.lang!==${JSON.stringify(initialLanguage)}&&document.querySelector('#fullscreen').textContent==='Full Screen'&&document.querySelector('#play').textContent==='Auto explore'`),'language toggle translates fullscreen and auto controls');
+  await click('#language');
+  assert.equal(await evaluate('document.documentElement.lang'),initialLanguage,'language toggle returns to the initial language');
   for(const mode of ['fixed','movable','combined']){
     await click('[data-mode="'+mode+'"]');
     for(const h of [0,10,30]){
