@@ -17,9 +17,12 @@ Start at the [experiment index](secondary/index.html) to browse all six apparatu
 
 [How a Wedge Splits Materials](primary/wedge/index.html) lets Primary learners push a virtual blade and compare its width, entry and sideways opening. The [README](primary/wedge/README.md) explains the geometric model and the conceptual-only fracture animation.
 
+[Moving Loads with an Inclined Plane](primary/inclined-plane/index.html) compares identical loads on two adjustable ramps reaching the same height. Its [README](primary/inclined-plane/README.md) documents the ideal force–distance model and marks the calculations as an extension.
+
 | Experiment | Page | Formula |
 | --- | --- | --- |
 | How Screws Turn Rotation into Movement (Primary) | [primary/screw/index.html](primary/screw/index.html) | x = np |
+| Moving Loads with an Inclined Plane (Primary) | [primary/inclined-plane/index.html](primary/inclined-plane/index.html) | F = mgh/L |
 | How a Wedge Splits Materials (Primary) | [primary/wedge/index.html](primary/wedge/index.html) | Push down → split apart |
 | Inside a Door Handle: Wheel and Axle (Primary) | [primary/door-handle/index.html](primary/door-handle/index.html) | θknob = θaxle |
 | Balancing a Seesaw (Primary) | [primary/seesaw/index.html](primary/seesaw/index.html) | m₁d₁ = m₂d₂ |

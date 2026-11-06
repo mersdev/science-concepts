@@ -3,10 +3,11 @@ import './primary/screw/audit.mjs';
 import { checkWedge } from './primary/wedge/check.mjs';
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
-import { existsSync, mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { checkInclinedPlane } from "./primary/inclined-plane/check.mjs";
 import { checkDoorHandle } from "./primary/door-handle/check.mjs";
 import { checkTower } from './primary/tower/check.mjs';
 import { checkBridges } from './primary/bridges/check.mjs';
@@ -107,7 +108,7 @@ try {
   };
   await send('Runtime.enable'); await send('Page.enable');
   if (!process.env.SCREW_ONLY) {
-  if (!process.env.DOOR_ONLY && !process.env.TOWER_ONLY && !process.env.BRIDGES_ONLY && !process.env.GEARS_ONLY && !process.env.SEESAW_ONLY) {
+  if (!process.env.RAMP_ONLY && !process.env.DOOR_ONLY && !process.env.TOWER_ONLY && !process.env.BRIDGES_ONLY && !process.env.GEARS_ONLY && !process.env.SEESAW_ONLY) {
   await send('Page.navigate',{url:pathToFileURL(resolve(root,'index.html')).href});await wait(250);
   assert.deepEqual(await evaluate(`[...document.querySelectorAll('.experiment-card')].map(a=>a.getAttribute('href'))`),['primary/index.html','secondary/index.html']);
   assert(await evaluate('document.scripts.length===0&&[...document.images].every(img=>img.complete&&img.naturalWidth>0)'));
@@ -115,7 +116,9 @@ try {
   for(const series of ['primary','secondary']){await evaluate(`document.querySelector('a[href="${series}/index.html"]').focus()`);await send('Input.dispatchKeyEvent',{type:'keyDown',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});await send('Input.dispatchKeyEvent',{type:'keyUp',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});await wait(200);assert(await evaluate(`location.pathname.endsWith('/${series}/index.html')`));await evaluate(`document.querySelector('footer a').click()`);await wait(200);assert.equal(await evaluate('location.href'),pathToFileURL(resolve(root,'index.html')).href);}
   await send('Page.navigate', { url: pathToFileURL(resolve(root, 'primary', 'index.html')).href });
   await wait(250);
-  assert.deepEqual(await evaluate(`[...document.querySelectorAll('.experiment-card')].map(a=>a.getAttribute('href'))`), ['tower/index.html','bridges/index.html','seesaw/index.html','gears/index.html','door-handle/index.html','wedge/index.html','screw/index.html']);
+  const primaryRegistry=readFileSync(new URL('build-index.mjs',import.meta.url),'utf8').match(/const primaryExperiments = (.+);/)[1];
+  const primaryLinks=[...primaryRegistry.matchAll(/\['([^']+)',/g)].map(match=>match[1]+'/index.html');
+  assert.deepEqual(await evaluate(`[...document.querySelectorAll('.experiment-card')].map(a=>a.getAttribute('href'))`),primaryLinks,'primary catalogue matches all registered lessons');
   assert(await evaluate(`document.documentElement.lang==='en'&&document.querySelectorAll('#language,[data-en],[data-zh]').length===0&&document.querySelector('.apparatus img[src="../assets/catalog/tower.svg"]')&&[...document.images].every(img=>img.complete&&img.naturalWidth>0)`), 'primary catalogue is English-only and uses the shared card design');
   assert.equal(await evaluate('document.scripts.length'), 0, 'primary catalogue needs no runtime scripts');
   for (const [width,height] of [[1366,768],[1440,900],[390,844],[320,740]]) {
@@ -569,28 +572,32 @@ try {
   await send('Emulation.setDeviceMetricsOverride',{width:1366,height:768,deviceScaleFactor:1,mobile:false});
 
   }
-  if (!process.env.DOOR_ONLY && !process.env.BRIDGES_ONLY && !process.env.SEESAW_ONLY && !process.env.GEARS_ONLY) {
+  if (!process.env.RAMP_ONLY && !process.env.DOOR_ONLY && !process.env.BRIDGES_ONLY && !process.env.SEESAW_ONLY && !process.env.GEARS_ONLY) {
   activeExperiment = 'tower';
   await checkTower({send,evaluate,click,key,wait,screenshot,url:pathToFileURL(resolve(root,'primary/tower/index.html')).href,assert});
   }
-  if (!process.env.DOOR_ONLY && !process.env.SEESAW_ONLY && !process.env.GEARS_ONLY) {
+  if (!process.env.RAMP_ONLY && !process.env.DOOR_ONLY && !process.env.SEESAW_ONLY && !process.env.GEARS_ONLY) {
     activeExperiment = 'bridges';
     await checkBridges({send,evaluate,click,key,wait,screenshot,url:pathToFileURL(resolve(root,'primary/bridges/index.html')).href,assert});
   }
-  if (!process.env.DOOR_ONLY && !process.env.GEARS_ONLY) {
+  if (!process.env.RAMP_ONLY && !process.env.DOOR_ONLY && !process.env.GEARS_ONLY) {
   activeExperiment = 'seesaw';
   await checkSeesaw({send,evaluate,click,key,wait,screenshot,url:pathToFileURL(resolve(root,'primary/seesaw/index.html')).href,assert});
   }
-  if (!process.env.DOOR_ONLY && !process.env.SEESAW_ONLY) {
+  if (!process.env.RAMP_ONLY && !process.env.DOOR_ONLY && !process.env.SEESAW_ONLY) {
   activeExperiment='gears';
   await checkGears({send,evaluate,click,key,wait,screenshot,url:pathToFileURL(resolve(root,'primary/gears/index.html')).href,assert});
   }
-  if (!process.env.SEESAW_ONLY) {
+  if (!process.env.RAMP_ONLY && !process.env.SEESAW_ONLY) {
   activeExperiment='doorHandle';
   await checkDoorHandle({send,evaluate,click,key,wait,screenshot,url:pathToFileURL(resolve(root,'primary/door-handle/index.html')).href,assert});
   }
+  activeExperiment='inclinedPlane';
+  await checkInclinedPlane({send,evaluate,click,key,wait,screenshot,url:pathToFileURL(resolve(root,'primary/inclined-plane/index.html')).href,assert});
+  if (!process.env.RAMP_ONLY) {
   activeExperiment='wedge';
   await checkWedge({send,evaluate,click,key,wait,screenshot,url:pathToFileURL(resolve(root,'primary/wedge/index.html')).href,assert});
+  }
   }
   if (process.env.SCREW_ONLY || !['TOWER_ONLY','BRIDGES_ONLY','SEESAW_ONLY','GEARS_ONLY','DOOR_ONLY','RAMP_ONLY','WEDGE_ONLY'].some(key=>process.env[key])) {
     activeExperiment='screw';

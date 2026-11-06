@@ -1,0 +1,9 @@
+.ramp-controls{display:grid;grid-template-columns:1fr 1fr;gap:24px}.progress-control{margin-top:14px}
+#stage{touch-action:none;cursor:grab;aspect-ratio:1.9}#stage:active{cursor:grabbing}#apparatus polygon{stroke:none}#apparatus [data-part]{cursor:grab}
+.legend .a-key,#a-force-bar{background:#e58e73}.legend .b-key,#b-force-bar{background:#78add0}
+#a-length-hint,#a-load-hint{color:#9f553f;border-color:#d7947f}#b-length-hint,#b-load-hint{color:#356b91;border-color:#84adc9}
+.distance-row{font-size:12px!important;letter-spacing:0!important;gap:12px;margin-top:10px;color:var(--ink)!important}.distance-row b{display:block;margin-top:4px;font-size:17px;font-weight:500}.screen-preview p{font-size:12px;line-height:1.5;margin:10px 0 0}.screen-preview strong{color:var(--teal);letter-spacing:0}
+.graph-note{font-size:11px;line-height:1.4;color:var(--muted);margin:4px 0 0}
+@media(min-width:1000px){body:not(.model-fullscreen) #stage{height:270px}body:not(.model-fullscreen) #graph{height:145px}body:not(.model-fullscreen) .formula-card{display:block}body:not(.model-fullscreen) .formula-card strong{font-size:25px;margin:8px 0}body:not(.model-fullscreen) .formula-card p{font-size:19px}body:not(.model-fullscreen) .controls{padding:12px 20px}body:not(.model-fullscreen) input[type=range]{margin:12px 0 8px}body:not(.model-fullscreen) .actions{margin-top:15px}}
+@media(max-width:760px){.ramp-controls{gap:16px}.control-title{font-size:12px}.control-title strong{font-size:23px}.range-labels{font-size:8px}.legend{flex-wrap:wrap}.stage-caption{flex-wrap:wrap;font-size:10px}[data-readout]{white-space:normal}#stage{aspect-ratio:1.4}}
+@media(max-width:360px){.ramp-controls{grid-template-columns:1fr;gap:14px}.actions{gap:7px}.actions button{font-size:11px;padding:10px 7px}.stage-notes{flex-wrap:wrap}.card-head{letter-spacing:1px}.card-head .live{font-size:8px}}
