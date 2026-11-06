@@ -1,6 +1,6 @@
 # Science concepts
 
-Small, interactive experiments for primary science and Form 4 & 5 Physics. Open [index.html](index.html) and choose Primary or Secondary; no build, installation or network connection is required. The secondary catalogue currently contains six experiments.
+Small, interactive experiments for primary science and Form 4 & 5 Physics. Open [index.html](index.html) and choose Primary or Secondary; no build, installation or network connection is required. The Primary catalogue contains nine lessons and the Secondary catalogue contains six experiments.
 
 Primary lessons are in `primary/`; Form 4 & 5 experiments are in `secondary/`.
 
@@ -13,7 +13,6 @@ Primary lessons are in `primary/`; Form 4 & 5 experiments are in `secondary/`.
 
 Start at the [experiment index](secondary/index.html) to browse all six apparatus previews and open an experiment. The responsive catalogue works offline and supports keyboard navigation. Its static SVG previews reuse the experiments’ actual geometry without running simulations in the background. After changing apparatus artwork or the catalogue entries, run `node build-index.mjs` to refresh the root and series catalogues and previews using Node.js and Chrome/Chromium; no toolkit installation is required.
 
-[Inside a Door Handle: Wheel and Axle](primary/door-handle/index.html) shows a knob turning its spindle through the same angle, with an independently lifted cover revealing a cam-and-spring latch extension. Its [README](primary/door-handle/README.md) documents the controls and teaching model.
 
 [How a Wedge Splits Materials](primary/wedge/index.html) lets Primary learners push a virtual blade and compare its width, entry and sideways opening. The [README](primary/wedge/README.md) explains the geometric model and the conceptual-only fracture animation.
 
@@ -30,7 +29,6 @@ Start at the [experiment index](secondary/index.html) to browse all six apparatu
 | How Screws Turn Rotation into Movement (Primary) | [primary/screw/index.html](primary/screw/index.html) | N = L/p |
 | Moving Loads with an Inclined Plane (Primary) | [primary/inclined-plane/index.html](primary/inclined-plane/index.html) | F = mgh/L |
 | How a Wedge Splits Materials (Primary) | [primary/wedge/index.html](primary/wedge/index.html) | Push down → split apart |
-| Inside a Door Handle: Wheel and Axle (Primary) | [primary/door-handle/index.html](primary/door-handle/index.html) | θknob = θaxle |
 | Balancing a Seesaw (Primary) | [primary/seesaw/index.html](primary/seesaw/index.html) | m₁d₁ = m₂d₂ |
 | How Gears Transfer Motion (Primary) | [primary/gears/index.html](primary/gears/index.html) | N₁θ₁ + N₂θ₂ = 0 |
 | Why Triangles Make Structures Stronger (Primary Year 6) | [primary/bridges/index.html](primary/bridges/index.html) | δ = F/k |
@@ -66,7 +64,7 @@ Each folder contains its HTML model, animation logic and material colors. `share
 
 The [primary seesaw lesson](primary/seesaw/index.html) has independently draggable coral and blue riders, mass and distance sliders, a Balance riders action, turning-effect comparison bars and a live relationship graph. Its [README](primary/seesaw/README.md) documents the fixed fulcrum, units, limits and illustrative tilt. Fullscreen keeps both rider movement labels and the live output. `SEESAW_ONLY=1 node check.mjs` runs its focused checks.
 
-The original transparent science-teacher mascot, six experiment poses and layered campaign cover are in [social-posts](social-posts/README.md).
+The transparent science-teacher mascot and one character scene for each of the 15 experiments are in [social-posts](social-posts/README.md). The matching apparatus icons are listed in [assets/README.md](assets/README.md).
 
 [How Screws Turn Rotation into Movement](primary/screw/index.html) follows a real helical thread into a cutaway wooden block. Fully seat every 39 mm screw, compare the turns needed for 2–4 mm pitches, track turns remaining and insertion progress, and zoom the synchronized thread close-up. Its [README](primary/screw/README.md) records the ideal engagement model and controls. Run `SCREW_ONLY=1 node check.mjs` for focused checks.
 

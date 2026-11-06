@@ -4,6 +4,8 @@
 
 所有人物和道具 PNG 都是独立 RGBA 透明图层，不带画框、画布边框、白色贴纸描边或背景。颜色严格来自 [index.html](../secondary/index.html) 共用样式：`#fffefa`、`#f7f8f3`、`#293e3c`、`#71817b`、`#dfe5db`、`#397f73`、`#478d7a`、`#e58663`、`#f7f9f4`。
 
+Every active experiment now has a matching character scene based on the mascot reference. Browse the complete [character library](characters/README.md) and its [image-generation prompts](characters/prompts.md). The matching apparatus-only icons are listed in [assets/README.md](../assets/README.md).
+
 | 用途 | 独立透明素材 |
 | --- | --- |
 | 基础站姿 | [mascot-base.png](characters/mascot-base.png) |

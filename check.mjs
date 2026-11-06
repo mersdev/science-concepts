@@ -10,7 +10,6 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { checkInclinedPlane } from "./primary/inclined-plane/check.mjs";
-import { checkDoorHandle } from "./primary/door-handle/check.mjs";
 import { checkTower } from './primary/tower/check.mjs';
 import { checkBridges } from './primary/bridges/check.mjs';
 import { checkGears } from './primary/gears/check.mjs';
@@ -111,7 +110,7 @@ try {
   await send('Runtime.enable'); await send('Page.enable');
   if (!process.env.TOOLS_ONLY && !process.env.SHARPENER_ONLY) {
   if (!process.env.SCREW_ONLY) {
-  if (!process.env.RAMP_ONLY && !process.env.DOOR_ONLY && !process.env.TOWER_ONLY && !process.env.BRIDGES_ONLY && !process.env.GEARS_ONLY && !process.env.SEESAW_ONLY) {
+  if (!process.env.RAMP_ONLY && !process.env.TOWER_ONLY && !process.env.BRIDGES_ONLY && !process.env.GEARS_ONLY && !process.env.SEESAW_ONLY) {
   await send('Page.navigate',{url:pathToFileURL(resolve(root,'index.html')).href});await wait(250);
   assert.deepEqual(await evaluate(`[...document.querySelectorAll('.experiment-card')].map(a=>a.getAttribute('href'))`),['primary/index.html','secondary/index.html']);
   assert(await evaluate('document.scripts.length===0&&[...document.images].every(img=>img.complete&&img.naturalWidth>0)'));
@@ -575,25 +574,21 @@ try {
   await send('Emulation.setDeviceMetricsOverride',{width:1366,height:768,deviceScaleFactor:1,mobile:false});
 
   }
-  if (!process.env.RAMP_ONLY && !process.env.DOOR_ONLY && !process.env.BRIDGES_ONLY && !process.env.SEESAW_ONLY && !process.env.GEARS_ONLY) {
+  if (!process.env.RAMP_ONLY && !process.env.BRIDGES_ONLY && !process.env.SEESAW_ONLY && !process.env.GEARS_ONLY) {
   activeExperiment = 'tower';
   await checkTower({send,evaluate,click,key,wait,screenshot,url:pathToFileURL(resolve(root,'primary/tower/index.html')).href,assert});
   }
-  if (!process.env.RAMP_ONLY && !process.env.DOOR_ONLY && !process.env.SEESAW_ONLY && !process.env.GEARS_ONLY) {
+  if (!process.env.RAMP_ONLY && !process.env.SEESAW_ONLY && !process.env.GEARS_ONLY) {
     activeExperiment = 'bridges';
     await checkBridges({send,evaluate,click,key,wait,screenshot,url:pathToFileURL(resolve(root,'primary/bridges/index.html')).href,assert});
   }
-  if (!process.env.RAMP_ONLY && !process.env.DOOR_ONLY && !process.env.GEARS_ONLY) {
+  if (!process.env.RAMP_ONLY && !process.env.GEARS_ONLY) {
   activeExperiment = 'seesaw';
   await checkSeesaw({send,evaluate,click,key,wait,screenshot,url:pathToFileURL(resolve(root,'primary/seesaw/index.html')).href,assert});
   }
-  if (!process.env.RAMP_ONLY && !process.env.DOOR_ONLY && !process.env.SEESAW_ONLY) {
+  if (!process.env.RAMP_ONLY && !process.env.SEESAW_ONLY) {
   activeExperiment='gears';
   await checkGears({send,evaluate,click,key,wait,screenshot,url:pathToFileURL(resolve(root,'primary/gears/index.html')).href,assert});
-  }
-  if (!process.env.RAMP_ONLY && !process.env.SEESAW_ONLY) {
-  activeExperiment='doorHandle';
-  await checkDoorHandle({send,evaluate,click,key,wait,screenshot,url:pathToFileURL(resolve(root,'primary/door-handle/index.html')).href,assert});
   }
   activeExperiment='inclinedPlane';
   await checkInclinedPlane({send,evaluate,click,key,wait,screenshot,url:pathToFileURL(resolve(root,'primary/inclined-plane/index.html')).href,assert});
@@ -602,12 +597,12 @@ try {
   await checkWedge({send,evaluate,click,key,wait,screenshot,url:pathToFileURL(resolve(root,'primary/wedge/index.html')).href,assert});
   }
   }
-  if (process.env.SCREW_ONLY || !['TOWER_ONLY','BRIDGES_ONLY','SEESAW_ONLY','GEARS_ONLY','DOOR_ONLY','RAMP_ONLY','WEDGE_ONLY','TOOLS_ONLY'].some(key=>process.env[key])) {
+  if (process.env.SCREW_ONLY || !['TOWER_ONLY','BRIDGES_ONLY','SEESAW_ONLY','GEARS_ONLY','RAMP_ONLY','WEDGE_ONLY','TOOLS_ONLY'].some(key=>process.env[key])) {
     activeExperiment='screw';
     await checkScrew({send,evaluate,click,key,wait,screenshot,url:pathToFileURL(resolve(root,'primary/screw/index.html')).href,assert});
   }
   }
-  if (process.env.SHARPENER_ONLY || !['TOWER_ONLY','BRIDGES_ONLY','SEESAW_ONLY','GEARS_ONLY','DOOR_ONLY','RAMP_ONLY','WEDGE_ONLY','SCREW_ONLY','TOOLS_ONLY'].some(key=>process.env[key])) {
+  if (process.env.SHARPENER_ONLY || !['TOWER_ONLY','BRIDGES_ONLY','SEESAW_ONLY','GEARS_ONLY','RAMP_ONLY','WEDGE_ONLY','SCREW_ONLY','TOOLS_ONLY'].some(key=>process.env[key])) {
     activeExperiment='sharpener';
     await checkSharpener({send,evaluate,click,key,wait,screenshot,url:pathToFileURL(resolve(root,'primary/pencil-sharpener/index.html')).href,assert});
   }
