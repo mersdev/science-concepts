@@ -1,7 +1,11 @@
 #stage{touch-action:none;cursor:ew-resize;aspect-ratio:1.9}#apparatus polygon{stroke:none}
 .thread-key{background:#e7bd62}.marker-key{background:#e68e73}
 #thread-detail{display:block;width:100%;height:95px;margin-top:8px;overflow:hidden}.preview-zooms{display:flex;gap:4px}.preview-zooms button{font-size:11px;padding:3px 8px}.preview-zooms button.selected{background:var(--teal);color:var(--paper)}
-.screen-preview p{font-size:12px;line-height:1.45;margin:7px 0 0}.graph-note{font-size:11px;color:var(--muted);line-height:1.4;margin:5px 0 0}#graph text{font-size:14px}
+.screen-preview p{font-size:12px;line-height:1.45;margin:7px 0 0}.graph-note{font-size:11px;color:var(--muted);line-height:1.4;margin:5px 0 0}#graph text{font-size:18px}
 .stage-wrap:is(:fullscreen,.is-fullscreen) #thread-preview{width:min(420px,94%);align-self:center;flex-shrink:0;padding:6px 12px}.stage-wrap:is(:fullscreen,.is-fullscreen) #thread-detail{height:85px;margin:0}.stage-wrap:is(:fullscreen,.is-fullscreen) .preview-heading,.stage-wrap:is(:fullscreen,.is-fullscreen) #finding{display:none}
-@media(min-width:1000px){body:not(.model-fullscreen) #stage{height:295px}body:not(.model-fullscreen) .formula-card{display:block}body:not(.model-fullscreen) .formula-card strong{font-size:25px;margin:7px 0}body:not(.model-fullscreen) .formula-card p{margin:4px 0}body:not(.model-fullscreen) #graph{height:120px;margin-top:10px}body:not(.model-fullscreen) .controls{padding:14px 20px}body:not(.model-fullscreen) #thread-detail{height:70px}}
+@media(min-width:1000px){body:not(.model-fullscreen) #stage{height:280px}body:not(.model-fullscreen) .formula-card{display:block}body:not(.model-fullscreen) .formula-card strong{font-size:25px;margin:7px 0}body:not(.model-fullscreen) .formula-card p{margin:4px 0}body:not(.model-fullscreen) #graph{height:120px;margin-top:10px}body:not(.model-fullscreen) .controls{padding:14px 20px}body:not(.model-fullscreen) #thread-detail{height:60px}}
 @media(max-width:420px){.selector button{font-size:11px;padding:9px 4px}.stage-caption{font-size:10px;flex-wrap:wrap}[data-readout]{white-space:normal}.actions{flex-wrap:wrap;gap:7px}.actions button{font-size:11px;padding:10px 8px}.legend{gap:10px}.legend span:last-child{margin-left:0}.move-hint{font-size:10px}}
+
+.selector [data-pitch]{display:flex;flex-direction:column;align-items:center;gap:4px}.selector [data-pitch] small{font-size:10px;font-weight:400;letter-spacing:0}.metric .meter{margin-top:8px!important}#insertion-fill{width:0}
+
+.selector [data-pitch] span{display:block}.selector [data-pitch] small{display:block;margin-left:0}

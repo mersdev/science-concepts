@@ -21,7 +21,7 @@ Start at the [experiment index](secondary/index.html) to browse all six apparatu
 
 | Experiment | Page | Formula |
 | --- | --- | --- |
-| How Screws Turn Rotation into Movement (Primary) | [primary/screw/index.html](primary/screw/index.html) | x = np |
+| How Screws Turn Rotation into Movement (Primary) | [primary/screw/index.html](primary/screw/index.html) | N = L/p |
 | Moving Loads with an Inclined Plane (Primary) | [primary/inclined-plane/index.html](primary/inclined-plane/index.html) | F = mgh/L |
 | How a Wedge Splits Materials (Primary) | [primary/wedge/index.html](primary/wedge/index.html) | Push down → split apart |
 | Inside a Door Handle: Wheel and Axle (Primary) | [primary/door-handle/index.html](primary/door-handle/index.html) | θknob = θaxle |
@@ -62,7 +62,7 @@ The [primary seesaw lesson](primary/seesaw/index.html) has independently draggab
 
 The original transparent science-teacher mascot, six experiment poses and layered campaign cover are in [social-posts](social-posts/README.md).
 
-[How Screws Turn Rotation into Movement](primary/screw/index.html) follows a real helical thread into a cutaway wooden block. Turn or withdraw the screw, compare 2–4 mm pitches, and zoom the synchronized thread close-up. Its [README](primary/screw/README.md) records the ideal engagement model and controls. Run `SCREW_ONLY=1 node check.mjs` for focused checks.
+[How Screws Turn Rotation into Movement](primary/screw/index.html) follows a real helical thread into a cutaway wooden block. Fully seat every 39 mm screw, compare the turns needed for 2–4 mm pitches, track turns remaining and insertion progress, and zoom the synchronized thread close-up. Its [README](primary/screw/README.md) records the ideal engagement model and controls. Run `SCREW_ONLY=1 node check.mjs` for focused checks.
 
 Run browser checks with Node.js 22+ and Chrome or Chromium:
 

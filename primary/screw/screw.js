@@ -1,8 +1,8 @@
 // Portable analytic screw geometry. World units are 2 per mm; x is the screw axis.
 (() => {
- const TAU=2*Math.PI,clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+ const TAU=2*Math.PI,LENGTH=39,WOOD=90,clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
  const C={base:'#8eafa1',mat:'#d0e2bf',rubber:'#527569',wood:'#d7ad76',cut:'#ebc995',grain:'#b78b58',bore:'#ad8357',steel:'#99afb2',gold:'#e7bd62',dark:'#4d676a',coral:'#e68e73',blue:'#83b7d2',cream:'#f3e1b4'};
- function model(turns=0,pitch=3){pitch=[2,3,4].includes(+pitch)?+pitch:3;turns=clamp(Number(turns)||0,0,6);return {turns,pitch,angle:turns*TAU,travel:turns*pitch,advance:turns*pitch*2};}
+ function model(turns=0,pitch=3){pitch=[2,3,4].includes(+pitch)?+pitch:3;const maxTurns=LENGTH/pitch;turns=clamp(Number(turns)||0,0,maxTurns);const travel=Math.min(LENGTH,turns*pitch);return {turns,pitch,length:LENGTH,maxTurns,remaining:maxTurns-turns,progress:travel/LENGTH,seated:turns===maxTurns,angle:turns*TAU,travel,advance:travel*2};}
  const spin=([x,y,z],m)=>[x+m.advance,y*Math.cos(m.angle)+(z-50)*Math.sin(m.angle),50-y*Math.sin(m.angle)+(z-50)*Math.cos(m.angle)];
  function mesh(turns,pitch,includeBench=true){const m=model(turns,pitch),lead=m.pitch*2,faces=[],solids=[];
   const face=(points,color,name,part='',moving=false)=>{points=moving?points.map(p=>spin(p,m)):points;if(points.every(p=>p.every(Number.isFinite)))faces.push({points,color,name,part});};
@@ -19,13 +19,13 @@
   box(-112,-49,-2,210,98,5,C.base,'bench');box(-109,-46,3,204,92,1,C.mat,'bench inlay');
   for(const x of [-101,87])for(const y of [-38,38]){box(x-3,y-3,4,6,6,.6,C.cream,'anchor plate');box(x-.8,y-.8,4.6,1.6,1.6,.5,C.dark,'anchor fastener');}
   // One wooden block with its front upper half removed and a half-bore exposed.
-  box(0,-32,4,65,64,38,C.wood,'wood lower');box(0,-32,42,65,24,50,C.wood,'wood back');box(0,-8,58,65,8,34,C.cut,'wood upper cut');
-  for(const z of [12,19,29,35])box(0,32,z,65,.04,.4,C.grain,'wood grain inlay');
+  box(0,-32,4,WOOD,64,38,C.wood,'wood lower');box(0,-32,42,WOOD,24,50,C.wood,'wood back');box(0,-8,58,WOOD,8,34,C.cut,'wood upper cut');
+  for(const z of [12,19,29,35])box(0,32,z,WOOD,.04,.4,C.grain,'wood grain inlay');
   // Matching stationary female thread: a 0.25-world-unit radial clearance.
   const profile=[[-.5*lead,4.25],[-.24*lead,4.25],[0,6.75],[.24*lead,4.25],[.5*lead,4.25]],start=faces.length;
   const clipX=(poly,bound,greater)=>{let out=[];for(let i=0;i<poly.length;i++){const p=poly[i],q=poly[(i+1)%poly.length],a=greater?p[0]>=bound:p[0]<=bound,b=greater?q[0]>=bound:q[0]<=bound;if(a)out.push(p);if(a!==b){const t=(bound-p[0])/(q[0]-p[0]);out.push(p.map((v,j)=>v+(q[j]-v)*t));}}return out;};
-  const boreFace=(p,name='wood bore')=>{p=clipX(clipX(p,0,true),65,false);if(p.length>=3)for(let i=1;i<p.length-1;i++)face([p[0],p[i],p[i+1]],C.bore,name);};
-  for(let k=-2;k<=Math.ceil((65+72)/lead)+1;k++)for(let i=0;i<16;i++){
+  const boreFace=(p,name='wood bore')=>{p=clipX(clipX(p,0,true),WOOD,false);if(p.length>=3)for(let i=1;i<p.length-1;i++)face([p[0],p[i],p[i+1]],C.bore,name);};
+  for(let k=-2;k<=Math.ceil((WOOD+72)/lead)+1;k++)for(let i=0;i<16;i++){
    const a=Math.PI/2+i*Math.PI/16,b=a+Math.PI/16,at=(angle,o,r)=>[-72+lead*(-angle/TAU+k)+o,r*Math.cos(angle),50+r*Math.sin(angle)];
    for(let j=0;j<profile.length-1;j++){const [o,r]=profile[j],[oo,rr]=profile[j+1];boreFace([at(a,o,r),at(a,oo,rr),at(b,oo,rr),at(b,o,r)]);
     if(i===0||i===15){const t=i===0?a:b,sign=i===0?1:-1;let p=[at(t,o,r),at(t,oo,rr),at(t,oo,8),at(t,o,8)];if(sign>0)p=p.reverse();boreFace(p,'wood cut lip');}
@@ -33,7 +33,7 @@
   }
   // End-grain half rings join the exposed bore to the rectangular wood block.
 
-  for(const x of [0,65])for(let i=0;i<64;i++){const a=Math.PI/2+i*Math.PI/64,b=a+Math.PI/64,at=(a,r)=>[x,r*Math.cos(a),50+r*Math.sin(a)],outer=a=>8/Math.max(Math.abs(Math.cos(a)),Math.abs(Math.sin(a)));let p=[at(a,radius(x,a)),at(b,radius(x,b)),at(b,outer(b)),at(a,outer(a))];if(x===65)p=p.reverse();patch(p,C.cut,'bore end grain');}
+  for(const x of [0,WOOD])for(let i=0;i<64;i++){const a=Math.PI/2+i*Math.PI/64,b=a+Math.PI/64,at=(a,r)=>[x,r*Math.cos(a),50+r*Math.sin(a)],outer=a=>8/Math.max(Math.abs(Math.cos(a)),Math.abs(Math.sin(a)));let p=[at(a,radius(x,a)),at(b,radius(x,b)),at(b,outer(b)),at(a,outer(a))];if(x===WOOD)p=p.reverse();patch(p,C.cut,'bore end grain');}
   solids.push({name:'wood bore',points:faces.slice(start).flatMap(f=>f.points)});
   for(const x of [12,53]){box(x-7,36,4,14,12,3,C.base,'clamp base');box(x-3,39,7,6,6,38,C.steel,'clamp pedestal');box(x-4,25,42,8,7,3,C.rubber,'pressure pad');box(x-5,25,45,10,19,3,C.blue,'hold-down bar');box(x-1,39,48,2,2,3,C.gold,'clamp stud');box(x-4,37,51,8,6,2,C.cream,'clamp cap');box(x-.7,38,53,1.4,4,.15,C.dark,'clamp cap slot');}
   }
