@@ -3,12 +3,14 @@ export async function checkTower({send,evaluate,click,key,wait,screenshot,url,as
  await send('Emulation.setDeviceMetricsOverride',{width:1366,height:768,deviceScaleFactor:1,mobile:false});
  await send('Page.navigate',{url});await wait(350);
  assert(await evaluate(`{const m=tower.model;Math.abs(m(60,24,'square').critical-3.924)<1e-9&&m(30,24,'square').critical>m(60,24,'square').critical&&m(60,48,'square').critical>m(60,24,'square').critical&&m(60,24,'rectangle').critical===m(60,24,'square').critical/2&&m(60,24,'circle').critical===m(60,24,'square').critical&&!m(60,24,'square',0).tips&&m(60,24,'square',3.924).boundary}`),'tower physics, shape and boundary');
- const set=async(id,value)=>evaluate(`{const el=document.querySelector('#${id}');el.value=${value};el.dispatchEvent(new Event('input'));}`);
+ const fills=async()=>assert(await evaluate(`[...document.querySelectorAll('input[type=range]')].every(el=>Math.abs(parseFloat(el.style.getPropertyValue('--fill'))-(Number(el.value)-Number(el.min))/(Number(el.max)-Number(el.min))*100)<1e-8)`),'slider fills match their current values');
+ await fills();
+ const set=async(id,value)=>{await evaluate(`{const el=document.querySelector('#${id}');el.value=${value};el.dispatchEvent(new Event('input'));}`);await fills();};
  await click('#test');await wait(1600);assert.equal(await evaluate('tower.getState().angle'),90);
  await set('width',50);await set('height',20);await click('#test');await wait(1600);assert.equal(await evaluate('tower.getState().angle'),0);
  await click('#reset');await key('End','#stage');assert.equal(await evaluate('tower.getState().h'),80);await key('Home','#stage');assert.equal(await evaluate('tower.getState().h'),20);
  for(const shape of ['square','circle','rectangle']){await click(`[data-shape="${shape}"]`);for(const h of [20,80])for(const w of [10,50]){await set('height',h);await set('width',w);assert(await evaluate(`tower.geometry().every(f=>f.points.every(p=>p.every(Number.isFinite)))`),'finite geometry');await set('push',10);await click('#test');await wait(1500);assert(await evaluate(`tower.geometry().every(f=>f.points.every(p=>{const v=iso(p,P);return v[0]>=0&&v[0]<=800&&v[1]>=0&&v[1]<=450}))`),'all allowed tower poses inside stage');}}
- await click('#reset');await click('#play');await wait(350);assert(await evaluate('tower.getState().auto'));await click('#play');assert(!await evaluate('tower.getState().auto'));
+ await click('#reset');await click('#play');await wait(350);assert(await evaluate('tower.getState().auto'));await fills();await click('#play');assert(!await evaluate('tower.getState().auto'));
  await click('#reset');await click('#test');await wait(200);
  await evaluate("Object.defineProperty(document,'hidden',{configurable:true,value:true});document.dispatchEvent(new Event('visibilitychange'))");const hiddenAngle=await evaluate('tower.getState().angle');await wait(150);assert.equal(await evaluate('tower.getState().angle'),hiddenAngle);
  await evaluate("delete document.hidden;document.dispatchEvent(new Event('visibilitychange'))");await wait(100);assert(await evaluate('tower.getState().angle')>hiddenAngle);
@@ -23,5 +25,5 @@ export async function checkTower({send,evaluate,click,key,wait,screenshot,url,as
  await send('Emulation.setDeviceMetricsOverride',{width:1366,height:768,deviceScaleFactor:1,mobile:false});await click('#fullscreen');await screenshot('tower-desktop-fullscreen');await click('#fullscreen');
  await send('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]});await click('#reset');await click('#test');assert.equal(await evaluate('tower.getState().angle'),90);await click('#play');assert(!await evaluate('tower.getState().auto'));await send('Emulation.setEmulatedMedia',{features:[]});await click('#reset');
  assert(await evaluate('tower.getState().h===60&&tower.getState().w===24&&!tower.getState().tested&&document.querySelector("#area").textContent.includes("576")'));
- await screenshot('tower-mechanism-closeup');console.log('PASS tower: threshold, shape, boundaries, geometry, controls, drag/keys, motion, fullscreen and layouts');
+ await fills();await screenshot('tower-mechanism-closeup');console.log('PASS tower: threshold, shape, boundaries, geometry, controls, drag/keys, motion, fullscreen and layouts');
 }
