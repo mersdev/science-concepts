@@ -6,7 +6,7 @@ The paired icons show apparatus only. See the complete character and icon mappin
 
 ## Malaysian school uniform versions
 
-These two mascot illustrations distinguish the school stages used by the site. The primary student wears a white shirt with short navy-blue trousers; the secondary student wears a white shirt with long dark-green trousers. The root series page uses a small [two-student selector icon](../../assets/series-choice.png).
+These two mascot illustrations distinguish the school stages used by the site. The primary student wears a white shirt with short navy-blue trousers; the secondary student wears a white shirt with long dark-green trousers. The root series page uses the original Science Concepts title icon.
 
 | School stage | Character |
 | --- | --- |

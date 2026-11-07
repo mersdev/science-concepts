@@ -40,5 +40,3 @@ Use `mascot-base.png` as the exact character-identity reference. Preserve the cu
 
 - Primary student: white short-sleeve collared uniform shirt, short dark navy-blue trousers above the knee, white socks and black school shoes.
 - Secondary student: white short-sleeve collared uniform shirt, long dark forest-green trousers to the ankles, white socks and black school shoes.
-
-The combined series icon uses the two final student images side by side, preserving the shorts-versus-long-trousers distinction at small size.
