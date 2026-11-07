@@ -4,6 +4,15 @@ Each of the 15 active experiments has a transparent character scene based on the
 
 The paired icons show apparatus only. See the complete character and icon mapping in [`assets/README.md`](../../assets/README.md). The built-in imagegen prompt set and lesson-specific subjects are recorded in [`prompts.md`](prompts.md).
 
+## Malaysian school uniform versions
+
+These two mascot illustrations distinguish the school stages used by the site. The primary student wears a white shirt with short navy-blue trousers; the secondary student wears a white shirt with long dark-green trousers. The root series page uses a small [two-student selector icon](../../assets/series-choice.png).
+
+| School stage | Character |
+| --- | --- |
+| Primary | [primary-uniform.png](primary-uniform.png) |
+| Secondary | [secondary-uniform.png](secondary-uniform.png) |
+
 | Experiment | Character scene |
 | --- | --- |
 | Build a More Stable Tower | [08-tower.png](08-tower.png) |

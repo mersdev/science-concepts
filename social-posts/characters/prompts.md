@@ -33,3 +33,12 @@ Create one isolated apparatus icon for a science experiment. Match the supplied 
 - Screw: a screw in a block with rotation arrows.
 - Pencil sharpener: a hand-crank sharpener with an exposed cutting roller and gears.
 - Scissors and hole punch: both tools with a paper sheet and visible punched holes.
+
+## Malaysian school uniform versions
+
+Use `mascot-base.png` as the exact character-identity reference. Preserve the curled dark-teal hair, coral face and cheeks, large oval eyes, round proportions, bold dark-teal outlines and restrained teal/coral/cream shading. Draw a full-body school student on a transparent background, with no lab coat, clipboard, tools, text, logo or frame.
+
+- Primary student: white short-sleeve collared uniform shirt, short dark navy-blue trousers above the knee, white socks and black school shoes.
+- Secondary student: white short-sleeve collared uniform shirt, long dark forest-green trousers to the ankles, white socks and black school shoes.
+
+The combined series icon uses the two final student images side by side, preserving the shorts-versus-long-trousers distinction at small size.
